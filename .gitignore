@@ -3,3 +3,4 @@ venv/
 
 backend/db.sqlite3
 backend/scripts/
+backend/media
