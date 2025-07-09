@@ -65,17 +65,43 @@ body {
     border-radius: 8px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   }
-  .file-wrapper{
+  /* .file-wrapper{
     @apply h-[100%]
-  }
+  } */
  
   .file{
-    @apply w-full max-w-full border-0;
+    @apply aspect-square w-full max-w-full border-0;
   }
   .icon-responsive:hover{
+    pointer-events: auto;
     cursor: pointer;
     opacity: 0.8;
     scale: 1.5;
     transition: scale 0.2s ease-in-out;
+  }
+  .overlay{
+    position: fixed;
+    top: 0px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .form-input{
+    @apply w-full px-2 py-2 border-1 border-black rounded-md outline-none;
+  }
+  .form-input-wrapper{
+    @apply flex flex-row items-center justify-between w-full px-2 py-2 border-1 border-black rounded-md outline-none;
+  }
+  .form-btn-toolbar{
+    @apply flex flex-row justify-end items-center gap-x-2 w-full
+  }
+  .form-btn{
+    @apply px-4 py-2 border-1 border-black rounded-md outline-none hover:cursor-pointer hover:opacity-80;
   }
 }

@@ -1,18 +1,20 @@
 "use client"
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import { ClassContext } from "@/app/context/ClassContext";
+import DuplicateCode from "./DuplicateCode";
+
 import { HiMiniDocumentDuplicate } from "react-icons/hi2";
 import { FaCheckCircle, FaCog, FaEdit } from "react-icons/fa";
 import { IoIosAddCircleOutline } from "react-icons/io";
-export default function ClassHeader({ classInfo, editMode, setEditMode }: { 
-    classInfo: {
-        name: string,
-        course_number?: string,
-        join_code: string
-    },
-    editMode: boolean,
-    setEditMode: React.Dispatch<React.SetStateAction<boolean>>
-}){
+import { MdDeleteForever } from "react-icons/md";
+import { ClassType } from "../../../../types/Sections";
+
+export default function ClassHeader({ classInfo }: { classInfo: ClassType }) {
+    // Gather context
+    const { setAddMode, editMode, setEditMode } = useContext(ClassContext)
+
+    // State for toolbar and clicking out
     const [showToolbar, setShowToolbar] = useState<boolean>(false)
     useEffect(() => {
         const closeToolbar = (e: MouseEvent) => {
@@ -47,20 +49,24 @@ export default function ClassHeader({ classInfo, editMode, setEditMode }: {
             <div className="flex items-center gap-x-4">
                 <div className="relative">
                     {!editMode &&
-                        <FaCog className="hover:cursor-pointer hover:opacity-80 text-2xl text-primary" onClick={() => openToolbar}/>
+                        <FaCog className="hover:cursor-pointer hover:opacity-80 text-2xl text-primary" onClick={openToolbar}/>
                     }
                     {editMode &&
                         <FaCheckCircle className="hover:cursor-pointer hover:opacity-80 text-2xl text-primary" onClick={() => setEditMode(false)}/>
                     }
                     {showToolbar &&
-                        <div id="toolbar" className="absolute top-[100%] left-0 min-w-fit bg-white border-1 border-primary text-[1.2rem] shadow-md z-1">
-                            <div className="flex flex-row justify-betweeen items-center p-2 gap-x-6 border-b-1 border-b-primary hover:opacity-80 hover:cursor-pointer">
-                                <span>Add</span>
+                        <div id="toolbar" className="absolute top-[120%] left-0 min-w-fit w-40 bg-white border-1 border-primary text-[1.2rem] shadow-md z-1">
+                            <div className="flex flex-row justify-between items-center p-2 border-b-1 border-b-primary hover:opacity-80 hover:cursor-pointer" onClick={() => setAddMode(true)}>
+                                <span>Add Unit</span>
                                 <IoIosAddCircleOutline className="hover:cursor-pointer hover:opacity-80" />
                             </div>
-                            <div className="flex flex-row justify-betweeen items-center p-2 gap-x-6 hover:opacity-80 hover:cursor-pointer" onClick={openEditMode}>
+                            <div className="flex flex-row justify-between items-center p-2 border-b-1 border-b-primary hover:opacity-80 hover:cursor-pointer" onClick={openEditMode}>
                                 <span>Edit</span>
                                 <FaEdit className="hover:cursor-pointer hover:opacity-80" />
+                            </div>
+                            <div className="flex flex-row justify-between items-center p-2 hover:opacity-80 hover:cursor-pointer" onClick={openEditMode}>
+                                <span>Delete Class</span>
+                                <MdDeleteForever className="hover:cursor-pointer hover:opacity-80" />
                             </div>
                         </div>
                     }
@@ -77,10 +83,9 @@ export default function ClassHeader({ classInfo, editMode, setEditMode }: {
                     )
                 }
             </div>
-            <div className="flex items-end gap-x-2">
-                <span className="text-xl">Join Code:</span>
-                <span>{ classInfo.join_code }</span>
-                <HiMiniDocumentDuplicate className="icon-responsive text-4xl text-primary"/>
+            <div className="flex flex-row items-end justify-end">
+                <span className="text-2xl text-primary">Join Code: &nbsp; </span>
+                <DuplicateCode code={classInfo.join_code} />
             </div>
         </header>
     )

@@ -1,11 +1,12 @@
 import Link from "next/link";
 
-import FilePreview from "../FilePreview";
-import FileAdd from "../FileAdd";
+import FilePreview from "../File/FilePreview";
+import FileAdd from "../File/FileAdd";
 import { IoPeopleSharp } from "react-icons/io5";
 import { LuNotebookPen } from "react-icons/lu";
 import { HiMiniDocumentDuplicate } from "react-icons/hi2";
-import { FilePreviewType } from "../../types";
+import { FilePreviewType } from "../../../../types";
+import DuplicateCode from "./DuplicateCode";
 
 export default function ClassCard({ params }: { 
     params: { 
@@ -24,19 +25,16 @@ export default function ClassCard({ params }: {
                 <div className="flex flex-row">
                     { params.name} | { params.course_number}
                 </div>
-                <div className="flex flex-row items-center">
-                    { params.join_code}
-                    <HiMiniDocumentDuplicate />
-                </div>
+                <DuplicateCode code={params.join_code} />
             </header>
             <div className="flex flex-col px-4 gap-y-2 text-2xl">
                 <h2>Latest Notes</h2>
-                <div className="grid grid-cols-2 gap-4 h-[200px]">
+                <div className="grid grid-cols-2 gap-4">
                     { params.latest_notes.slice(0, 2).map((note, i) => (
-                        <FilePreview key={i} params={note} />
+                        <FilePreview key={i} file={note} />
                     ))}
                     { params.latest_notes.length < 2 && 
-                        <FileAdd params={{ id: params.id, name: params.name, section: "Class" }}>
+                        <FileAdd section_id={params.id} section="Class">
                         </FileAdd>
                     }
                 </div>
