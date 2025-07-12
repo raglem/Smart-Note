@@ -1,4 +1,4 @@
-import { ClassType } from "../../../../types/Sections"
+import { ClassType } from "../../../types/Sections"
 import ClassClientShell from "./ClassClientShell";
 
 export default async function Page({ params } : { params: { id: string}}){

@@ -26,3 +26,14 @@ export interface NoteType {
 
 }
 export type SectionEnumType = "Class" | "Unit" | "Subunit";
+export interface StudyGroupType {
+    id: string;
+    name: string;
+    dateTime: Date;
+    visibility: "Public" | "Private";
+    members: StudyGroupMemberType[];
+}
+export interface StudyGroupMemberType{
+    member: SimpleMemberType;
+    status: "Invited" | "Joined";
+}

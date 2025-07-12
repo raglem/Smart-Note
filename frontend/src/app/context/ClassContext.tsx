@@ -1,5 +1,5 @@
 import { createContext, useState } from "react";
-import { UnitType } from "../../../types/Sections";
+import { UnitType } from "../../types/Sections";
 
 export const ClassContext = createContext({} as ClassContextType);
 

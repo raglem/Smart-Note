@@ -6,7 +6,7 @@ import AddUnit from "@/app/components/Class/AddUnit"
 import ClassHeader from "../../components/Class/ClassHeader"
 import { ClassContext, ClassContextType } from "@/app/context/ClassContext"
 import Section from "../../components/Class/Section"
-import { ClassType, UnitType } from "../../../../types/Sections"
+import { ClassType, UnitType } from "../../../types/Sections"
 
 import { closestCenter, DndContext, DragAbortEvent, DragCancelEvent, DragEndEvent, DragStartEvent } from "@dnd-kit/core"
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"

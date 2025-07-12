@@ -62,11 +62,11 @@ export default function RootLayout({
             </div>
           </div>
         </nav>
-        <main className="flex flex-grow p-5 lg:p-10 min-h[calc(100vh-60px)]">
+        <main className="relative flex flex-grow min-h[calc(100vh-100px)]">
           {children}
         </main>
-        <footer className="flex flex-row justify-center items-center py-2 border-t-1 border-t-primary border-">
-          Created by Theoden Melgar
+        <footer className="flex flex-row justify-center items-center py-2 border-t-1 border-t-primary h-[40px]">
+          Footer
         </footer>
       </body>
     </html>

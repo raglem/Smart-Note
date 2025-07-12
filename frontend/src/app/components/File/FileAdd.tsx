@@ -1,6 +1,6 @@
 "use client"
 import { useState } from "react";
-import { SectionEnumType } from "../../../../types";
+import { SectionEnumType } from "../../../types";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import FileAddForm from "./FileAddForm";
 export default function FileAdd({ section_id, section } : { section_id: string, section: SectionEnumType }){

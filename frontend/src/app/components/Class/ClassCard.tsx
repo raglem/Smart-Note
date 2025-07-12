@@ -5,7 +5,7 @@ import FileAdd from "../File/FileAdd";
 import { IoPeopleSharp } from "react-icons/io5";
 import { LuNotebookPen } from "react-icons/lu";
 import { HiMiniDocumentDuplicate } from "react-icons/hi2";
-import { FilePreviewType } from "../../../../types";
+import { FilePreviewType } from "../../../types";
 import DuplicateCode from "./DuplicateCode";
 
 export default function ClassCard({ params }: { 

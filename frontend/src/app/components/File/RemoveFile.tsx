@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { CiCircleRemove } from "react-icons/ci";
-import { FilePreviewType } from "../../../../types";
+import { FilePreviewType } from "../../../types";
 import DeleteConfirmation from "../Class/DeleteConfirmation";
 
 export default function RemoveFile({ id, file } : { id: string,file: FilePreviewType }){
