@@ -1,4 +1,4 @@
-import StudyGroupSidebar from "../components/Study Group/StudyGroupSidebar";
+import StudyGroupSidebar from "../../components/Study Group/StudyGroupSidebar";
 import { StudyGroupProvider } from "../context/StudyGroupContext";
 export default function StudyGroupsLayout({
     children,

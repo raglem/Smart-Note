@@ -4,7 +4,7 @@ import { useState, useContext } from "react"
 import { StudyGroupContext } from "@/app/context/StudyGroupContext"
 import { IoIosCheckmarkCircle, IoMdRemoveCircleOutline } from "react-icons/io"
 import { FaClock } from "react-icons/fa"
-import { StudyGroupType } from "../../../types"
+import { StudyGroupType } from "../../types"
 
 export default function StudyGroupManage({ id, studyGroup }: { id: string, studyGroup: StudyGroupType}){
     const [name, setName] = useState<string>(studyGroup.name)

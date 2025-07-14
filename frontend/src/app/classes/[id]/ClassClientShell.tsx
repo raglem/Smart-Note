@@ -2,15 +2,15 @@
 
 import { useState } from "react"
 
-import AddUnit from "@/app/components/Class/AddUnit"
-import ClassHeader from "../../components/Class/ClassHeader"
+import AddUnit from "@/components/Class/AddUnit"
+import ClassHeader from "../../../components/Class/ClassHeader"
 import { ClassContext, ClassContextType } from "@/app/context/ClassContext"
-import Section from "../../components/Class/Section"
+import Section from "../../../components/Class/Section"
 import { ClassType, UnitType } from "../../../types/Sections"
 
 import { closestCenter, DndContext, DragAbortEvent, DragCancelEvent, DragEndEvent, DragStartEvent } from "@dnd-kit/core"
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
-import SortableItem from "@/app/components/SortableItem"
+import SortableItem from "@/components/SortableItem"
 import { listeners } from "process"
 
 export default function ClassClientShell({ classInfo }:{

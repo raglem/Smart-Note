@@ -1,5 +1,5 @@
 import { use, useContext, useState } from "react";
-import { StudyGroupType } from "../../../types";
+import { StudyGroupType } from "../../types";
 
 import { FaClock, FaPlusCircle } from "react-icons/fa";
 import { IoIosCheckmarkCircle, IoMdPersonAdd } from "react-icons/io";

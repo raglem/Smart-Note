@@ -1,7 +1,7 @@
 "use client"
 
 import { useContext, useMemo, useState } from "react";
-import { isSubunitType, isUnitType, SectionType, UnitType } from "../../../types/Sections"
+import { isSubunitType, isUnitType, SectionType, UnitType } from "../../types/Sections"
 import { FaCaretUp, FaCaretDown } from "react-icons/fa";
 
 import FilePreview from "../File/FilePreview";

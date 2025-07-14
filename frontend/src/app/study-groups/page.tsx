@@ -2,10 +2,10 @@
 
 import { useContext, useState } from "react"
 import { StudyGroupContext } from "../context/StudyGroupContext"
-import StudyGroupCreate from "../components/Study Group/StudyGroupCreate"
-import StudyGroupCalendar from "../components/Study Group/StudyGroupCalendar"
-import StudyGroupInvite from "../components/Study Group/StudyGroupInvite"
-import StudyGroupManage from "../components/Study Group/StudyGroupManage"
+import StudyGroupCreate from "../../components/Study Group/StudyGroupCreate"
+import StudyGroupCalendar from "../../components/Study Group/StudyGroupCalendar"
+import StudyGroupInvite from "../../components/Study Group/StudyGroupInvite"
+import StudyGroupManage from "../../components/Study Group/StudyGroupManage"
 import { StudyGroupType } from "@/types"
 import { MdMenu } from "react-icons/md"
 

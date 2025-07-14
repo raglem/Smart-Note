@@ -1,4 +1,4 @@
-import ClassCard from "../components/Class/ClassCard"
+import ClassCard from "../../components/Class/ClassCard"
 
 const classes = [
     {

@@ -8,7 +8,7 @@ import { HiMiniDocumentDuplicate } from "react-icons/hi2";
 import { FaCheckCircle, FaCog, FaEdit } from "react-icons/fa";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { MdDeleteForever } from "react-icons/md";
-import { ClassType } from "../../../types/Sections";
+import { ClassType } from "../../types/Sections";
 
 export default function ClassHeader({ classInfo }: { classInfo: ClassType }) {
     // Gather context

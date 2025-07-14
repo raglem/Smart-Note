@@ -1,6 +1,6 @@
 "use client"
 
-import { FilePreviewType } from "../../../types";
+import { FilePreviewType } from "../../types";
 
 export default function FilePreview({ file, children } : { 
     file: FilePreviewType, 

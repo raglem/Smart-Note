@@ -6,7 +6,7 @@ import { StudyGroupContext } from "@/app/context/StudyGroupContext";
 import StudyGroupInvite from "./StudyGroupInvite";
 
 import { FaCog, FaClock, FaEdit, FaPlusCircle } from "react-icons/fa";
-import { StudyGroupType } from "../../../types";
+import { StudyGroupType } from "../../types";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import StudyGroupManage from "./StudyGroupManage";
 
