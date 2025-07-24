@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import SortableItem from "../SortableItem";
 
 import { closestCenter, DndContext, DragEndEvent, useDroppable } from "@dnd-kit/core";
@@ -8,8 +8,12 @@ import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-ki
 
 import { IoIosAddCircleOutline, IoIosRemoveCircleOutline } from "react-icons/io";
 import { GiHamburgerMenu } from "react-icons/gi";
+import { ClassContext } from "@/app/context/ClassContext";
+import api from "@/utils/api";
+import { UnitType } from "@/types/Sections";
 
-export default function AddUnit({ unit_id, close }: { unit_id: string, close: () => void }) {
+export default function AddUnit({ class_id, close }: { class_id: number, close: () => void }) {
+    const { units, setUnits } = useContext(ClassContext)
     const [unitName, setUnitName] = useState<string>("")
     const [subunit, setSubunit] = useState<string>("")
     const [subunits, setSubunits] = useState<string[]>([])
@@ -57,12 +61,42 @@ export default function AddUnit({ unit_id, close }: { unit_id: string, close: ()
     }
 
     // Handles form submission or cancel
-    const handleUnitCreate = () => {
+    const handleUnitCreate = async () => {
         if(unitName === "" || unitName.trim() === ""){
             //TODO: Show error
             return
         }
-        // TODO: Link api route
+        
+        type unitRequestBody = {
+            name: string,
+            class_field: number,
+            order: number,
+            subunits: {
+                name: string,
+                order: number,
+            }[]
+        }
+        const body: unitRequestBody = {
+            name: unitName,
+            class_field: class_id,
+            order: units.length,
+            subunits: subunits.map((subunit, i) => {
+                return {
+                    name: subunit,
+                    order: i+1,
+                }
+            })
+        }
+
+        try{
+            const res = await api.post('/classes/units/', body)
+            const newUnit: UnitType = res.data
+            // Add unit to class context
+            setUnits([...units, newUnit])
+        }
+        catch(err){
+            console.error(err)
+        }
         close()
     }
     const handleCancel = () => {
@@ -93,7 +127,7 @@ export default function AddUnit({ unit_id, close }: { unit_id: string, close: ()
                                 <ol className="flex flex-col border-1 border-y-primary rounded-sm">
                                     {
                                         subunits.map((currentSubunit, i) => (
-                                            <SortableItem id={currentSubunit} key={i}>
+                                            <SortableItem id={i} key={i}>
                                                 {i < subunits.length - 1 ? ({ listeners, attributes, setNodeRef, style }) => 
                                                     <li ref={setNodeRef} style={style} className="flex flex-row justify-between items-center p-2 border-b-1 border-b-primary" key={i}>
                                                         {currentSubunit}

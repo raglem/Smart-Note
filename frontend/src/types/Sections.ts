@@ -1,30 +1,49 @@
-import { MemberType, SimpleMemberType, NoteCategoryType } from ".";
+import { MemberType, SimpleMemberType, NoteCategoryType, FileType } from ".";
 
-export interface ClassType {
-    id: string;
+export interface ClassType{
+    id: number,
+    name: string,
+    join_code: string,
+    course_number: string,
+    owner: SimpleMemberType,
+    members: SimpleMemberType[],
+    units: {
+        id: number,
+        name: string,
+        order: number,
+        class_field: number
+    }[]
+    latest_files: FileType[],
+    number_of_notes: number
+}
+export interface ClassDetailType {
+    id: number;
     name: string;
     course_number?: string;
     join_code: string;
+    owner: SimpleMemberType;
     members: SimpleMemberType[];
     units: UnitType[];
-    note_category: NoteCategoryType;
+    files: FileType[];
 }
 export interface UnitType {
-    id: string;
-    class_id: string;
+    id: number;
+    class_id: number;
     name: string;
     course_number: string;
+    order: number;
     members: SimpleMemberType[];
     subunits: SubunitType[];
-    note_category: NoteCategoryType;
+    files: FileType[];
 }
 export interface SubunitType {
-    id: string;
-    unit_id: string;
+    id: number;
+    unit_id: number;
     name: string;
     course_number: string;
+    order: number;
     members: SimpleMemberType[];
-    note_category: NoteCategoryType;
+    files: FileType[];
 }
 export type SectionType = UnitType | SubunitType;
   

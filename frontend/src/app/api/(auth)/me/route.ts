@@ -15,7 +15,6 @@ export async function GET() {
   const cookieStore = await cookies()
   let access = cookieStore.get('access_token')?.value
   let refresh = cookieStore.get('refresh_token')?.value
-
   // Check there is no access token
   if (!access) {
     // If there is no refresh token, return unauthenticated response
@@ -25,7 +24,7 @@ export async function GET() {
     // If there is a refresh token, ask for an access token
     else{
       try{
-        const res = await fetch(`${process.env.DJANGO_API}/users/token/refresh`, {
+        const res = await fetch(`${process.env.DJANGO_API}/users/token/refresh/`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ refresh })
@@ -48,10 +47,10 @@ export async function GET() {
           maxAge: 60 * 60, // 1 hour
           secure: process.env.NODE_ENV === 'production',
         })
-
         return response
       }
       catch(err){
+        console.log(err)
         return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
       }
     }

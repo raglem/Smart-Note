@@ -3,7 +3,7 @@ import { useState } from "react";
 import { SectionEnumType } from "../../types";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import FileAddForm from "./FileAddForm";
-export default function FileAdd({ section_id, section } : { section_id: string, section: SectionEnumType }){
+export default function FileAdd({ section_id, section } : { section_id: number, section: SectionEnumType }){
     const [showFile, setShowFile] = useState<boolean>(false)
     return (
         <>

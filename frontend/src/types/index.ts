@@ -1,24 +1,30 @@
 export interface MemberType {
-    id: string;
+    id: number;
     name: string;
     friends: SimpleMemberType[];
 }
 export interface SimpleMemberType{
-    id: string;
+    id: number;
     name: string;
 }
 export interface FilePreviewType {
     name: string;
     previewUrl: string;
 }
+export interface FileType{
+    id: number,
+    file: string,
+    name: string,
+    updated_at: string,
+}
 export interface NoteCategoryType{
-    id: string;
+    id: number;
     section: SectionEnumType
     section_id: string,
     notes: NoteType[]
 }
 export interface NoteType {
-    id: string;
+    id: number;
     file: FilePreviewType;
     owner: SimpleMemberType;
     category_id: string;
@@ -27,7 +33,7 @@ export interface NoteType {
 }
 export type SectionEnumType = "Class" | "Unit" | "Subunit";
 export interface StudyGroupType {
-    id: string;
+    id: number;
     name: string;
     dateTime: Date;
     visibility: "Public" | "Private";

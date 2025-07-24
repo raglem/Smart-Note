@@ -1,13 +1,17 @@
 "use client"
-import { useState } from "react";
-import { FilePreviewType, SectionEnumType } from "../../types";
+import { useContext, useState } from "react";
+import { FilePreviewType, FileType, SectionEnumType } from "../../types";
 import { FaFileUpload } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
 import FilePreview from "./FilePreview";
+import api from "@/utils/api";
+import { ClassContext } from "@/app/context/ClassContext";
 
-export default function FileAdd({ section_id, section, close } : { section_id: string, section: SectionEnumType, close: () => void }){
+export default function FileAdd({ section_id, section, close } : { section_id: number, section: SectionEnumType, close: () => void }){
+    const { setClassFields, units, setUnits } = useContext(ClassContext)
     const [file, setFile] = useState<File | null>(null)
-    const [filePreview, setFilePreview] = useState<FilePreviewType|null>(null)
+    const [filePreview, setFilePreview] = useState<FileType|null>(null)
+    const [isPDF, setIsPDF] = useState<boolean>(false)
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if(!e.target.files) return
         
@@ -16,16 +20,78 @@ export default function FileAdd({ section_id, section, close } : { section_id: s
 
         // Create file preview
         setFilePreview({
+            id: 0,
             name: e.target.files[0].name,
-            previewUrl: URL.createObjectURL(e.target.files[0])
+            file: URL.createObjectURL(e.target.files[0]),
+            updated_at: (new Date).toString()
         })
+
+        setIsPDF(e.target.files[0].name.toLowerCase().endsWith(".pdf"))
     }
     const handleFileRemoval = () => {
         setFile(null)
         setFilePreview(null)
     }
-    const handleFileAdd = () => {
-        // TODO: Add file
+    const handleFileSave = async () => {
+        if(!filePreview || !file){
+            // TODO: Alert user file cannot be added
+            return
+        }
+        const fd = new FormData()
+        fd.append('name', filePreview.name)
+        fd.append('file', file)
+        fd.append('section_id', section_id.toString())
+        fd.append('section_type', section)
+
+        try{
+            const res = await api.post('/classes/files/create/', fd, {
+                headers: { 'Content-Type': 'multipart/form-data'}
+            })
+            const data: FileType = res.data
+
+            // Update Class Context with added file
+            if(section === "Class"){
+                setClassFields(prev => ({
+                    ...prev,
+                    files: [...prev.files, {
+                        id: data.id,
+                        file: data.file,
+                        name: data.name,
+                        updated_at: data.name
+                    }].sort((a,b) => a.name.localeCompare(b.name))
+                }))
+            }
+            else if(section === "Unit"){
+                setUnits((prev) => prev.map(u => u.id !== section_id ? u : ({
+                    ...u,
+                    files: [...u.files, {
+                        id: data.id,
+                        file: data.file,
+                        name: data.name,
+                        updated_at: data.name
+                    }].sort((a,b) => a.name.localeCompare(b.name))
+                })))
+            }
+            else if(section === "Subunit"){
+                const unitWithSubunit = units.find(u => u.subunits.find(s => s.id === section_id))
+                if(!unitWithSubunit) return
+                setUnits((prev) => prev.map(u => u.id !== unitWithSubunit.id ? u : ({
+                    ...u,
+                    subunits: u.subunits.map(s => s.id !== section_id ? s : ({
+                        ...s,
+                        files: [...s.files, {
+                            id: data.id,
+                            file: data.file,
+                            name: data.name,
+                            updated_at: data.name
+                        }].sort((a,b) => a.name.localeCompare(b.name))
+                    }))
+                })))
+            }
+        }
+        catch(err){
+            console.error(err)
+        }
         close()
     }
     return (
@@ -42,11 +108,11 @@ export default function FileAdd({ section_id, section, close } : { section_id: s
                         /> 
                     </label>
                 ) : (
-                    <FilePreview file={filePreview} />
+                    <FilePreview file={filePreview} isPDF={isPDF} />
                 )}
                 { !file ? (
                     <div className="form-btn-toolbar justify-end px-2">
-                        <button className="form-btn bg-primary text-white">Add File</button>
+                        <button className="form-btn bg-primary text-white hover:cursor-not-allowed opacity-80 whitespace-nowrap">Save File</button>
                         <button onClick={close} className="form-btn bg-secondary text-primary">Cancel</button>
                     </div>
                     
@@ -64,7 +130,7 @@ export default function FileAdd({ section_id, section, close } : { section_id: s
                             <MdDeleteForever className="icon-responsive text-5xl text-primary" onClick={handleFileRemoval} />
                         </div>
                         <div className="flex flex-row items-center gap-x-2">
-                            <button className="form-btn bg-primary text-white">Add File</button>
+                            <button className="form-btn bg-primary text-white whitespace-nowrap" onClick={handleFileSave}>Save File</button>
                             <button onClick={close} className="form-btn bg-secondary text-primary">Cancel</button>
                         </div>
                     </div>

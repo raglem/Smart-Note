@@ -15,7 +15,7 @@ export async function middleware(request: NextRequest){
         // If there is a refresh token, ask for an access token
         else{
             try{
-                const res = await fetch(`${process.env.DJANGO_API}/users/token/refresh`, {
+                const res = await fetch(`${process.env.DJANGO_API}/users/token/refresh/`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ refresh })
