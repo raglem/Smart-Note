@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useContext, useEffect } from "react"
+import { useState, useContext, useEffect, Suspense } from "react"
 
 import AddUnit from "@/components/Class/AddUnit"
 import ClassHeader from "../../../components/Class/ClassHeader"
