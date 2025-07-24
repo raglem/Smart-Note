@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from users.models import Member
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 import uuid
 
 class UserSerializer(serializers.ModelSerializer):
@@ -18,14 +19,27 @@ class UserSerializer(serializers.ModelSerializer):
         validated_data['password'] = make_password(validated_data['password'])
         user = User.objects.create(**validated_data)
 
-        # create member with one-to-one relationship with user
-        member_id = str(uuid.uuid4())[:8]
-        Member.objects.create(name = validated_data['username'], member_id = member_id, user=user)
+        Member.objects.create(name = validated_data['username'], user=user)
         
         return user
 
-class MemberSerializer(serializers.ModelSerializer):
+class SimpleMemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = Member
         fields = ['name', 'member_id']
         read_only_fields = ['member_id']
+    
+class MemberSerializer(serializers.ModelSerializer):
+    friends = SimpleMemberSerializer(many=True)
+    class Meta:
+        model = Member
+        fields = ['name', 'member_id', 'friends']
+        read_only_fields = ['member_id']
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        # add username to the token payload
+        token['username'] = user.username  
+        return token
