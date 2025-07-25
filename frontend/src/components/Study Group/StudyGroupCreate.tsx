@@ -2,28 +2,59 @@
 
 import { useState, useContext } from "react"
 import { StudyGroupContext } from "@/app/context/StudyGroupContext"
+import api from "@/utils/api"
+import { StudyGroupType } from "@/types"
 
 export default function StudyGroupCreate(){
     const [name, setName] = useState<string>("")
-    const [date, setDate] = useState<Date>(new Date())
-    const [time, setTime] = useState<Date>(new Date())
+    const [datetime, setDatetime] = useState<Date>(new Date())
     const [visibility, setVisibility] = useState<"Public" | "Private">("Private")
 
     // Retrieve context
     const { setStudyGroups, setCreatingGroup } = useContext(StudyGroupContext)
 
-    const handleCreate = () => {
-        const dateTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), time.getHours(), time.getMinutes())
-        // TODO: Handle API POST
-        setStudyGroups((prev) => [...prev, {
-            id: "123",
+    const handleCreate = async () => {
+        const body = {
             name,
-            dateTime,
-            visibility,
+            datetime,
+            visibility: "Public",
             members: []
-        }].sort((a,b) => new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime()))
+        }
+        try{
+            const res = await api.post('/study-groups/', body)
+            const data = res.data as StudyGroupType
+            setStudyGroups((prev) => [...prev, data].sort((a: StudyGroupType, b:StudyGroupType) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime()))
+        }
+        catch(err){
+            console.error(err)
+        }
         setCreatingGroup(false)
     }
+
+    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const [year, month, day] = e.target.value.split('-').map(Number);
+        const newDate = new Date(datetime);
+        newDate.setFullYear(year);
+        newDate.setMonth(month - 1);
+        newDate.setDate(day);
+        setDatetime(newDate);
+    };
+    
+    const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const [hours, minutes] = e.target.value.split(':').map(Number);
+        const newDate = new Date(datetime);
+        newDate.setHours(hours);
+        newDate.setMinutes(minutes);
+        setDatetime(newDate);
+    };
+
+    // Get the local datetime
+    const formattedLocalDate = `${datetime.getFullYear()}-${pad(datetime.getMonth() + 1)}-${pad(datetime.getDate())}`
+    const formattedLocalTime = `${pad(datetime.getHours())}:${pad(datetime.getMinutes())}`;
+    function pad(num: number): string {
+        return num.toString().padStart(2, '0');
+    }
+
     return (
         <div className="overlay">
             <div className="card flex flex-col gap-y-4 pt-8 pb-4 min-w-[300px] w-[50vw] max-w-[768px] bg-secondary">
@@ -37,11 +68,11 @@ export default function StudyGroupCreate(){
                     </div>
                     <div className="flex flex-col">
                         <label htmlFor="date" className="text-xl">Date</label>
-                        <input type="date" placeholder="Date" id="date" className="form-input" value={date.toISOString().split('T')[0]} onChange={(e) => setDate(new Date(e.target.value))} />
+                        <input type="date" placeholder="Date" id="date" className="form-input" value={formattedLocalDate} onChange={handleDateChange} />
                     </div>
                     <div className="flex flex-col">
                         <label htmlFor="time" className="text-xl">Time</label>
-                        <input type="time" placeholder="Time" id="time" className="form-input" value={time.toTimeString().split(' ')[0]} onChange={(e) => setTime(new Date(e.target.value))} />
+                        <input type="time" placeholder="Time" id="time" className="form-input" value={formattedLocalTime} onChange={handleTimeChange} />
                     </div>
                     <div className="flex flex-col">
                         <label htmlFor="visibility" className="text-xl">Visibility</label>

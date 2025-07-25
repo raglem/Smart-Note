@@ -35,11 +35,12 @@ export type SectionEnumType = "Class" | "Unit" | "Subunit";
 export interface StudyGroupType {
     id: number;
     name: string;
-    dateTime: Date;
+    datetime: Date;
     visibility: "Public" | "Private";
     members: StudyGroupMemberType[];
 }
 export interface StudyGroupMemberType{
+    id: number,
     member: SimpleMemberType;
     status: "Invited" | "Joined";
 }

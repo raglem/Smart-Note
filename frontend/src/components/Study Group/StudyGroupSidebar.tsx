@@ -34,7 +34,7 @@ export default function StudyGroupSidebar() {
                 studyGroupRefs.current[sg.id] = null;
             }
         });
-    }, studyGroups)
+    }, [studyGroups])
 
     return (
         <div

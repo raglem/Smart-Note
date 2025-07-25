@@ -55,15 +55,29 @@ export function StudyGroupCard({ group }: { group: StudyGroupType }) {
     return (
         <>
             <div className={`card flex flex-col py-2 gap-y-2 w-full ${ selectedStudyGroup?.id === group.id ? "bg-primary text-white" : "bg-white text-primary"}`}>
-                <header className="flex flex-row items-center py-2 px-4 gap-x-4 border-b-1 border-b-primary">
+                <header className={`flex flex-row items-center py-2 px-4 gap-x-4 border-b-1 ${ selectedStudyGroup?.id === group.id ? "border-b-white" : "border-b-primary"}`}>
                     <div className="relative">
                         <FaCog className="hover:cursor-pointer text-3x" onClick={handleToolbar}/>
-                        {showToolbar && <div id="toolbar" className="absolute top-full left-0 min-w-fit w-40 bg-white border-1 border-primary text-[1.2rem] shadow-md z-1">
-                            <div className="flex flex-row justify-between items-center p-2 border-b-1 border-b-primary hover:opacity-80 hover:cursor-pointer" onClick={() => setInvitingGroup(true)}>
+                        {showToolbar && <div id="toolbar" className={`absolute top-full left-0 min-w-fit w-40 bg-white border-1 ${ selectedStudyGroup?.id === group.id ? "border-white" : "border-primary"} text-[1.2rem] shadow-md z-1 text-primary`}>
+                            <div 
+                                className="flex flex-row justify-between items-center p-2 border-b-1 border-b-primary hover:opacity-80 hover:cursor-pointer" 
+                                onClick={() => {
+                                    setSelectedStudyGroup(group)
+                                    setInvitingGroup(true)
+                                    setShowToolbar(false)
+                                }}
+                            >
                                 <span>Invite</span>
                                 <FaPlusCircle className="hover:cursor-pointer hover:opacity-80" />
                             </div>
-                            <div className="flex flex-row justify-between items-center p-2 hover:opacity-80 hover:cursor-pointer" onClick={() => setManagingGroup(true)}>
+                            <div 
+                                className="flex flex-row justify-between items-center p-2 hover:opacity-80 hover:cursor-pointer"
+                                onClick={() => {
+                                    setSelectedStudyGroup(group)
+                                    setManagingGroup(true)
+                                    setShowToolbar(false)
+                                }}
+                            >
                                 <span>Manage</span>
                                 <FaEdit className="hover:cursor-pointer hover:opacity-80" />
                             </div>
@@ -71,13 +85,13 @@ export function StudyGroupCard({ group }: { group: StudyGroupType }) {
                     </div>
                     <div>
                         <h1 className={`text-${group.name.length > 15 ? "sm" : "xl"} m-0`}>{ group.name }</h1>
-                        <i className="text-xs">{ new Intl.DateTimeFormat('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }).format(new Date(group.dateTime)) }</i>
+                        <i className="text-xs">{ new Intl.DateTimeFormat('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }).format(new Date(group.datetime)) }</i>
                     </div>
                 </header>
                 <ul className="flex flex-col px-2">
                     {
                         group.members.map(current => (
-                            <li className={`not-last-of-type:border-b-1 ${ selectedStudyGroup?.id === group.id ? "border-b-white" : "border-b-primary"}`} key={current.member.id}>
+                            <li className={`not-last-of-type:border-b-1 ${ selectedStudyGroup?.id === group.id ? "border-b-white" : "border-b-primary"}`} key={current.id}>
                                 <div className="flex flex-row justify-between items-center p-2">
                                     <div>{ current.member.name }</div>
                                     { current.status === "Joined" ? <IoIosCheckmarkCircle className="hover:scale-150 transition-transform duration-200 ease-in-out text-xl text-green-500"/> 

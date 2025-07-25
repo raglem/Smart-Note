@@ -5,7 +5,7 @@ import { FaClock, FaPlusCircle } from "react-icons/fa";
 import { IoIosCheckmarkCircle, IoMdPersonAdd } from "react-icons/io";
 import { StudyGroupContext } from "@/app/context/StudyGroupContext";
 
-export default function StudyGroupInvite({ id, name, studyGroup }: { id: string, name: string, studyGroup: StudyGroupType}) {
+export default function StudyGroupInvite({ id, name, studyGroup }: { id: number, name: string, studyGroup: StudyGroupType}) {
     // TODO: Fetch classes
     // TODO: Edge case, user has no classes
     const classes = [

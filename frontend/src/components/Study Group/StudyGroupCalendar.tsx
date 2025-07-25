@@ -2,7 +2,7 @@
 
 import { StudyGroupContext } from "@/app/context/StudyGroupContext"
 import { StudyGroupType } from "@/types"
-import { useContext, useState } from "react"
+import { useContext, useMemo, useState } from "react"
 import { FaCaretLeft, FaCaretRight } from "react-icons/fa"
 import StudyGroupCalendarDay from "./StudyGroupCalendarDay"
 
@@ -44,11 +44,13 @@ export default function StudyGroupCalendar({ selectedMonth, selectedYear, setSel
     // Retrieve the user's study groups from the context
     const { studyGroups } = useContext(StudyGroupContext)
 
+    const studyGroupsWithCastedDates = useMemo(() => studyGroups.map(sg => ({...sg, datetime: new Date(sg.datetime)})), [studyGroups])
+
     // The calendar
     const studyCalendar: studyCalendarType = {
         days: generateCalendarDays(selectedMonth, selectedYear).map(day => ({
             date: day,
-            events: studyGroups.filter(sg => sg.dateTime.getDate() === day?.getDate() && sg.dateTime.getMonth() === day?.getMonth() && sg.dateTime.getFullYear() === day?.getFullYear())
+            events: studyGroupsWithCastedDates.filter(sg => sg.datetime.getDate() === day?.getDate() && sg.datetime.getMonth() === day?.getMonth() && sg.datetime.getFullYear() === day?.getFullYear())
         })),
         month: selectedMonth,
         year: selectedYear
