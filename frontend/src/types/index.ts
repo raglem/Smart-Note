@@ -1,10 +1,12 @@
 export interface MemberType {
     id: number;
+    member_id: number;
     name: string;
     friends: SimpleMemberType[];
 }
 export interface SimpleMemberType{
     id: number;
+    member_id: number;
     name: string;
 }
 export interface FilePreviewType {

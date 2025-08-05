@@ -31,12 +31,7 @@ export default function StudyGroupClientShell({ studyGroupsInfo }: { studyGroups
             <div className={`transform transition-pl duration-300 ease-in-out ${showSidebar ? "lg:pl-[250px]" : "pl-0" } flex flex-col h-full justify-center box-sizing w-full`}>
                 <div className="flex flex-col h-full gap-y-4 p-12">
                     <StudyGroupCalendarHeader />
-                    <StudyGroupCalendar 
-                        selectedMonth={month} 
-                        selectedYear={year} 
-                        setSelectedMonth={setMonth} 
-                        setSelectedYear={setYear}
-                    />
+                    <StudyGroupCalendar />
                 </div>
             </div>
         </>

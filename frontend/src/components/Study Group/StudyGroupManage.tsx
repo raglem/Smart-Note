@@ -41,6 +41,7 @@ export default function StudyGroupManage({ id, studyGroup }: { id: number, study
     }
 
     const handleRemoveMember = (id: number) => {
+        console.log(members)
         setMembers(members.filter((m) => m.id !== id))
     }
 

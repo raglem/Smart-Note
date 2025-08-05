@@ -3,12 +3,11 @@
 import { useContext, useEffect, useState } from "react";
 
 import { StudyGroupContext } from "@/app/context/StudyGroupContext";
-import StudyGroupInvite from "./StudyGroupInvite";
 
-import { FaCog, FaClock, FaEdit, FaPlusCircle } from "react-icons/fa";
+import { FaCog, FaClock } from "react-icons/fa";
 import { StudyGroupType } from "../../types";
 import { IoIosCheckmarkCircle } from "react-icons/io";
-import StudyGroupManage from "./StudyGroupManage";
+import StudyGroupToolbar from "./StudyGroupToolbar";
 
 export function StudyGroupCard({ group }: { group: StudyGroupType }) {
     // Context to handle study group forms
@@ -58,30 +57,12 @@ export function StudyGroupCard({ group }: { group: StudyGroupType }) {
                 <header className={`flex flex-row items-center py-2 px-4 gap-x-4 border-b-1 ${ selectedStudyGroup?.id === group.id ? "border-b-white" : "border-b-primary"}`}>
                     <div className="relative">
                         <FaCog className="hover:cursor-pointer text-3x" onClick={handleToolbar}/>
-                        {showToolbar && <div id="toolbar" className={`absolute top-full left-0 min-w-fit w-40 bg-white border-1 ${ selectedStudyGroup?.id === group.id ? "border-white" : "border-primary"} text-[1.2rem] shadow-md z-1 text-primary`}>
-                            <div 
-                                className="flex flex-row justify-between items-center p-2 border-b-1 border-b-primary hover:opacity-80 hover:cursor-pointer" 
-                                onClick={() => {
-                                    setSelectedStudyGroup(group)
-                                    setInvitingGroup(true)
-                                    setShowToolbar(false)
-                                }}
-                            >
-                                <span>Invite</span>
-                                <FaPlusCircle className="hover:cursor-pointer hover:opacity-80" />
-                            </div>
-                            <div 
-                                className="flex flex-row justify-between items-center p-2 hover:opacity-80 hover:cursor-pointer"
-                                onClick={() => {
-                                    setSelectedStudyGroup(group)
-                                    setManagingGroup(true)
-                                    setShowToolbar(false)
-                                }}
-                            >
-                                <span>Manage</span>
-                                <FaEdit className="hover:cursor-pointer hover:opacity-80" />
-                            </div>
-                        </div>}
+                        {showToolbar && 
+                            <StudyGroupToolbar 
+                                group={group}
+                                closeToolbar={() => setShowToolbar(false)}
+                            />
+                        }
                     </div>
                     <div>
                         <h1 className={`text-${group.name.length > 15 ? "sm" : "xl"} m-0`}>{ group.name }</h1>
