@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 
 class Member(models.Model):
     name = models.CharField(max_length=50, unique=True)
-    member_id = models.CharField(max_length=8, primary_key=True, unique=True, blank=True)
+    member_id = models.CharField(max_length=8, unique=True, blank=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='member', blank=True)
 
     def __str__(self):

@@ -21,27 +21,11 @@ class ClassCreateListAPIView(generics.ListCreateAPIView):
     serializer_class = ClassSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_queryset(self):
-        member = Member.objects.get(user=self.request.user)
-        return Class.objects.prefetch_related('units').filter(members=member) | Class.objects.filter(owner=member)
-
-    def perform_create(self, serializer):
-        user = self.request.user
-        member = Member.objects.get(user=user)
-        serializer.save(owner=member)
-
     def get_serializer_class(self):
         if self.request.method == 'POST':
             return ClassCreateSerializer
         return super().get_serializer_class()
     
-    # def get_permissions(self):
-    #     # if self.request.method == 'GET':
-    #     #     return [permissions.IsAdminUser()]
-    #     return super().get_permissions()
-
-# For working with individual classes
-# Includes deeply nested information, including all files and nested subunits
 class ClassDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     """
     API view to retrieve specific classes.
@@ -49,27 +33,6 @@ class ClassDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Class.objects.prefetch_related('units')
     serializer_class = ClassUnitSubunitSerializerFull
     permission_classes = [permissions.IsAuthenticated]
-
-    # def perform_update(self, serializer):
-    #     user = self.request.user
-    #     member = Member.objects.get(user=user)
-    #     serializer.save(owner=member)
-
-    # def get_permissions(self):
-    #     if self.request.method == 'DELETE':
-    #         return [IsOwnerOfClass()]
-
-# class ClassUnitSubunitAPIView(generics.RetrieveUpdateDestroyAPIView):
-#     """
-#     API view to retrieve classes with their units and subunits.
-#     """
-#     queryset = Class.objects.all()
-#     serializer_class = ClassUnitSubunitSerializer
-#     permission_classes = [permissions.IsAuthenticated]
-
-#     def get_serializer_class(self):
-#         if(self.request.method == 'PUT'):
-#             return ClassUnitSubunitSerializerFull
 
 class UnitCreateAPIView(generics.CreateAPIView):
     queryset = Unit.objects.all()

@@ -4,7 +4,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('', views.ClassCreateListAPIView.as_view(), name='class-creare-list'),
+    path('', views.ClassCreateListAPIView.as_view(), name='class-create-list'),
     path('<int:pk>/', views.ClassDetailAPIView.as_view(), name='class-detail'),
     path('units/', views.UnitCreateAPIView.as_view(), name='unit-create'),
     path('units/<int:pk>/', views.UnitDetailAPIView.as_view(), name='unit-detail'),

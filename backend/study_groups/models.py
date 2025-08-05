@@ -19,7 +19,7 @@ class StudyGroupMember(models.Model):
         JOINED = 'Joined', 'Joined'
     member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='study_group_memberships')
     study_group = models.ForeignKey(StudyGroup, on_delete=models.CASCADE, related_name='members')
-    status = models.CharField(max_length=20, choices=StatusChoices.choices)
+    status = models.CharField(max_length=20, choices=StatusChoices.choices, default=StatusChoices.INVITED)
 
     def __str__(self):
         return f"{self.member.name} | {self.study_group.name} | {self.get_status_display()}"

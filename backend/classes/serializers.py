@@ -263,16 +263,14 @@ class ClassCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         units = validated_data.pop('units', [])
         members = validated_data.pop('members', [])
+        owner = self.context['request'].user.member
 
         with transaction.atomic():
-            new_class = Class.objects.create(**validated_data)
+            new_class = Class.objects.create(owner=owner, **validated_data)
             # Create units and associate them with the class
             for unit in units:
-                subunits = unit.pop('subunits', [])
-                new_unit = Unit.objects.create(class_field=new_class, **unit)
-                # Create subunits and associate them with the unit
-                for subunit in subunits:
-                    Subunit.objects.create(unit=new_unit,**subunit)
+                print(f"Creating unit: {unit['name']}")
+                Unit.objects.create(class_field=new_class, **unit)
             # Associate members with the class
             new_class.members.set(members)
         return new_class
