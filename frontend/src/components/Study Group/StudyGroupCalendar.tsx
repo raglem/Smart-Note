@@ -1,8 +1,9 @@
 "use client"
 
 import { StudyGroupContext } from "@/app/context/StudyGroupContext"
+import { StudyGroupDateContext } from "@/app/context/StudyGroupDateContext"
 import { StudyGroupType } from "@/types"
-import { useContext, useState } from "react"
+import { useContext, useMemo, useState } from "react"
 import { FaCaretLeft, FaCaretRight } from "react-icons/fa"
 import StudyGroupCalendarDay from "./StudyGroupCalendarDay"
 
@@ -35,36 +36,34 @@ type studyCalendarType = {
     year: number
 }
 
-export default function StudyGroupCalendar({ selectedMonth, selectedYear, setSelectedMonth, setSelectedYear }: { 
-    selectedMonth: number, 
-    selectedYear: number 
-    setSelectedMonth: React.Dispatch<React.SetStateAction<number>>,
-    setSelectedYear: React.Dispatch<React.SetStateAction<number>>
-}) {
+export default function StudyGroupCalendar() {
     // Retrieve the user's study groups from the context
     const { studyGroups } = useContext(StudyGroupContext)
+    const { month, year, setMonth, setYear } = useContext(StudyGroupDateContext)
+
+    const studyGroupsWithCastedDates = useMemo(() => studyGroups.map(sg => ({...sg, datetime: new Date(sg.datetime)})), [studyGroups])
 
     // The calendar
     const studyCalendar: studyCalendarType = {
-        days: generateCalendarDays(selectedMonth, selectedYear).map(day => ({
+        days: generateCalendarDays(month, year).map(day => ({
             date: day,
-            events: studyGroups.filter(sg => sg.dateTime.getDate() === day?.getDate() && sg.dateTime.getMonth() === day?.getMonth() && sg.dateTime.getFullYear() === day?.getFullYear())
+            events: studyGroupsWithCastedDates.filter(sg => sg.datetime.getDate() === day?.getDate() && sg.datetime.getMonth() === day?.getMonth() && sg.datetime.getFullYear() === day?.getFullYear())
         })),
-        month: selectedMonth,
-        year: selectedYear
+        month: month,
+        year: year
     }
 
     const monthChange = (newMonth: number) => {
         if(newMonth > 11){
-            setSelectedMonth(0)
-            setSelectedYear(selectedYear + 1)
+            setMonth(0)
+            setYear(year + 1)
         }
         else if(newMonth < 0){
-            setSelectedMonth(11)
-            setSelectedYear(selectedYear - 1)
+            setMonth(11)
+            setYear(year - 1)
         }
         else{
-            setSelectedMonth(newMonth)
+            setMonth(newMonth)
         }
     }
 
@@ -88,10 +87,10 @@ export default function StudyGroupCalendar({ selectedMonth, selectedYear, setSel
                 }
             </div>
             <div className="flex flex-row justify-center items-center gap-x-2">
-                <button onClick={() => monthChange(selectedMonth - 1)}>
+                <button onClick={() => monthChange(month - 1)}>
                     <FaCaretLeft className="icon-responsive text-5xl text-primary" />
                 </button>
-                <button onClick={() => monthChange(selectedMonth + 1)}>
+                <button onClick={() => monthChange(month + 1)}>
                     <FaCaretRight className="icon-responsive text-5xl text-primary" />
                 </button>
             </div>

@@ -1,48 +1,58 @@
-import { use, useContext, useState } from "react";
+'use client'
+
+import { useContext, useEffect, useState } from "react";
+import useClassesStore from "@/stores/classesStore";
+import { StudyGroupContext } from "@/app/context/StudyGroupContext";
 import { StudyGroupType } from "../../types";
+import { ClassType } from "@/types/Sections";
+import LoadingSpinner from "../LoadingSpinner";
 
 import { FaClock, FaPlusCircle } from "react-icons/fa";
 import { IoIosCheckmarkCircle, IoMdPersonAdd } from "react-icons/io";
-import { StudyGroupContext } from "@/app/context/StudyGroupContext";
+import { TbFaceIdError } from "react-icons/tb";
+import InviteMembersList from "./InviteMembersList";
 
-export default function StudyGroupInvite({ id, name, studyGroup }: { id: string, name: string, studyGroup: StudyGroupType}) {
-    // TODO: Fetch classes
-    // TODO: Edge case, user has no classes
-    const classes = [
-        {
-            id: "class1",
-            name: "Mathematics 101",
-            members: [
-                { id: "m1", name: "Alice" },
-                { id: "m2", name: "Bob" },
-                { id: "m10", name: "Caleb" }
-            ]
-        },
-        {
-            id: "class2",
-            name: "Physics 202",
-            members: [
-                { id: "m3", name: "Carol" },
-                { id: "m4", name: "David" }
-            ]
-        },
-        {
-            id: "class3",
-            name: "Chemistry 303",
-            members: [
-                { id: "m5", name: "Eve" },
-                { id: "m6", name: "Frank" }
-            ]
-        }
-    ]
+export default function StudyGroupInvite({ id, name, studyGroup }: { id: number, name: string, studyGroup: StudyGroupType}) {
+    // Retrieve classes from zustand store
+    const classes = useClassesStore((state) => state.classes)
+    const isLoading = useClassesStore((state)=> state.isLoading)
+    const error = useClassesStore((state) => state.error)
+    const fetchClasses = useClassesStore((state) => state.fetchClasses)
 
-    const { setInvitingGroup } = useContext(StudyGroupContext)
+    useEffect(() => {
+        fetchClasses()
+    }, [])
 
-    const [selectedClassId, setSelectedClassId] = useState<string>(classes[0].id)
-    const selectedClass = classes.find(c => c.id === selectedClassId) || classes[0]
+    const { setStudyGroups, setInvitingGroup } = useContext(StudyGroupContext)
 
-    const handleInvite = (id: string) => {
-        // TODO: Handle invite
+    const [selectedClassId, setSelectedClassId] = useState<number | null>((classes && classes.length > 0) ? classes[0].id : null)
+    const selectedClass: ClassType = classes.find(c => c.id === selectedClassId) || classes[0]
+
+    if(error){
+        // TODO: Notify user classes request failed
+        return
+    }
+    if(!classes || classes.length === 0){
+        // TODO: Edge case, user has no classes
+        return (
+            <div className="overlay">
+                <div className="card flex flex-col gap-y-2 py-4 min-w-[300px] w-[50vw] max-w-[768px] bg-secondary">
+                    <header className="flex flex-row items-center px-2 text-3xl border-b-1 border-b-primary">
+                        Invite to Study Group
+                    </header>
+                    <div className="flex flex-row px-2 gap-x-2">
+                        <TbFaceIdError className="text-primary text-5xl"/>
+                        <p>
+                            You're not in any classes. <br/>
+                            Join a class to invite members to your study group.
+                        </p>
+                    </div>
+                    <div className="flex flex-row justify-end px-2">
+                        <button className="form-btn py-1 px-4 bg-primary text-white" onClick={() => setInvitingGroup(false)}>Close</button>
+                    </div>
+                </div>
+            </div>
+        )
     }
 
     return (
@@ -58,32 +68,18 @@ export default function StudyGroupInvite({ id, name, studyGroup }: { id: string,
                         </label>
                         <select 
                             id="name"
-                            className="form-input" value={selectedClassId} 
-                            onChange={(e) => setSelectedClassId(e.target.value)}
+                            className="form-input" value={selectedClassId || ''} 
+                            onChange={(e) => setSelectedClassId(parseInt(e.target.value))}
                         >
                             {classes.map((c) => (
                                 <option key={c.id} value={c.id}>{c.name}</option>
                             ))}
                         </select>
                     </div>
-                    <ol className="flex flex-col max-h-[210px] border-1 border-y-primary rounded-sm overflow-auto">
-                        {selectedClass.members.map((classMember) => (
-                            <li className="flex flex-row justify-between items-center p-2 not-last-of-type:border-b-1 border-b-primary" key={classMember.id}>
-                                <span>{classMember.name}</span>
-                                {
-                                    !studyGroup.members.find((studyGroupMember) => studyGroupMember.member.id === classMember.id) ? (
-                                        <IoMdPersonAdd className="icon-responsive text-primary text-xl" onClick={() => handleInvite(classMember.id)}/>
-                                    ) : (
-                                        studyGroup.members.find((studyGroupMember) => studyGroupMember.member.id === classMember.id)?.status === "Joined" ? (
-                                            <IoIosCheckmarkCircle className="hover:scale-150 transition-transform duration-200 ease-in-out text-xl text-green-500"/>
-                                        ) : (
-                                            <FaClock className="hover:scale-150 transition-transform duration-200 ease-in-out text-xl text-yellow-500"/>
-                                        )
-                                    )
-                                }
-                            </li>
-                        ))}
-                    </ol>
+                    <InviteMembersList
+                        studyGroupId={id}
+                        classMembers={selectedClass.members}
+                    />
                 </div>
                 <div className="form-btn-toolbar p-2">
                     <button className="form-btn py-1 px-4 bg-primary text-white" onClick={() => setInvitingGroup(false)}>Close</button>

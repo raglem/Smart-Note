@@ -4,15 +4,9 @@ export interface ClassType{
     id: number,
     name: string,
     join_code: string,
-    course_number: string,
+    course_number?: string,
     owner: SimpleMemberType,
     members: SimpleMemberType[],
-    units: {
-        id: number,
-        name: string,
-        order: number,
-        class_field: number
-    }[]
     latest_files: FileType[],
     number_of_notes: number
 }

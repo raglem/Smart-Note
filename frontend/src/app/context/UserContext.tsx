@@ -9,12 +9,6 @@ type UserContextType = {
     setUserId: React.Dispatch<React.SetStateAction<number | null>>
     checkUser: () => Promise<boolean>
 }
-type MeResponseType = {
-    user: {
-        userId: number,
-        username: string,
-    }
-}
 export const UserContext = createContext({} as UserContextType)
 
 export const UserProvider =({ children }: { children: React.ReactNode }) => {
