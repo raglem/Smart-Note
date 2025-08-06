@@ -5,7 +5,7 @@ export default function SortableItem({
     id,
     children,
   }: {
-    id: string;
+    id: number;
     children: (props: {
       listeners: ReturnType<typeof useSortable>["listeners"];
       attributes: ReturnType<typeof useSortable>["attributes"];

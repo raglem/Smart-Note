@@ -5,7 +5,8 @@ from rest_framework.views import APIView
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
-from .serializers import UserSerializer, MemberSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializers import UserSerializer, SimpleMemberSerializer, CustomTokenObtainPairSerializer
 
 class RegisterUserView(APIView):
     permission_classes = [AllowAny]
@@ -25,5 +26,8 @@ class MembersAPIView(ListCreateAPIView):
     API view to retrieve all members.
     """
     queryset = Member.objects.all()
-    serializer_class = MemberSerializer
-    permission_classes = [IsAdminUser]
+    serializer_class = SimpleMemberSerializer
+    permission_classes = [AllowAny]
+
+class LoginUserView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer

@@ -18,8 +18,6 @@ export async function POST(req: NextRequest) {
     body: JSON.stringify(body),
   })
 
-  console.log(res)
-
   if (!res.ok) {
     return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
   }
@@ -36,15 +34,17 @@ export async function POST(req: NextRequest) {
   // Set cookies
   response.cookies.set('access_token', data.access, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: false,
     path: '/',
+    sameSite: 'lax',
     maxAge: 60 * 60, // 1 hour
   })
 
   response.cookies.set('refresh_token', data.refresh, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: true,
     path: '/',
+    sameSite: 'none',
     maxAge: 60 * 60 * 24 // 1 day
   })
 

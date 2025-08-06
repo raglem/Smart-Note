@@ -1,14 +1,58 @@
 "use client"
 
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { CiCircleRemove } from "react-icons/ci";
-import { FilePreviewType } from "../../types";
+import { FileType } from "../../types";
 import DeleteConfirmation from "../Class/DeleteConfirmation";
+import api from "@/utils/api";
+import { ClassContext } from "@/app/context/ClassContext";
 
-export default function RemoveFile({ id, file } : { id: string,file: FilePreviewType }){
+export default function RemoveFile({ file } : { file: FileType }){
+    const { classFields, setClassFields, units, setUnits } = useContext(ClassContext)
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState<boolean>(false)
-    const handleFileDelete = () => {
-        // TODO: Delete File
+    const removeFileFromClassContext = (id: number) => {
+        const classFileIndex = classFields.files.findIndex(f => f.id === id)
+        if(classFileIndex !== -1){
+            setClassFields((prev) => ({
+                ...prev,
+                files: prev.files.filter((f: { id: number }) => f.id !== id)
+            }));
+            return
+        }
+        for(const unit of units){
+            const unitFileIndex = unit.files.findIndex(file => file.id === id)
+            if(unitFileIndex !== -1){
+                setUnits((prev) => prev.map(u => u.id !== unit.id ? u : {
+                    ...u,
+                    files: u.files.filter(f => f.id !== id)
+                }))
+                return
+            }
+            for (const subunit of unit.subunits){
+                const subunitFileIndex = subunit.files.findIndex(file => file.id === id);
+                if (subunitFileIndex !== -1) {
+                    setUnits((prev) => prev.map(u => u.id !== unit.id ? u : {
+                        ...u,
+                        subunits: u.subunits.map(su => su.id !== subunit.id ? su : {
+                            ...su,
+                            files: su.files.filter(f => f.id !== id)
+                        })
+                    }));
+                    return;
+                }
+            }
+        }
+    }
+    const handleFileDelete = async () => {
+        try{
+            const res = await api.delete(`/classes/files/${file.id}/`)
+            // TODO: Alert user file has been deleted
+            // TODO: Delete the file from Class Context
+            removeFileFromClassContext(file.id)
+        }
+        catch(err){
+            console.error(err)
+        }
         setShowDeleteConfirmation(false)
     }
     return (<>
