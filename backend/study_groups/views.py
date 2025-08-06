@@ -1,6 +1,6 @@
 from django.utils import timezone
 from django.shortcuts import render
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
@@ -25,7 +25,7 @@ class StudyGroupCreateAPIView(ListCreateAPIView):
         context['user'] = self.request.user
         return context
 
-class StudyGroupDetailAPIView(RetrieveUpdateDestroyAPIView):
+class StudyGroupDetailAPIView(RetrieveUpdateAPIView):
     queryset = StudyGroup.objects.all()
     serializer_class = StudyGroupSerializer
     permission_classes = [IsAuthenticated]
@@ -85,4 +85,22 @@ class AcceptDeclineInviteStudyGroupAPIView(APIView):
             "message": f"You have been added to the study group {study_group.name}", 
             "member": serialized_study_group_member.data
         }, status=status.HTTP_200_OK)
-            
+
+class LeaveStudyGroupAPIView(APIView):
+    def delete(self, request, pk):
+        member = Member.objects.get(user=request.user)
+        study_group = get_object_or_404(StudyGroup, id=pk)
+        study_group_member = study_group.members.filter(member=member).first()
+
+        if not study_group_member:
+            return Response(f"{member.name} is not a member of this study group", status=status.HTTP_404_NOT_FOUND)
+
+        # Remove the member from the study group
+        study_group_member.delete()
+
+        # If no members left, delete the study group
+        if study_group.members.count() == 0:
+            study_group.delete()
+        return Response({
+            "message": f"You have left the study group {study_group.name}"
+        }, status=status.HTTP_204_NO_CONTENT)
