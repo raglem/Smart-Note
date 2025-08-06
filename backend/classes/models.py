@@ -21,6 +21,8 @@ class Class(models.Model):
 
         if not self.join_code:
             self.join_code = self._generate_join_code()
+
+        self.clean()
         super().save(*args, **kwargs)
 
         if is_new:

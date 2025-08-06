@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'users',
     'classes',
+    'study_groups',
 ]
 
 MIDDLEWARE = [
@@ -133,7 +134,8 @@ SIMPLE_JWT = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Los_Angeles'
+USE_TZ = True
 
 USE_I18N = True
 

@@ -26,15 +26,15 @@ class UserSerializer(serializers.ModelSerializer):
 class SimpleMemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = Member
-        fields = ['name', 'member_id']
-        read_only_fields = ['member_id']
+        fields = ['id', 'name', 'member_id']
+        read_only_fields = ['id', 'member_id']
     
 class MemberSerializer(serializers.ModelSerializer):
     friends = SimpleMemberSerializer(many=True)
     class Meta:
         model = Member
-        fields = ['name', 'member_id', 'friends']
-        read_only_fields = ['member_id']
+        fields = ['id', 'name', 'member_id', 'friends']
+        read_only_fields = ['id', 'member_id']
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
