@@ -17,7 +17,6 @@ const useClassesStore = create<classesStore>((set) => ({
     fetchClasses: async () => {
         try{
             const res = await api.get(`/classes/`)
-            console.log(res.data)
             const sorted_data = res.data.sort((a: ClassType, b: ClassType) => a.name.localeCompare(b.name))
             set({ classes: sorted_data, isLoading: false, error: null })
         }

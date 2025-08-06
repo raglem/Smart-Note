@@ -4,6 +4,7 @@ import { StudyGroupType } from "@/types";
 import api from "@/utils/api";
 import { FaEdit, FaPlusCircle } from "react-icons/fa";
 import { CgDanger } from "react-icons/cg";
+import { ImExit } from "react-icons/im";
 
 export default function StudyGroupToolbar({ group, closeToolbar } : { group: StudyGroupType, closeToolbar: () => void }) {
     const { 
@@ -13,9 +14,9 @@ export default function StudyGroupToolbar({ group, closeToolbar } : { group: Stu
         setManagingGroup 
     } = useContext(StudyGroupContext)
 
-    const handleDeleteStudyGroup = async () => {
+    const handleLeaveStudyGroup = async () => {
         try{
-            const res = await api.delete(`/study-groups/${group.id}/`)
+            const res = await api.delete(`/study-groups/leave/${group.id}/`)
             setStudyGroups(prev => prev.filter(sg => sg.id !== group.id))
         }
         catch(err){
@@ -48,11 +49,11 @@ export default function StudyGroupToolbar({ group, closeToolbar } : { group: Stu
                 <FaEdit className="hover:cursor-pointer hover:opacity-80" />
             </div>
             <div 
-                className="flex flex-row justify-between items-center p-2 hover:opacity-80 hover:cursor-pointer"
-                onClick={handleDeleteStudyGroup}
+                className="flex flex-row justify-between items-center p-2 hover:opacity-80 hover:cursor-pointer text-primary"
+                onClick={handleLeaveStudyGroup}
             >
-                <span>Delete</span>
-                <CgDanger className="hover:cursor-pointer hover:opacity-80 text-red-500 text-2xl" />
+                <span>Leave</span>
+                <ImExit className="hover:cursor-pointer hover:opacity-80 text-primary text-2xl" />
             </div>
         </div>
     )
