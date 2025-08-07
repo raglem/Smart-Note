@@ -5,6 +5,7 @@ import Logout from "@/components/Logout";
 
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
+import ToastProvider from "./context/ToastContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,11 +27,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html>
       <UserProvider>
         <body
           className={`min-h-screen flex flex-col ${geistSans.variable} ${geistMono.variable} antialiased`}
         >
+          <ToastProvider />
           <Navbar />
           <main className="relative flex flex-grow min-h[calc(100vh-100px)]">
             {children}

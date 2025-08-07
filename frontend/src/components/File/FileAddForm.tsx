@@ -6,6 +6,7 @@ import { MdDeleteForever } from "react-icons/md";
 import FilePreview from "./FilePreview";
 import api from "@/utils/api";
 import { ClassContext } from "@/app/context/ClassContext";
+import { toast } from "react-toastify";
 
 export default function FileAdd({ section_id, section, close } : { section_id: number, section: SectionEnumType, close: () => void }){
     const { setClassFields, units, setUnits } = useContext(ClassContext)
@@ -34,7 +35,7 @@ export default function FileAdd({ section_id, section, close } : { section_id: n
     }
     const handleFileSave = async () => {
         if(!filePreview || !file){
-            // TODO: Alert user file cannot be added
+            toast.error("No file selected")
             return
         }
         const fd = new FormData()

@@ -6,6 +6,7 @@ import { IoIosAddCircleOutline } from "react-icons/io"
 import AddMembers from "./AddMembers"
 import { UnitType } from "@/types/Sections"
 import api from "@/utils/api"
+import { toast } from "react-toastify"
 
 export default function AddClass({ close }: { close: () => void }){
     const [className, setClassName] = useState<string>("")
@@ -30,8 +31,7 @@ export default function AddClass({ close }: { close: () => void }){
 
         try{
             const res = await api.post('/classes/', body)
-            
-            // TODO: Alert user the class was successfully created
+            toast.success(`Class ${body.name} created successfully`)
         }
         catch(err){
             console.error(err)

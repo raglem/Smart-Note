@@ -6,6 +6,7 @@ import { IoIosCheckmarkCircle, IoMdRemoveCircleOutline } from "react-icons/io"
 import { FaClock } from "react-icons/fa"
 import { StudyGroupMemberType, StudyGroupType } from "../../types"
 import api from "@/utils/api"
+import { toast } from "react-toastify"
 
 export default function StudyGroupManage({ id, studyGroup }: { id: number, studyGroup: StudyGroupType}){
     const [name, setName] = useState<string>(studyGroup.name)
@@ -32,7 +33,7 @@ export default function StudyGroupManage({ id, studyGroup }: { id: number, study
             setStudyGroups(prev => prev.map(sg => sg.id !== data.id ? sg : data))
         }
         catch(err){
-            // TODO: Inform user PUT request failed
+            toast.error(`Failed to update study group ${studyGroup.name}. Changes were not saved`)
             console.error(err)
         }
         finally{

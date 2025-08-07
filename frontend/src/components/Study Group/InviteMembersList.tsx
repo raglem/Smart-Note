@@ -8,6 +8,7 @@ import api from "@/utils/api"
 
 import { IoIosCheckmarkCircle, IoMdPersonAdd } from "react-icons/io"
 import { FaClock } from "react-icons/fa"
+import { toast } from "react-toastify"
 
 export default function MembersList({ studyGroupId, classMembers }: { 
     studyGroupId: number, 
@@ -19,23 +20,18 @@ export default function MembersList({ studyGroupId, classMembers }: {
     const invitedMembers = studyGroups.find((sg: StudyGroupType) => sg.id === studyGroupId)?.members || []
 
     const handleInvite = async (id: number) => {
+        const memberToInvite: SimpleMemberType | undefined = classMembers.find(member => member.id === id)
+        // Check if the user does not exist and has not been invited already
+        if(!memberToInvite || invitedMembers.find(sgMember => sgMember.member.id === id)) return
         try{
-            const memberToInvite: SimpleMemberType | undefined = classMembers.find(member => member.id === id)
-
-            // Check if the user does not exist and has not been invited already
-            if(!memberToInvite || invitedMembers.find(sgMember => sgMember.member.id === id)) return
-
-            console.log('SENDING REQUEST')
-
             const res = await api.post(`/study-groups/invite/${studyGroupId}/`, { id })
-            console.log(res)
             const data = res.data as StudyGroupMemberType
-
+            toast.success(`Invite sent to ${memberToInvite.name}`)
             updateStudyGroupContextWithNewMember(data)
         }
         catch(err){
             console.error(err)
-            // TODO: Alert user an error has occurred
+            toast.error(`Failed to send invite to ${memberToInvite.name}`)
         }
     }
 
