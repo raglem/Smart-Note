@@ -26,11 +26,24 @@ class LoginUserView(TokenObtainPairView):
     
 class MembersAPIView(ListCreateAPIView):
     """
-    API view to retrieve all members.
+    API view to create and search for members
     """
     queryset = Member.objects.all()
     serializer_class = SimpleMemberSerializer
     permission_classes = [AllowAny]
+
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [IsAuthenticated()]
+        return super().get_permissions()
+    
+    def get_queryset(self):
+        queryset = Member.objects.all()
+        search = self.request.query_params.get('search', None)
+
+        if search:
+            queryset = queryset.filter(name__icontains=search)
+        return queryset[:10]
 
 class MemberDetailAPIView(RetrieveAPIView):
     queryset = Member.objects.all()
