@@ -6,6 +6,7 @@ import { FileType } from "../../types";
 import DeleteConfirmation from "../Class/DeleteConfirmation";
 import api from "@/utils/api";
 import { ClassContext } from "@/app/context/ClassContext";
+import { toast } from "react-toastify";
 
 export default function RemoveFile({ file } : { file: FileType }){
     const { classFields, setClassFields, units, setUnits } = useContext(ClassContext)
@@ -46,11 +47,11 @@ export default function RemoveFile({ file } : { file: FileType }){
     const handleFileDelete = async () => {
         try{
             const res = await api.delete(`/classes/files/${file.id}/`)
-            // TODO: Alert user file has been deleted
-            // TODO: Delete the file from Class Context
+            toast.success(`File ${file.name} deleted successfully`)
             removeFileFromClassContext(file.id)
         }
         catch(err){
+            toast.error(`Failed to delete file ${file.name}`)
             console.error(err)
         }
         setShowDeleteConfirmation(false)

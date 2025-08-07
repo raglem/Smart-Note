@@ -11,6 +11,7 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import { ClassContext } from "@/app/context/ClassContext";
 import api from "@/utils/api";
 import { UnitType } from "@/types/Sections";
+import { toast } from "react-toastify";
 
 export default function AddUnit({ class_id, close }: { class_id: number, close: () => void }) {
     const { units, setUnits } = useContext(ClassContext)
@@ -40,7 +41,7 @@ export default function AddUnit({ class_id, close }: { class_id: number, close: 
     // Edits subunits portion of form
     const handleSubunitAdd = () => {
         if(subunits.includes(subunit)){
-            // TODO: Show error
+            toast.error(`Subunit with name ${subunit} already exists`)
             return
         }
         setSubunits([...subunits, subunit])
@@ -62,8 +63,8 @@ export default function AddUnit({ class_id, close }: { class_id: number, close: 
 
     // Handles form submission or cancel
     const handleUnitCreate = async () => {
-        if(unitName === "" || unitName.trim() === ""){
-            //TODO: Show error
+        if(unitName.trim() === "" || unitName.length < 3){
+            toast.error("Unit name must be at least 3 characters long")
             return
         }
         

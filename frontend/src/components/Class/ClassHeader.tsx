@@ -10,6 +10,7 @@ import { IoIosAddCircleOutline } from "react-icons/io";
 import { MdDeleteForever } from "react-icons/md";
 import { ClassDetailType } from "../../types/Sections";
 import DeleteClass from "./DeleteClass";
+import { toast } from "react-toastify";
 
 export default function ClassHeader({ classInfo }: { classInfo: ClassDetailType }) {
     // Gather context
@@ -42,13 +43,13 @@ export default function ClassHeader({ classInfo }: { classInfo: ClassDetailType 
 
     const handleBlurForNameAndCourseNumber = () => {
         // Check name
-        if(name.length < 1){
-            // TODO: Notify user name cannot be empty
+        if(name.length < 3){
+            toast.error("Class name must be at least 3 characters long")
             return
         }
 
         if(!classFields){
-            // TODO: Notify user class has not been loaded
+            toast.error("Class fields have not been loaded yet. Please try again.")
             return
         }
 

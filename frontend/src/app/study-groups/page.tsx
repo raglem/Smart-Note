@@ -4,34 +4,44 @@ import { cookies } from "next/headers"
 import { StudyGroupProvider } from "../context/StudyGroupContext"
 import { StudyGroupDateProvider } from "../context/StudyGroupDateContext"
 import StudyGroupSidebar from "@/components/Study Group/StudyGroupSidebar"
+import ErrorPage from "@/components/ErrorPage"
 
 export default async function Page(){
     const cookieStore = await cookies()
     const accessToken = cookieStore.get('access_token')?.value
+    let studyGroupsInfo: StudyGroupType[] = []
 
     if (!accessToken) {
         // Optionally redirect or show message
         return <div>You must be logged in to view your study groups.</div>
     }
 
-    const res = await fetch(`${process.env.DJANGO_API}/study-groups/`, {
-        method: 'GET',
-        headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`,
-        },
-        // Ensure Next.js doesn’t cache the request
-        cache: 'no-store',
-    })
-
-    if (!res.ok) {
-        console.log(res)
-        return <div>Failed to fetch study groups.</div>
+    try{
+        const res = await fetch(`${process.env.DJANGO_API}/study-groups/`, {
+            method: 'GET',
+            headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
+            },
+            // Ensure Next.js doesn’t cache the request
+            cache: 'no-store',
+        })
+    
+        if (!res.ok) {
+            console.log(res)
+            return <div>Failed to fetch study groups.</div>
+        }
+    
+        // Process response data
+        const data = await res.json()
+        studyGroupsInfo = data as StudyGroupType[]
+    }
+    catch(err){
+        return(
+            <ErrorPage message={'Failed to fetch study groups'} />
+        )
     }
 
-    // Process response data
-    const data = await res.json()
-    const studyGroupsInfo: StudyGroupType[] = data as StudyGroupType[]
     return (
         <StudyGroupProvider initialStudyGroups={studyGroupsInfo}>
             <StudyGroupDateProvider>

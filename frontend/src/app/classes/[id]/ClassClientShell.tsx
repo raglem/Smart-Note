@@ -14,6 +14,7 @@ import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-ki
 import SortableItem from "@/components/SortableItem"
 import FilePreview from "@/components/File/FilePreview"
 import FileAdd from "@/components/File/FileAdd"
+import { toast } from "react-toastify"
 
 export default function ClassClientShell({ classInfo }:{
     classInfo: ClassDetailType
