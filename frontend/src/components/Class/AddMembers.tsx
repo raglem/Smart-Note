@@ -84,7 +84,7 @@ export default function AddMembers({
             </div>}
             {!loading && <ol className="flex flex-col max-h-[210px] border-1 border-y-primary rounded-sm overflow-auto">
                 { formattedMemberQuery.length > 3 && matchingMembers.map((m) => (
-                    <li className="flex flex-row justify-between items-center p-2 not-last-of-type:border-b-1 border-b-primary hover:bg-primary hover:text-white" key={m.id} onClick={() => handleAddMember(m)}>
+                    <li className="flex flex-row justify-between items-center p-2 not-last-of-type:border-b-1 border-b-primary hover:cursor-pointer" key={m.id} onClick={() => handleAddMember(m)}>
                         <div className="flex flex-row justify-between items-center gap-x-2">
                             { m.name }
                         </div>

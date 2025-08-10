@@ -3,11 +3,11 @@ import { MemberType, SimpleMemberType, NoteCategoryType, FileType } from ".";
 export interface ClassType{
     id: number,
     name: string,
+    image: string,
     join_code: string,
     course_number?: string,
     owner: SimpleMemberType,
     members: SimpleMemberType[],
-    latest_files: FileType[],
     number_of_notes: number
 }
 export interface ClassDetailType {

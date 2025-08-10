@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { IoMdAddCircle } from "react-icons/io";
-import AddClass from "./AddClass"
+import CreateClass from "./ClassCreate"
 
 export default function ClassesHeader(){
     const [showAddClass, setShowAddClass] = useState<boolean>(false)
@@ -12,7 +12,7 @@ export default function ClassesHeader(){
     }
     return (
         <>
-            {showAddClass && <AddClass close={() => setShowAddClass(false)} />}
+            {showAddClass && <CreateClass close={() => setShowAddClass(false)} />}
             <header className="flex flex-row justify-between items-center">
                 <div className="flex flex-row items-center gap-x-4">
                     <h1>Classes</h1>
