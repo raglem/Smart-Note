@@ -1,3 +1,4 @@
+import json
 from rest_framework import serializers
 from users.models import Member
 from users.serializers import SimpleMemberSerializer
@@ -54,6 +55,10 @@ class FileCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Category not found")
 
         owner = self.context['request'].user.member
+
+        # Validate that the file name is unique within the category
+        if File.objects.filter(name=validated_data['name'], category=category).exists():
+             raise serializers.ValidationError("File name must be unique within the Category.")
 
         return File.objects.create(
             name=validated_data['name'],
@@ -224,41 +229,30 @@ class ClassSerializer(serializers.ModelSerializer):
     owner = SimpleMemberSerializer()
     members = SimpleMemberSerializer(many=True, read_only=True)
     units = UnitSerializer(many=True, read_only=True)
-    latest_files = serializers.SerializerMethodField()
     number_of_files = serializers.SerializerMethodField()
-    number_of_units = serializers.SerializerMethodField()
 
     class Meta:
         model = Class
         fields = [
-            'id', 'name', 'course_number', 
+            'id', 'name', 'image', 'course_number', 
             'owner', 'members', 'units', 'join_code',
-            'latest_files', 'number_of_units', 'number_of_files'
+            'number_of_files'
         ]
         read_only_fields = ['id']
-
-    def get_latest_files(self, obj):
-        category = FileCategory.objects.get(class_field=obj)
-        files = File.objects.filter(category=category)
-        latest_files = sorted(files)[0:2]
-        serialized_files = FileSerializer(latest_files, many=True)
-        return serialized_files.data
     
     def get_number_of_files(self, obj):
         category = FileCategory.objects.get(class_field=obj)
         return category.files.count()
-    
-    def get_number_of_units(self, obj):
-        return obj.units.count()
 
 # This serializer is used to serializer the Class model for a POST request
 class ClassCreateSerializer(serializers.ModelSerializer):
-    members = serializers.PrimaryKeyRelatedField(queryset=Member.objects.all(), many=True)
-    units = UnitCreateSerializerWithoutClass(many=True)
+    members = serializers.PrimaryKeyRelatedField(queryset=Member.objects.all(), many=True, required=False)
+    units = UnitCreateSerializerWithoutClass(many=True, required=False)
 
     class Meta:
         model = Class
-        fields = ['name', 'course_number', 'members', 'units']
+        fields = ['id', 'name', 'image', 'course_number', 'members', 'units']
+        read_only_fields = ['id']
     
     def create(self, validated_data):
         units = validated_data.pop('units', [])
@@ -269,7 +263,6 @@ class ClassCreateSerializer(serializers.ModelSerializer):
             new_class = Class.objects.create(owner=owner, **validated_data)
             # Create units and associate them with the class
             for unit in units:
-                print(f"Creating unit: {unit['name']}")
                 Unit.objects.create(class_field=new_class, **unit)
             # Associate members with the class
             new_class.members.set(members)
@@ -390,8 +383,6 @@ class ClassUnitSubunitSerializerFull(serializers.ModelSerializer):
                     original_subunit.name = subunit['name']
                 if subunit['order'] != original_subunit.order:
                     original_subunit.order = subunit['order']
-
-                # Todo: Check if any were files were changed
 
                 original_subunit.save()
 

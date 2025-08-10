@@ -20,6 +20,7 @@ class ClassCreateListAPIView(generics.ListCreateAPIView):
     queryset = Class.objects.prefetch_related('units')
     serializer_class = ClassSerializer
     permission_classes = [permissions.IsAuthenticated]
+    parser_classes = [parsers.MultiPartParser]
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
