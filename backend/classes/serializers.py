@@ -243,6 +243,13 @@ class ClassSerializer(serializers.ModelSerializer):
     def get_number_of_files(self, obj):
         category = FileCategory.objects.get(class_field=obj)
         return category.files.count()
+    
+# This serializer is used for the ClassSearchAPIView, only retrieving minimal information about the class
+class ClassSearchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Class
+        fields = ['id', 'name', 'join_code', 'image']
+        read_only_fields = ['id', 'name', 'join_code', 'image']
 
 # This serializer is used to serializer the Class model for a POST request
 class ClassCreateSerializer(serializers.ModelSerializer):
@@ -279,22 +286,6 @@ class ClassCreateSerializer(serializers.ModelSerializer):
             new_class.members.set(members)
 
         return new_class
-
-# This serializer returns information of the class along with its units and subunits
-class ClassUnitSubunitSerializer(serializers.ModelSerializer):
-    units = UnitSubunitSerializer(many=True, read_only=True)
-    members = SimpleMemberSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = Class
-        fields = ['id', 'name', 'course_number', 'units', 'members']
-        read_only_fields = ['id']
-
-    def to_representation(self, instance):
-        response = super().to_representation(instance)
-        response["units"] = sorted(response["units"], key=lambda x: x["order"])
-        
-        return response
 
 # This serializer is used to display/edit the full information of the class, including the nested unit and subunit
 class ClassUnitSubunitSerializerFull(serializers.ModelSerializer):
