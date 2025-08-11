@@ -9,7 +9,7 @@ import { FaCheckCircle, FaCog, FaEdit } from "react-icons/fa";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { MdDeleteForever } from "react-icons/md";
 import { ClassDetailType } from "../../types/Sections";
-import DeleteClass from "./DeleteClass";
+import LeaveClass from "./LeaveClass";
 import { toast } from "react-toastify";
 
 export default function ClassHeader({ classInfo }: { classInfo: ClassDetailType }) {
@@ -77,7 +77,7 @@ export default function ClassHeader({ classInfo }: { classInfo: ClassDetailType 
 
     return (
         <>
-            {showDelete && <DeleteClass close = {() => setShowDelete(false)}/>}
+            {showDelete && <LeaveClass close = {() => setShowDelete(false)}/>}
             <header className="flex flex-row justify-between items-center text-3xl">
                 <div className="flex items-center gap-x-4">
                     <div className="relative">
@@ -98,7 +98,7 @@ export default function ClassHeader({ classInfo }: { classInfo: ClassDetailType 
                                     <IoIosAddCircleOutline className="hover:cursor-pointer hover:opacity-80" />
                                 </div>
                                 <div className="flex flex-row justify-between items-center p-2 hover:opacity-80 hover:cursor-pointer" onClick={() => setShowDelete(true)}>
-                                    <span>Delete Class</span>
+                                    <span>Leave Class</span>
                                     <MdDeleteForever className="hover:cursor-pointer hover:opacity-80" />
                                 </div>
                             </div>
