@@ -1,4 +1,4 @@
-import { MemberType, SimpleMemberType, NoteCategoryType, FileType } from ".";
+import { SimpleMemberType, FileType } from ".";
 
 export interface ClassType{
     id: number,
@@ -19,6 +19,11 @@ export interface ClassDetailType {
     members: SimpleMemberType[];
     units: UnitType[];
     files: FileType[];
+}
+export interface ClassSimpleType{
+    id: number;
+    name: string;
+    image: string;
 }
 export interface UnitType {
     id: number;

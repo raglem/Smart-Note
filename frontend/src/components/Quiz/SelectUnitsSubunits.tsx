@@ -96,7 +96,7 @@ export default function SelectUnitsSubunits({selectedUnits, setSelectedUnits, se
     return (
         <>
             <div className="flex flex-col w-full">
-                <label htmlFor="unit-select">Units</label>
+                <label htmlFor="unit-select">Related Units (Optional)</label>
                 <div id="unit-input-wrapper" className="flex flex-col gap-y-2">
                     <input 
                         type="text" className="border-1 border-primary outline-none p-2" id="unit-select"
@@ -127,7 +127,7 @@ export default function SelectUnitsSubunits({selectedUnits, setSelectedUnits, se
                 </div>
             </div>
             <div className="flex flex-col w-full">
-                <label htmlFor="subunit-select">Subunits</label>
+                <label htmlFor="subunit-select">Related Subunits (Optional)</label>
                 <div id="subunit-input-wrapper" className="flex flex-col gap-y-2">
                     <input 
                         type="text" className="border-1 border-primary outline-none p-2" id="unit-select"

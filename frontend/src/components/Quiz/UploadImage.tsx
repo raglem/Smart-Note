@@ -19,8 +19,12 @@ export default function UploadImage({ image, setImage }:
         // Create file preview
         setImagePreview(URL.createObjectURL(e.target.files[0]))
     }
+    const handleImageRemoval = () => {
+        setImagePreview(null)
+        setImage(null)
+    }
     return (
-        <div className="relative flex flex-col w-full aspect-[16/9] justify-center items-center border-1 border-primary rounded-lg hover:opacity-80">
+        <div className="relative flex flex-col w-full aspect-[16/9] justify-center items-center border-1 border-primary rounded-lg">
             {!image && <label htmlFor="imageUpload" className="hover:cursor-pointer">
                 <ImCloudUpload className="text-primary text-5xl" />
                 <input 
@@ -29,7 +33,10 @@ export default function UploadImage({ image, setImage }:
                     onChange={handleImageUpload}
                 />
             </label>}
-            {image && <FaRegTimesCircle className="icon-responsive text-red-500 top-0 right-0 m-1"/>}
+            {image && imagePreview && <>
+                <img src={imagePreview} className="object-cover w-full h-full rounded-md" />
+                <FaRegTimesCircle className="absolute icon-responsive text-red-500 text-5xl top-0 right-0" onClick={handleImageRemoval}/>
+            </>}
         </div>
     )
     
