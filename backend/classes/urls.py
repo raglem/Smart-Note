@@ -8,6 +8,7 @@ urlpatterns = [
     path('search/', views.ClassSearchAPIView.as_view(), name='class-search'),
     path('join/<str:join_code>/', views.ClassJoinAPIView.as_view(), name='class-join'),
     path('<int:pk>/', views.ClassDetailAPIView.as_view(), name='class-detail'),
+    path('units-subunits/<int:pk>/', views.ClassUnitSubunitAPIView.as_view(), name='class-units-subunits'),
     path('leave/<int:pk>/', views.ClassLeaveAPIView.as_view(), name='class-leave'),
     path('units/', views.UnitCreateAPIView.as_view(), name='unit-create'),
     path('units/<int:pk>/', views.UnitDetailAPIView.as_view(), name='unit-detail'),
