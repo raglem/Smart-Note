@@ -33,10 +33,19 @@ export type AnswerType = {
     result: 'Correct' | 'Incorrect',
 }
 export type QuizResultType = {
+    id: number,
     member_id: number,
     quiz_id: number,
-    score: number,
+    number_of_correct_answers: number,
+    number_of_questions: number,
     answers: QuestionAnswerType[],
+}
+export type QuizResultSimpleType = {
+    id: number,
+    quiz: QuizType,
+    number_of_correct_answers: number,
+    number_of_questions: number,
+    date: string,
 }
 export type QuestionAnswerType = {
     result: 'Correct' | 'Incorrect',

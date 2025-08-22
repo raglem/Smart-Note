@@ -42,6 +42,7 @@ export default function TakeQuiz({ quiz_id, questions } : {
         )
     }
     const submitQuiz = async () => {
+        // Calculate the score
         let numberOfCorrectAnswers = 0
         let numberOfWrongAnswers = 0
         const answers: QuestionAnswerType[] = selectedAnswers.map(answer => ({
@@ -54,15 +55,20 @@ export default function TakeQuiz({ quiz_id, questions } : {
             else numberOfWrongAnswers++
         }
 
+        // Retrieve member information to append to the request body
         if(!member || !member.id) {
             console.log(member)
             toast.error("Could not retrieve member information. Please login or try again later")
             return
         }
+
+        // Prepare request body with the quiz result
         const quizResult: QuizResultType = {
+            id: -1,
             member_id: member.id,
             quiz_id: quiz_id,
-            score: Math.round((numberOfCorrectAnswers / (numberOfCorrectAnswers + numberOfWrongAnswers)) * 10000) / 100,
+            number_of_correct_answers: numberOfCorrectAnswers,
+            number_of_questions: numberOfCorrectAnswers + numberOfWrongAnswers,
             answers: answers
         }
         const body = {

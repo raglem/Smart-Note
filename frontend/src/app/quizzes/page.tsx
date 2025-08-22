@@ -1,6 +1,6 @@
 import ErrorPage from "@/components/ErrorPage"
 import QuizzesBoard from "@/components/Quiz/QuizzesBoard"
-import { QuizType } from "@/types/Quizzes"
+import { QuizResultSimpleType, QuizType } from "@/types/Quizzes"
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 
@@ -12,27 +12,32 @@ export default async function QuizPage(){
         redirect('/login');
     }
 
-    const res = await fetch(`${process.env.DJANGO_API}/quizzes/`, {
+    const [quizzesResponse, resultsResponse] = await Promise.all([
+        fetch(`${process.env.DJANGO_API}/quizzes/`, {
         method: 'GET',
         headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${accessToken}`,
         },
-        // Ensure Next.js doesn’t cache the request
         cache: 'no-store',
-    })
+    }), fetch(`${process.env.DJANGO_API}/quizzes/results`, {
+        method: 'GET',
+        headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`,
+        },
+        cache: 'no-store',
+    })])
 
-    if(!res.ok){
+    if(!quizzesResponse.ok || !resultsResponse.ok){
         return (
             <ErrorPage message={"Failed to retrieve quizzes"} />
         )
     }
 
-    const quizzes: QuizType[] = await res.json()
+    const quizzes: QuizType[] = await quizzesResponse.json()
+    const results: QuizResultSimpleType[] = await resultsResponse.json()
     return (
-        <div className="flex flex-col w-full gap-y-8">
-            <h1 className="text-5xl">Quizzes</h1>
-            <QuizzesBoard quizzes={quizzes} />
-        </div>
+        <QuizzesBoard quizzes={quizzes} results={results} />
     )
 }
