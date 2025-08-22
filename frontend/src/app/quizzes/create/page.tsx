@@ -1,15 +1,18 @@
 "use client"
 
-import { useState } from "react";
-import { ClassType, UnitSimpleType, SubunitSimpleType } from "@/types/Sections";
+import { useState, createContext } from "react";
 import UploadImage from "@/components/Quiz/UploadImage";
 import SelectClass from "@/components/Quiz/SelectClass";
 import SelectUnitsSubunits from "@/components/Quiz/SelectUnitsSubunits";
 import CannotSelectUnitsSubunits from "@/components/Quiz/CannotSelectUnitsSubunits";
-import { toast } from "react-toastify";
+import Questions from "@/components/Quiz/Questions";
 import api from "@/utils/api";
+import { toast } from "react-toastify";
 import checkForValidCharacters from "@/utils/checkForValidCharacters";
-import { useRouter } from "next/navigation";
+import { ClassType, UnitSimpleType, SubunitSimpleType } from "@/types/Sections";
+import { MultipleChoiceQuestionType } from "@/types/Quizzes";
+import RelatedUnitSubunitsContext from "@/app/context/RelatedUnitsSubunitsContext";
+import ValidateQuestions from "@/utils/validateQuestions";
 
 export default function CreatePage(){
     const [name, setName] = useState<string>("");
@@ -17,7 +20,7 @@ export default function CreatePage(){
     const [selectedClass, setSelectedClass] = useState<ClassType | null>(null);
     const [selectedUnits, setSelectedUnits] = useState<UnitSimpleType []>([]);
     const [selectedSubunits, setSelectedSubunits] = useState<SubunitSimpleType []>([]);
-    const router = useRouter();
+    const [questions, setQuestions] = useState<MultipleChoiceQuestionType[]>([])
 
     async function handleQuizCreate(){
         if(name.trim().length < 3 || !checkForValidCharacters(name)){
@@ -34,6 +37,14 @@ export default function CreatePage(){
             return
         }
 
+        const questionValidation: { message: string, valid: boolean} = ValidateQuestions(questions)
+        if(!questionValidation.valid){
+            toast.error(questionValidation.message)
+            return
+
+        }
+
+        // Format form data for quiz request
         const fd = new FormData()
         fd.append("name", name)
         fd.append("image", image)
@@ -52,10 +63,24 @@ export default function CreatePage(){
         }
 
         try{
-            const res = await api.post('/quizzes/', fd, {
+            const quizRes = await api.post('/quizzes/', fd, {
                 headers: { 'Content-Type': 'multipart/form-data'}
             })
-            console.log(res.data)
+
+            // Format json data for questions request
+            const questionData = {
+                quiz: quizRes.data.id,
+                questions: questions.map((q, i) => ({
+                    ...q,
+                    id: undefined,
+                    order: i + 1,
+                    related_units: q.related_units.map(u => u.id),
+                    related_subunits: q.related_subunits.map(s => s.id)
+                }))
+            }
+
+            const questionsRes = await api.post('/quizzes/questions/bulk-create/', questionData)
+            console.log(questionsRes.data)
             toast.success("Quiz created successfully")
             // router.push('/quizzes')
         }
@@ -94,6 +119,9 @@ export default function CreatePage(){
                     /> : <CannotSelectUnitsSubunits />}
                 </div>
             </div>
+            <RelatedUnitSubunitsContext.Provider value={{units: selectedUnits, subunits: selectedSubunits}}>
+                <Questions questions={questions} setQuestions={setQuestions} />
+            </RelatedUnitSubunitsContext.Provider>
             <div className="flex flex-row justify-end items-center">
                 <button className="p-2 rounded-md bg-primary text-2xl text-white cursor-pointer" onClick={handleQuizCreate}>
                     Create Quiz
