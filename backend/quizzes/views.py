@@ -1,5 +1,7 @@
 from .models import Quiz, MultipleChoiceQuestion, AnswerChoice, QuizResult
-from .serializers import QuizCreateUpdateSerializer, QuizSerializer, BulkMultipleChoiceQuestionSerializer, SubmitQuizReadSerializer, SubmitQuizWriteSerializer
+from .serializers import QuizCreateUpdateSerializer, QuizSerializer, \
+                            BulkMultipleChoiceQuestionSerializer, QuizResultSerializer, \
+                            SubmitQuizWriteSerializer, QuizResultSimpleSerializer
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser
@@ -61,7 +63,7 @@ class QuestionsAPIView(APIView):
     
 class QuizResultListCreateAPIView(ListCreateAPIView):
     queryset = QuizResult.objects.all()
-    serializer_class = SubmitQuizReadSerializer
+    serializer_class = QuizResultSimpleSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
@@ -75,5 +77,5 @@ class QuizResultListCreateAPIView(ListCreateAPIView):
 
 class QuizResultDetailAPIView(RetrieveAPIView):
     queryset = QuizResult.objects.all()
-    serializer_class = SubmitQuizReadSerializer
+    serializer_class = QuizResultSerializer
     permission_classes = [IsAuthenticated]

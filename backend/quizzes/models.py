@@ -36,17 +36,20 @@ class AnswerChoice(models.Model):
 class QuizResult(models.Model):
     member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='quiz_results')
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name='results')
-    score = models.FloatField()
+    number_of_correct_answers = models.PositiveIntegerField()
+    number_of_questions = models.PositiveIntegerField()
+    date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.member.name} | Quiz: {self.quiz.name} | Score: {round(self.score, 2)}"
+        return f"{self.member.name} | Quiz: {self.quiz.name} | Score: {round(self.number_of_correct_answers / self.number_of_questions, 2)}"
 
-class QuestionAnswer(models.Model):
+class Answer(models.Model):
     RESULT_CHOICES = (
         ('Correct', 'Correct'),
         ('Incorrect', 'Incorrect'),
     )
     result = models.CharField(max_length=10, choices=RESULT_CHOICES)
+    wrong_selected_choice = models.ForeignKey(AnswerChoice, on_delete=models.CASCADE, related_name='selected_answers', null=True, blank=True)
     question = models.ForeignKey(MultipleChoiceQuestion, on_delete=models.CASCADE, related_name='answers')
     quiz_result = models.ForeignKey(QuizResult, on_delete=models.CASCADE, related_name='answers')
     order = models.PositiveIntegerField()
