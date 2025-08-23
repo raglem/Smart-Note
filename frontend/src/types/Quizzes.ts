@@ -30,7 +30,14 @@ export type ChoiceType = {
 }
 export type AnswerType = {
     question_id: number,
+    wrong_selected_choice: number | null,
     result: 'Correct' | 'Incorrect',
+}
+export type QuestionAnswerType = {
+    result: 'Correct' | 'Incorrect',
+    question: number,
+    wrong_selected_choice: number | null,
+    order: number,
 }
 export type QuizResultType = {
     id: number,
@@ -47,8 +54,17 @@ export type QuizResultSimpleType = {
     number_of_questions: number,
     date: string,
 }
-export type QuestionAnswerType = {
-    result: 'Correct' | 'Incorrect',
-    question: number,
-    order: number,
+export type QuizResultDetailType = {
+    id: number,
+    quiz: QuizType,
+    number_of_correct_answers: number,
+    number_of_questions: number,
+    date: string,
+    answers: {
+        id: number,
+        result: 'Correct' | 'Incorrect',
+        wrong_selected_choice: number | null,
+        order: number,
+        question: MultipleChoiceQuestionType
+    }[],
 }

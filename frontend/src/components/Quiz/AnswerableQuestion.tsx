@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 export default function AnswerableQuestion({ question, verifyAnswer }: {
     question: MultipleChoiceQuestionType
-    verifyAnswer: (questionId: number, result: "Correct" | "Incorrect") => void 
+    verifyAnswer: (questionId: number, selectedChoice: number | null, result: "Correct" | "Incorrect") => void 
 }){
     const [selectedChoice, setSelectedChoice] = useState<number | null>(null)
     const [shuffledChoices, setShuffledChoices] = useState<ChoiceType[]>([...question.alternate_choices, { id: 0, choice_text: question.correct_answer}])
@@ -13,7 +13,7 @@ export default function AnswerableQuestion({ question, verifyAnswer }: {
     useEffect(() => {
         if(selectedChoice !== null) {
             const isCorrect = selectedChoice === 0;
-            verifyAnswer(question.id, isCorrect ? "Correct" : "Incorrect");
+            verifyAnswer(question.id, isCorrect ? null : selectedChoice, isCorrect ? "Correct" : "Incorrect");
         }
     }, [selectedChoice])
 
@@ -24,23 +24,23 @@ export default function AnswerableQuestion({ question, verifyAnswer }: {
             let currentIndex = copy.length;
         
             while (currentIndex !== 0) {
-              const randomIndex = Math.floor(Math.random() * currentIndex);
-              currentIndex--;
+                const randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
         
-              const tmp = copy[currentIndex];
-              copy[currentIndex] = copy[randomIndex];
-              copy[randomIndex] = tmp;
+                const tmp = copy[currentIndex];
+                copy[currentIndex] = copy[randomIndex];
+                copy[randomIndex] = tmp;
             }
         
             return copy;
-          }
+        }
         
-          setShuffledChoices(
+        setShuffledChoices(
             shuffleChoices([
-              ...question.alternate_choices,
-              { id: 0, choice_text: question.correct_answer },
+                ...question.alternate_choices,
+                { id: 0, choice_text: question.correct_answer },
             ])
-          );
+        );
     }, [question])
 
     const getLetterChoice = (i: number) => {

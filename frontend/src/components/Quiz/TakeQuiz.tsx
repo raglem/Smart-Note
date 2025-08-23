@@ -7,6 +7,7 @@ import AnswerableQuestion from "./AnswerableQuestion";
 import useMemberStore from "@/stores/memberStore";
 import { toast } from "react-toastify";
 import api from "@/utils/api";
+import { useRouter } from "next/navigation";
 
 export default function TakeQuiz({ quiz_id, questions } : {
     quiz_id: number,
@@ -15,6 +16,7 @@ export default function TakeQuiz({ quiz_id, questions } : {
     const [currentPage, setCurrentPage] = useState<number>(0)
     const [selectedAnswers, setSelectedAnswers] = useState<AnswerType[]>(questions.map(question => ({
         question_id: question.id,
+        wrong_selected_choice: null,
         result: "Incorrect"
     })))
     const paginatedQuestions: MultipleChoiceQuestionType[][] = (() => {
@@ -34,10 +36,12 @@ export default function TakeQuiz({ quiz_id, questions } : {
         fetchMember()
     }, [])
 
-    const verifyAnswer = (questionId: number, result: "Correct" | "Incorrect") => {
+    const router = useRouter()
+
+    const verifyAnswer = (questionId: number, selectedChoice: number | null, result: "Correct" | "Incorrect") => {
         setSelectedAnswers(prevAnswers => 
             prevAnswers.map(answer => 
-                answer.question_id === questionId ? { ...answer, result } : answer
+                answer.question_id === questionId ? { ...answer, wrong_selected_choice: selectedChoice, result } : answer
             )
         )
     }
@@ -48,6 +52,7 @@ export default function TakeQuiz({ quiz_id, questions } : {
         const answers: QuestionAnswerType[] = selectedAnswers.map(answer => ({
             question: answer.question_id,
             result: answer.result,
+            wrong_selected_choice: answer.wrong_selected_choice,
             order: questions.find(q => q.id === answer.question_id)?.order || 0
         }))
         for(const answer of selectedAnswers){
@@ -79,8 +84,8 @@ export default function TakeQuiz({ quiz_id, questions } : {
 
         try{
             const res = await api.post('/quizzes/results/', body)
-            console.log(res.data)
             toast.success('Quiz submitted successfully')
+            router.push('/quizzes/')
         }
         catch(err){
             console.error(err)
