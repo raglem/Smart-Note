@@ -1,4 +1,4 @@
-import { MemberType, SimpleMemberType, NoteCategoryType, FileType } from ".";
+import { SimpleMemberType, FileType } from ".";
 
 export interface ClassType{
     id: number,
@@ -20,6 +20,11 @@ export interface ClassDetailType {
     units: UnitType[];
     files: FileType[];
 }
+export interface ClassSimpleType{
+    id: number;
+    name: string;
+    image: string;
+}
 export interface UnitType {
     id: number;
     class_id: number;
@@ -30,6 +35,10 @@ export interface UnitType {
     subunits: SubunitType[];
     files: FileType[];
 }
+export interface UnitSimpleType{
+    id: number;
+    name: string,
+}
 export interface SubunitType {
     id: number;
     unit_id: number;
@@ -38,6 +47,10 @@ export interface SubunitType {
     order: number;
     members: SimpleMemberType[];
     files: FileType[];
+}
+export interface SubunitSimpleType{
+    id: number;
+    name: string,
 }
 export type SectionType = UnitType | SubunitType;
   
