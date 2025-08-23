@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from .models import Class, File, Unit, Subunit, FileCategory
 from .serializers import (
     BulkFileCreateSerializer, 
-    ClassSerializer, ClassCreateSerializer, ClassSearchSerializer,
+    ClassSerializer, ClassCreateSerializer, ClassSearchSerializer, ClassUnitSubunitSerializer,
     FileCreateSerializer, FileSerializer,
     UnitSerializer, UnitCreateSerializer,
     SubunitSerializerFull, ClassUnitSubunitSerializerFull,
@@ -42,6 +42,11 @@ class ClassDetailAPIView(generics.RetrieveUpdateAPIView):
     """
     queryset = Class.objects.prefetch_related('units')
     serializer_class = ClassUnitSubunitSerializerFull
+    permission_classes = [permissions.IsAuthenticated]
+
+class ClassUnitSubunitAPIView(generics.RetrieveAPIView):
+    queryset = Class.objects.prefetch_related('units')
+    serializer_class = ClassUnitSubunitSerializer
     permission_classes = [permissions.IsAuthenticated]
 
 class ClassSearchAPIView(generics.ListAPIView):

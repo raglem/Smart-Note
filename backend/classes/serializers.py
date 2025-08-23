@@ -149,6 +149,12 @@ class UnitSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'order', 'class_field']
         read_only_fields = ['id']
 
+class UnitNestedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Unit
+        fields = ['id', 'name', 'order']
+        read_only_fields = ['id']
+
 # This serializer is used to serialize the Unit model for a POST or PUT request
 # The class_field should be included in the validated data
 class UnitCreateSerializer(serializers.ModelSerializer):
@@ -244,6 +250,12 @@ class ClassSerializer(serializers.ModelSerializer):
         category = FileCategory.objects.get(class_field=obj)
         return category.files.count()
     
+class ClassSimpleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Class
+        fields = ['id', 'name', 'image']
+        read_only_fields = ['id']
+    
 # This serializer is used for the ClassSearchAPIView, only retrieving minimal information about the class
 class ClassSearchSerializer(serializers.ModelSerializer):
     class Meta:
@@ -286,6 +298,24 @@ class ClassCreateSerializer(serializers.ModelSerializer):
             new_class.members.set(members)
 
         return new_class
+    
+# This serializer displays the units and subunits of a class
+class ClassUnitSubunitSerializer(serializers.ModelSerializer):
+    units = UnitNestedSerializer(read_only=True, many=True)
+    subunits = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Class
+        fields = ['id', 'units', 'subunits']
+        read_only_fields = ['id']
+
+    def get_subunits(self, obj):
+        subunits = []
+        for unit in obj.units.all():
+            for subunit in unit.subunits.all():
+                serialized_subunit = SubunitNestedSerializer(subunit)
+                subunits.append(serialized_subunit.data)
+        return subunits
 
 # This serializer is used to display/edit the full information of the class, including the nested unit and subunit
 class ClassUnitSubunitSerializerFull(serializers.ModelSerializer):
