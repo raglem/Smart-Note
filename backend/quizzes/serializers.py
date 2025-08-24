@@ -1,18 +1,18 @@
 from rest_framework import serializers
-from .models import Quiz, MultipleChoiceQuestion, AnswerChoice, Answer, QuizResult
+from .models import Quiz, MultipleChoiceQuestion, WrongAnswerChoice, MultipleChoiceAnswer, QuizResult
 from classes.models import Class, Unit, Subunit
 from classes.serializers import ClassSimpleSerializer, SubunitNestedSerializer, UnitNestedSerializer
 from users.models import Member
 from users.serializers import SimpleMemberSerializer
 
-class AnswerChoiceSerializer(serializers.ModelSerializer):
+class WrongAnswerChoiceSerializer(serializers.ModelSerializer):
     class Meta:
-        model = AnswerChoice
+        model = WrongAnswerChoice
         fields = ['id', 'choice_text']
         read_only_fields = ['id']
 
 class MultipleChoiceQuestionReadSerializer(serializers.ModelSerializer):
-    alternate_choices = AnswerChoiceSerializer(many=True)
+    alternate_choices = WrongAnswerChoiceSerializer(many=True)
     related_units = UnitNestedSerializer(many=True, read_only=True)
     related_subunits = SubunitNestedSerializer(many=True, read_only=True)
     class Meta:
@@ -21,7 +21,7 @@ class MultipleChoiceQuestionReadSerializer(serializers.ModelSerializer):
         raad_only_fields = ['id', 'question_text', 'order', 'correct_answer', 'alternate_choices']
 
 class MultipleChoiceQuestionWriteSerializer(serializers.ModelSerializer):
-    alternate_choices = AnswerChoiceSerializer(many=True)
+    alternate_choices = WrongAnswerChoiceSerializer(many=True)
     related_units = serializers.PrimaryKeyRelatedField(queryset=Unit.objects.all(), many=True)
     related_subunits = serializers.PrimaryKeyRelatedField(queryset=Subunit.objects.all(), many=True)
     class Meta:
@@ -113,26 +113,26 @@ class QuizSimpleSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'name', 'image', 'related_class', 'related_units', 
                   'related_subunits']
         
-class AnswerReadSerializer(serializers.ModelSerializer):
-    wrong_selected_choice = serializers.PrimaryKeyRelatedField(queryset=AnswerChoice.objects.all(), required=False, allow_null=True)
+class MultipleChoiceAnswerReadSerializer(serializers.ModelSerializer):
+    wrong_selected_choice = serializers.PrimaryKeyRelatedField(queryset=WrongAnswerChoice.objects.all(), required=False, allow_null=True)
     question = MultipleChoiceQuestionReadSerializer(read_only=True)
     class Meta:
-        model = Answer
+        model = MultipleChoiceAnswer
         fields = ['id', 'result', 'wrong_selected_choice', 'question', 'quiz_result', 'order']
         read_only_fields = ['id']
 
-class AnswerWriteSerializer(serializers.ModelSerializer):
-    wrong_selected_choice = serializers.PrimaryKeyRelatedField(queryset=AnswerChoice.objects.all(), required=False, allow_null=True)
+class MultipleChoiceAnswerWriteSerializer(serializers.ModelSerializer):
+    wrong_selected_choice = serializers.PrimaryKeyRelatedField(queryset=WrongAnswerChoice.objects.all(), required=False, allow_null=True)
     question = serializers.PrimaryKeyRelatedField(queryset=MultipleChoiceQuestion.objects.all())
     class Meta:
-        model = Answer
+        model = MultipleChoiceAnswer
         fields = ['id', 'result', 'wrong_selected_choice', 'question', 'quiz_result', 'order']
         read_only_fields = ['id', 'quiz_result']
     
-class SubmitQuizWriteSerializer(serializers.ModelSerializer):
+class QuizResultWriteSerializer(serializers.ModelSerializer):
     member = serializers.PrimaryKeyRelatedField(queryset=Member.objects.all())
     quiz = serializers.PrimaryKeyRelatedField(queryset=Quiz.objects.all())
-    answers = AnswerWriteSerializer(many=True)
+    answers = MultipleChoiceAnswerWriteSerializer(many=True)
     class Meta: 
         model = QuizResult
         fields = ['id', 'member', 'quiz', 'number_of_correct_answers', 'number_of_questions', 'answers']
@@ -142,13 +142,13 @@ class SubmitQuizWriteSerializer(serializers.ModelSerializer):
         submitted_quiz = QuizResult.objects.create(**validated_data)
         for answer_data in answers_data:
             answer_data['quiz_result'] = submitted_quiz
-            Answer.objects.create(**answer_data)
+            MultipleChoiceAnswer.objects.create(**answer_data)
         return submitted_quiz
     
 class QuizResultSerializer(serializers.ModelSerializer):
     member = SimpleMemberSerializer(read_only=True)
     quiz = QuizSerializer(read_only=True)
-    answers = AnswerReadSerializer(many=True)
+    answers = MultipleChoiceAnswerReadSerializer(many=True)
     class Meta: 
         model = QuizResult
         fields = ['id', 'member', 'quiz', 'number_of_correct_answers', 'number_of_questions', 'answers', 'date']

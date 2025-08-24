@@ -29,7 +29,7 @@ class Question(models.Model):
 class MultipleChoiceQuestion(Question):
     correct_answer = models.CharField(max_length=150)
     
-class AnswerChoice(models.Model):
+class WrongAnswerChoice(models.Model):
     question = models.ForeignKey(MultipleChoiceQuestion, on_delete=models.CASCADE, related_name='alternate_choices')
     choice_text = models.CharField(max_length=100) 
 
@@ -49,10 +49,15 @@ class Answer(models.Model):
         ('Incorrect', 'Incorrect'),
     )
     result = models.CharField(max_length=10, choices=RESULT_CHOICES)
-    wrong_selected_choice = models.ForeignKey(AnswerChoice, on_delete=models.CASCADE, related_name='selected_answers', null=True, blank=True)
+
+    class Meta:
+        abstract = True
+
+class MultipleChoiceAnswer(Answer):
+    order = models.PositiveIntegerField()
+    wrong_selected_choice = models.ForeignKey(WrongAnswerChoice, on_delete=models.CASCADE, related_name='selected_answers', null=True, blank=True)
     question = models.ForeignKey(MultipleChoiceQuestion, on_delete=models.CASCADE, related_name='answers')
     quiz_result = models.ForeignKey(QuizResult, on_delete=models.CASCADE, related_name='answers')
-    order = models.PositiveIntegerField()
 
     def __str__(self):
         return f"{self.quiz_result.quiz.name} | Question: {self.question.question_text} | Result: {self.result}"

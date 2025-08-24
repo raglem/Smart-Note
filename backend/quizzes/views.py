@@ -1,7 +1,7 @@
-from .models import Quiz, MultipleChoiceQuestion, AnswerChoice, QuizResult
+from .models import Quiz, MultipleChoiceQuestion, WrongAnswerChoice, QuizResult
 from .serializers import QuizCreateUpdateSerializer, QuizSerializer, \
                             BulkMultipleChoiceQuestionSerializer, QuizResultSerializer, \
-                            SubmitQuizWriteSerializer, QuizResultSimpleSerializer
+                            QuizResultWriteSerializer, QuizResultSimpleSerializer
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser
@@ -58,7 +58,7 @@ class QuestionsAPIView(APIView):
             # Nested creation of AnswerChoice instances
             for choice_data in alternate_choices_data:
                 choice_data['question'] = mcq
-                AnswerChoice.objects.create(**choice_data)
+                WrongAnswerChoice.objects.create(**choice_data)
         return Response({"message": "Questions added successfully."}, status=201)
     
 class QuizResultListCreateAPIView(ListCreateAPIView):
@@ -72,7 +72,7 @@ class QuizResultListCreateAPIView(ListCreateAPIView):
     
     def get_serializer_class(self):
         if self.request.method == 'POST':
-            return SubmitQuizWriteSerializer
+            return QuizResultWriteSerializer
         return super().get_serializer_class()
 
 class QuizResultDetailAPIView(RetrieveAPIView):
