@@ -1,5 +1,7 @@
 from rest_framework import serializers
-from .models import Quiz, MultipleChoiceQuestion, WrongAnswerChoice, MultipleChoiceAnswer, QuizResult
+from .models import Quiz, MultipleChoiceQuestion, WrongAnswerChoice, MultipleChoiceAnswer, \
+                    FreeResponseQuestion, FreeResponseAnswer, FreeResponseRubric, \
+                    FreeResponseGradedRubric, QuizResult
 from classes.models import Class, Unit, Subunit
 from classes.serializers import ClassSimpleSerializer, SubunitNestedSerializer, UnitNestedSerializer
 from users.models import Member
@@ -35,6 +37,58 @@ class BulkMultipleChoiceQuestionSerializer(serializers.Serializer):
     class Meta:
         model = MultipleChoiceQuestion
         fields = ['quiz', 'questions']
+
+class MultipleChoiceAnswerReadSerializer(serializers.ModelSerializer):
+    wrong_selected_choice = serializers.PrimaryKeyRelatedField(queryset=WrongAnswerChoice.objects.all(), required=False, allow_null=True)
+    question = MultipleChoiceQuestionReadSerializer(read_only=True)
+    class Meta:
+        model = MultipleChoiceAnswer
+        fields = ['id', 'result', 'wrong_selected_choice', 'question', 'quiz_result', 'order']
+        read_only_fields = ['id']
+
+class MultipleChoiceAnswerWriteSerializer(serializers.ModelSerializer):
+    wrong_selected_choice = serializers.PrimaryKeyRelatedField(queryset=WrongAnswerChoice.objects.all(), required=False, allow_null=True)
+    question = serializers.PrimaryKeyRelatedField(queryset=MultipleChoiceQuestion.objects.all())
+    class Meta:
+        model = MultipleChoiceAnswer
+        fields = ['id', 'result', 'wrong_selected_choice', 'question', 'quiz_result', 'order']
+        read_only_fields = ['id', 'quiz_result']
+
+class FreeResponseQuestionReadSerializer(serializers.ModelSerializer):
+    related_units = UnitNestedSerializer(many=True, read_only=True)
+    related_subunits = SubunitNestedSerializer(many=True, read_only=True)
+    class Meta:
+        model = FreeResponseQuestion
+        fields = ['id', 'question_text', 'order', 'related_units', 'related_subunits', 'total_possible_points', 'correct_answer']
+        raad_only_fields = ['id', 'question_text', 'order', 'correct_answer']
+
+class FreeResponseRubricSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FreeResponseRubric
+        fields = ['id', 'reasonning_text', 'possible_points']
+        read_only_fields = ['id']
+
+class FreeResponseQuestionWriteSerializer(serializers.ModelSerializer):
+    related_units = serializers.PrimaryKeyRelatedField(queryset=Unit.objects.all(), many=True)
+    related_subunits = serializers.PrimaryKeyRelatedField(queryset=Subunit.objects.all(), many=True)
+    rubrics = FreeResponseRubricSerializer(many=True)
+    class Meta:
+        model = FreeResponseQuestion
+        fields = ['id', 'question_text', 'order', 'related_units', 'related_subunits', 'total_possible_points', 'correct_answer']
+        read_only_fields = ['id']
+
+    def create(self, validated_data):
+        related_units = validated_data.pop('related_units', [])
+        related_subunits = validated_data.pop('related_subunits', [])
+        rubrics = validated_data.pop('rubrics', [])
+        free_response_question = FreeResponseQuestion.objects.create(**validated_data)
+        free_response_question.related_units.set(related_units)
+        free_response_question.related_subunits.set(related_subunits)
+        for rubric_data in rubrics:
+            rubric_data['question'] = free_response_question
+            FreeResponseRubric.objects.create(**rubric_data)
+        free_response_question.save()
+        return free_response_question
 
 class QuizCreateUpdateSerializer(serializers.ModelSerializer):
     related_class = serializers.PrimaryKeyRelatedField(queryset=Class.objects.all())
@@ -93,7 +147,8 @@ class QuizSerializer(serializers.ModelSerializer):
     related_class = ClassSimpleSerializer(read_only=True)
     related_units = UnitNestedSerializer(read_only=True, many=True)
     related_subunits = SubunitNestedSerializer(read_only=True, many=True)
-    questions = MultipleChoiceQuestionReadSerializer(many=True, read_only=True)
+    mcq_questions = MultipleChoiceQuestionReadSerializer(many=True, read_only=True)
+    frq_questions = FreeResponseQuestionReadSerializer(many=True, read_only=True)
     class Meta:
         model = Quiz
         fields = ['id', 'name', 'image', 'owner', 'related_class', 'related_units', 
@@ -112,22 +167,6 @@ class QuizSimpleSerializer(serializers.ModelSerializer):
                   'related_subunits']
         read_only_fields = ['id', 'name', 'image', 'related_class', 'related_units', 
                   'related_subunits']
-        
-class MultipleChoiceAnswerReadSerializer(serializers.ModelSerializer):
-    wrong_selected_choice = serializers.PrimaryKeyRelatedField(queryset=WrongAnswerChoice.objects.all(), required=False, allow_null=True)
-    question = MultipleChoiceQuestionReadSerializer(read_only=True)
-    class Meta:
-        model = MultipleChoiceAnswer
-        fields = ['id', 'result', 'wrong_selected_choice', 'question', 'quiz_result', 'order']
-        read_only_fields = ['id']
-
-class MultipleChoiceAnswerWriteSerializer(serializers.ModelSerializer):
-    wrong_selected_choice = serializers.PrimaryKeyRelatedField(queryset=WrongAnswerChoice.objects.all(), required=False, allow_null=True)
-    question = serializers.PrimaryKeyRelatedField(queryset=MultipleChoiceQuestion.objects.all())
-    class Meta:
-        model = MultipleChoiceAnswer
-        fields = ['id', 'result', 'wrong_selected_choice', 'question', 'quiz_result', 'order']
-        read_only_fields = ['id', 'quiz_result']
     
 class QuizResultWriteSerializer(serializers.ModelSerializer):
     member = serializers.PrimaryKeyRelatedField(queryset=Member.objects.all())
