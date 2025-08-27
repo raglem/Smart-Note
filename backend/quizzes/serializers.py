@@ -54,19 +54,20 @@ class MultipleChoiceAnswerWriteSerializer(serializers.ModelSerializer):
         fields = ['id', 'result', 'wrong_selected_choice', 'question', 'quiz_result', 'order']
         read_only_fields = ['id', 'quiz_result']
 
-class FreeResponseQuestionReadSerializer(serializers.ModelSerializer):
-    related_units = UnitNestedSerializer(many=True, read_only=True)
-    related_subunits = SubunitNestedSerializer(many=True, read_only=True)
-    class Meta:
-        model = FreeResponseQuestion
-        fields = ['id', 'question_text', 'order', 'related_units', 'related_subunits', 'total_possible_points', 'correct_answer']
-        raad_only_fields = ['id', 'question_text', 'order', 'correct_answer']
-
 class FreeResponseRubricSerializer(serializers.ModelSerializer):
     class Meta:
         model = FreeResponseRubric
-        fields = ['id', 'reasonning_text', 'possible_points']
+        fields = ['id', 'reasoning_text', 'possible_points']
         read_only_fields = ['id']
+
+class FreeResponseQuestionReadSerializer(serializers.ModelSerializer):
+    related_units = UnitNestedSerializer(many=True, read_only=True)
+    related_subunits = SubunitNestedSerializer(many=True, read_only=True)
+    rubrics = FreeResponseRubricSerializer(many=True, read_only=True)
+    class Meta:
+        model = FreeResponseQuestion
+        fields = ['id', 'question_text', 'order', 'related_units', 'related_subunits', 'total_possible_points', 'correct_answer', 'rubrics']
+        read_only_fields = ['id', 'question_text', 'order', 'correct_answer']
 
 class FreeResponseQuestionWriteSerializer(serializers.ModelSerializer):
     related_units = serializers.PrimaryKeyRelatedField(queryset=Unit.objects.all(), many=True)
@@ -74,7 +75,8 @@ class FreeResponseQuestionWriteSerializer(serializers.ModelSerializer):
     rubrics = FreeResponseRubricSerializer(many=True)
     class Meta:
         model = FreeResponseQuestion
-        fields = ['id', 'question_text', 'order', 'related_units', 'related_subunits', 'total_possible_points', 'correct_answer']
+        fields = ['id', 'question_text', 'order', 'related_units', 
+                  'related_subunits', 'total_possible_points', 'correct_answer', 'rubrics']
         read_only_fields = ['id']
 
     def create(self, validated_data):
@@ -89,6 +91,26 @@ class FreeResponseQuestionWriteSerializer(serializers.ModelSerializer):
             FreeResponseRubric.objects.create(**rubric_data)
         free_response_question.save()
         return free_response_question
+    
+class BulkFreeResponseQuestionSerializer(serializers.ModelSerializer):
+    questions = FreeResponseQuestionWriteSerializer(many=True)
+    quiz = serializers.PrimaryKeyRelatedField(queryset=Quiz.objects.all())
+    class Meta:
+        model = FreeResponseQuestion
+        fields = ['quiz', 'questions']
+
+class FreeResponseAnswerReadSerializer(serializers.ModelSerializer):
+    question = FreeResponseQuestionReadSerializer(read_only=True)
+    class Meta:
+        model = FreeResponseAnswer
+        fields = ['id', 'status', 'user_answer', 'question', 'order']
+
+class FreeResponseAnswerWriteSerializer(serializers.ModelSerializer):
+    question = serializers.PrimaryKeyRelatedField(queryset=FreeResponseQuestion.objects.all())
+    class Meta:
+        model = FreeResponseAnswer
+        fields = ['id', 'user_answer', 'question', 'order']
+        read_only_fields = ['id']
 
 class QuizCreateUpdateSerializer(serializers.ModelSerializer):
     related_class = serializers.PrimaryKeyRelatedField(queryset=Class.objects.all())
@@ -152,9 +174,9 @@ class QuizSerializer(serializers.ModelSerializer):
     class Meta:
         model = Quiz
         fields = ['id', 'name', 'image', 'owner', 'related_class', 'related_units', 
-                  'related_subunits', 'questions']
+                  'related_subunits', 'mcq_questions', 'frq_questions']
         read_only_fields = ['id', 'name', 'image', 'related_class', 'related_units', 
-                  'related_subunits', 'questions']
+                  'related_subunits', 'mcq_questions', 'frq_questions']
         
 class QuizSimpleSerializer(serializers.ModelSerializer):
     owner = SimpleMemberSerializer(read_only=True)
@@ -171,10 +193,11 @@ class QuizSimpleSerializer(serializers.ModelSerializer):
 class QuizResultWriteSerializer(serializers.ModelSerializer):
     member = serializers.PrimaryKeyRelatedField(queryset=Member.objects.all())
     quiz = serializers.PrimaryKeyRelatedField(queryset=Quiz.objects.all())
-    answers = MultipleChoiceAnswerWriteSerializer(many=True)
+    mcq_answers = MultipleChoiceAnswerWriteSerializer(many=True)
+    frq_answers = FreeResponseAnswerWriteSerializer(many=True)
     class Meta: 
         model = QuizResult
-        fields = ['id', 'member', 'quiz', 'number_of_correct_answers', 'number_of_questions', 'answers']
+        fields = ['id', 'member', 'quiz', 'points_awarded', 'total_possible_points', 'mcq_answers', 'frq_answers']
         read_only_fields = ['id']
     def create(self, validated_data):
         answers_data = validated_data.pop('answers', [])
@@ -187,15 +210,16 @@ class QuizResultWriteSerializer(serializers.ModelSerializer):
 class QuizResultSerializer(serializers.ModelSerializer):
     member = SimpleMemberSerializer(read_only=True)
     quiz = QuizSerializer(read_only=True)
-    answers = MultipleChoiceAnswerReadSerializer(many=True)
+    mcq_answers = MultipleChoiceAnswerReadSerializer(many=True, read_only=True)
+    frq_answers = FreeResponseAnswerReadSerializer(many=True, read_only=True)
     class Meta: 
         model = QuizResult
-        fields = ['id', 'member', 'quiz', 'number_of_correct_answers', 'number_of_questions', 'answers', 'date']
+        fields = ['id', 'member', 'quiz', 'points_awarded', 'total_possible_points', 'mcq_answers', 'frq_answers', 'date']
         read_only_fields = ['id']
 
 class QuizResultSimpleSerializer(serializers.ModelSerializer):
     quiz = QuizSimpleSerializer(read_only=True)
     class Meta: 
         model = QuizResult
-        fields = ['id', 'quiz', 'number_of_correct_answers', 'number_of_questions', 'date']
+        fields = ['id', 'quiz', 'points_awarded', 'total_possible_points', 'date']
         read_only_fields = ['id']

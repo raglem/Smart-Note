@@ -46,12 +46,21 @@ class WrongAnswerChoice(models.Model):
 class QuizResult(models.Model):
     member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='quiz_results')
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name='results')
-    number_of_correct_answers = models.PositiveIntegerField()
-    number_of_questions = models.PositiveIntegerField()
+    points_awarded = models.PositiveIntegerField()
+    total_possible_points = models.PositiveIntegerField()
     date = models.DateTimeField(auto_now_add=True)
 
+    @property
+    def free_response_answers_status(self):
+        for answer in self.frq_answers:
+            if answer.status == 'Pending':
+                return 'Pending'
+        return 'Graded'
+
     def __str__(self):
-        return f"{self.member.name} | Quiz: {self.quiz.name} | Score: {round(self.number_of_correct_answers / self.number_of_questions, 2)}"
+        if(self.total_possible_points == 0):
+            return f"{self.member.name} | Quiz: {self.quiz.name} | Score: Error (Division by 0)"
+        return f"{self.member.name} | Quiz: {self.quiz.name} | Score: {round(self.points_awarded / self.total_possible_points, 2)}"
 
 class MultipleChoiceAnswer(models.Model):
     RESULT_CHOICES = (
@@ -62,7 +71,7 @@ class MultipleChoiceAnswer(models.Model):
     order = models.PositiveIntegerField()
     wrong_selected_choice = models.ForeignKey(WrongAnswerChoice, on_delete=models.CASCADE, related_name='selected_answers', null=True, blank=True)
     question = models.ForeignKey(MultipleChoiceQuestion, on_delete=models.CASCADE, related_name='answers')
-    quiz_result = models.ForeignKey(QuizResult, on_delete=models.CASCADE, related_name='answers')
+    quiz_result = models.ForeignKey(QuizResult, on_delete=models.CASCADE, related_name='mcq_answers')
 
     def __str__(self):
         return f"{self.quiz_result.quiz.name} | Question: {self.question.question_text} | Result: {self.result}"
@@ -76,6 +85,7 @@ class FreeResponseAnswer(models.Model):
     user_answer = models.TextField(max_length=1000)
     order = models.PositiveIntegerField()
     question = models.ForeignKey(FreeResponseQuestion, on_delete=models.CASCADE, related_name='answers')
+    quiz_result = models.ForeignKey(QuizResult, on_delete=models.CASCADE, related_name='frq_answers')
     
 class FreeResponseRubric(models.Model):
     reasoning_text = models.TextField(max_length=1000)
