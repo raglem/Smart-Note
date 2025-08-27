@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { QuizResultSimpleType, QuizType } from "@/types/Quizzes";
 import QuizCard from "./QuizCard";
 import QuizResultCard from "./QuizResultCard";
+import { IoMdAddCircle } from "react-icons/io";
+import Link from "next/link";
 
 type ClassType = {
     id: number,
@@ -41,7 +43,15 @@ export default function QuizzesBoard({quizzes, results}: {quizzes: QuizType[], r
     return (
         <div className="flex flex-col items-center w-full gap-y-8">
             <header className="flex flex-row justify-between items-center w-full">
-                <h1 className="text-5xl">Quizzes</h1>
+                <div className="flex flex-col gap-y-2">
+                    <h1 className="ml-0">Quizzes</h1>
+                    <Link href="/quizzes/create/">
+                        <button className="flex flex-row justify-between items-center gap-x-2 rounded-md text-white bg-primary py-2 px-4 hover:cursor-pointer">
+                            <IoMdAddCircle />
+                            Create Quiz
+                        </button>
+                    </Link>
+                </div>
                 <div className="flex flex-row items-center w-fit bg-white rounded-md border-1 border-primary">
                     <button 
                         className={`p-2 ${display==='quizzes' ? 'bg-primary text-white' : 'text-black'} cursor-pointer hover:opacity-80`} 

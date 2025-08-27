@@ -31,7 +31,8 @@ export default async function QuizResultPage({ params }: { params: { id: string 
     }
 
     const result: QuizResultDetailType = await res.json()
-    const sortedAnswers = result.answers.sort((a, b) => a.order - b.order)
+    console.log(result)
+    const sortedAnswers = result.mcq_answers.sort((a, b) => a.order - b.order)
     return (
         <div className="flex flex-col h-full w-full max-w-[1280px] gap-y-5">
             <header className="flex flex-col gap-4 pb-4 border-b-1 border-b-primary">
@@ -50,7 +51,7 @@ export default async function QuizResultPage({ params }: { params: { id: string 
                     ))}
                 </div>
             </header>
-            <Results answers={sortedAnswers} />
+            {/* <Results answers={sortedAnswers} /> */}
         </div>
     )
 }

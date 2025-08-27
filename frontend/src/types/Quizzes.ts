@@ -9,62 +9,88 @@ export type QuizType = {
     related_class: ClassSimpleType,
     related_units: UnitSimpleType[],
     related_subunits: SubunitSimpleType[]
-    questions: MultipleChoiceQuestionType[],
+    mcq_questions: MultipleChoiceQuestionType[],
+    frq_questions: FreeResponseQuestionType[],
 }
+export type QuestionType = MultipleChoiceQuestionType | FreeResponseQuestionType
 export type MultipleChoiceQuestionType = {
     id: number,
     question_text: string,
+    question_category: "MultipleChoice",
     related_units: UnitSimpleType[],
     related_subunits: SubunitSimpleType[],
     order: number,
     correct_answer: string,
     alternate_choices: AlternateChoiceType[]
 }
+export type FreeResponseQuestionType = {
+    id: number,
+    question_text: string,
+    question_category: "FreeResponse",
+    related_units: UnitSimpleType[],
+    related_subunits: SubunitSimpleType[],
+    order: number,
+    correct_answer: string,
+    total_possible_points: number,
+    rubrics: FreeResponseQuestionRubric[]
+}
 export type AlternateChoiceType = {
     id: number,
     choice_text: string
 }
-export type ChoiceType = {
+export type FreeResponseQuestionRubric = {
     id: number,
-    choice_text: string
+    reasoning_text: string,
+    possible_points: number,
+    question: number
 }
-export type AnswerType = {
+export type AnswerType = MCQAnswerType | FRQAnswerType
+export type MCQAnswerType = {
     question_id: number,
     wrong_selected_choice: number | null,
-    result: 'Correct' | 'Incorrect',
+    result: 'Correct' | 'Incorrect'
+    answer_category: "MultipleChoice"
 }
-export type QuestionAnswerType = {
-    result: 'Correct' | 'Incorrect',
+export type FRQAnswerType = {
+    question_id: number,
+    user_answer: string,
+    total_possible_points: number,
+    answer_category: "FreeResponse"
+}
+export type MCQFormattedAnswerType = {
     question: number,
     wrong_selected_choice: number | null,
+    result: 'Correct' | 'Incorrect'
+    order: number
+}
+export type FRQFormattedAnswerType = {
+    question: number,
+    user_answer: string,
     order: number,
 }
+export type FormattedAnswerType = MCQFormattedAnswerType | FRQFormattedAnswerType
 export type QuizResultType = {
     id: number,
     member_id: number,
     quiz_id: number,
-    number_of_correct_answers: number,
-    number_of_questions: number,
-    answers: QuestionAnswerType[],
+    points_awarded: number,
+    total_possible_points: number,
+    mcq_answers: FormattedAnswerType[],
+    frq_answers: FormattedAnswerType[],
 }
 export type QuizResultSimpleType = {
     id: number,
     quiz: QuizType,
-    number_of_correct_answers: number,
-    number_of_questions: number,
+    points_awarded: number,
+    total_possible_points: number,
     date: string,
 }
 export type QuizResultDetailType = {
     id: number,
     quiz: QuizType,
-    number_of_correct_answers: number,
-    number_of_questions: number,
+    points_awarded: number,
+    total_possible_points: number,
     date: string,
-    answers: {
-        id: number,
-        result: 'Correct' | 'Incorrect',
-        wrong_selected_choice: number | null,
-        order: number,
-        question: MultipleChoiceQuestionType
-    }[],
+    mcq_answers: FormattedAnswerType[],
+    frq_answers: FormattedAnswerType[]
 }

@@ -1,6 +1,6 @@
 import ErrorPage from "@/components/ErrorPage";
-import TakeQuiz from "@/components/Quiz/TakeQuiz";
-import { QuizType } from "@/types/Quizzes";
+import TakeQuiz from "@/components/Quiz/TakeQuiz/TakeQuiz";
+import { FreeResponseQuestionType, MultipleChoiceQuestionType, QuestionType, QuizType } from "@/types/Quizzes";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { TimerProvider } from "@/app/context/TimerContext";
@@ -32,6 +32,15 @@ export default async function Page({ params }: { params: { id: string }}){
     }
 
     const quiz: QuizType = await res.json()
+    const formattedMultipleChoiceQuestions: MultipleChoiceQuestionType[] = quiz.mcq_questions.map(mcq => ({
+        ...mcq,
+        question_category: "MultipleChoice"
+    }))
+    const formattedFreeResponseQuestions: FreeResponseQuestionType[] = quiz.frq_questions.map(frq => ({
+        ...frq,
+        question_category: "FreeResponse"
+    }))
+    const questions: QuestionType[] = [...formattedMultipleChoiceQuestions, ...formattedFreeResponseQuestions]
     return (
         <div className="flex flex-col h-full w-full max-w-[1280px] gap-y-5">
             <TimerProvider>
@@ -56,7 +65,7 @@ export default async function Page({ params }: { params: { id: string }}){
                         <QuizTimer />
                     </div>
                 </div>
-                <TakeQuiz quiz_id={quiz.id} questions={quiz.questions} />
+                <TakeQuiz quiz_id={quiz.id} questions={questions} />
             </TimerProvider>
         </div>
     )
