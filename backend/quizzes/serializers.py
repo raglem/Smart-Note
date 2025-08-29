@@ -126,7 +126,7 @@ class FreeResponseAnswerReadSerializer(serializers.ModelSerializer):
             return 0
         rubrics = instance.question.rubrics.all()
         for rubric in rubrics:
-            graded_rubric = FreeResponseGradedRubric.objects.get(rubric=rubric)
+            graded_rubric = FreeResponseGradedRubric.objects.get(rubric=rubric, answer=instance)
             if graded_rubric:
                 points_awarded += graded_rubric.points_awarded
         return points_awarded
@@ -252,7 +252,11 @@ class QuizResultReadSerializer(serializers.ModelSerializer):
     status = serializers.SerializerMethodField()
     class Meta: 
         model = QuizResult
-        fields = ['id', 'member', 'quiz', 'points_awarded', 'total_possible_points', 'mcq_answers', 'frq_answers', 'date', 'status']
+        fields = [
+            'id', 'member', 'quiz', 'points_awarded', 
+            'total_possible_points', 'mcq_answers', 'frq_answers', 
+            'date', 'status'
+        ]
         read_only_fields = ['id']
     def get_status(self, obj):
         for frq_answer in obj.frq_answers.all():
