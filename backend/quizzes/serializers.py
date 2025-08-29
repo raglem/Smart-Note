@@ -112,6 +112,26 @@ class FreeResponseAnswerWriteSerializer(serializers.ModelSerializer):
         fields = ['id', 'user_answer', 'question', 'order']
         read_only_fields = ['id']
 
+class FreeResponseGradedRubricSerializer(serializers.ModelSerializer):
+    # Writable on input
+    rubric = serializers.PrimaryKeyRelatedField(queryset=FreeResponseRubric.objects.all(), write_only=True)
+    answer = FreeResponseAnswerReadSerializer(read_only=True)
+
+    class Meta:
+        model = FreeResponseGradedRubric
+        fields = ['id', 'points_awarded', 'rubric', 'answer']
+        read_only_fields = ['id']
+
+    # Readable on GET request
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['rubric'] = FreeResponseRubricSerializer(instance.rubric).data
+        return representation
+    
+class FreeResponseGradedAnswerSerializer(serializers.Serializer):
+    answer = serializers.PrimaryKeyRelatedField(queryset=FreeResponseAnswer.objects.all())
+    graded_rubrics = FreeResponseGradedRubricSerializer(many=True)
+
 class QuizCreateUpdateSerializer(serializers.ModelSerializer):
     related_class = serializers.PrimaryKeyRelatedField(queryset=Class.objects.all())
     related_units = serializers.PrimaryKeyRelatedField(queryset=Unit.objects.all(), many=True)
@@ -212,10 +232,16 @@ class QuizResultSerializer(serializers.ModelSerializer):
     quiz = QuizSerializer(read_only=True)
     mcq_answers = MultipleChoiceAnswerReadSerializer(many=True, read_only=True)
     frq_answers = FreeResponseAnswerReadSerializer(many=True, read_only=True)
+    status = serializers.SerializerMethodField()
     class Meta: 
         model = QuizResult
-        fields = ['id', 'member', 'quiz', 'points_awarded', 'total_possible_points', 'mcq_answers', 'frq_answers', 'date']
+        fields = ['id', 'member', 'quiz', 'points_awarded', 'total_possible_points', 'mcq_answers', 'frq_answers', 'date', 'status']
         read_only_fields = ['id']
+    def get_status(self, obj):
+        for frq_answer in obj.frq_answers.all():
+            if frq_answer.status == 'Pending':
+                return 'Pending'
+            return 'Graded'
 
 class QuizResultSimpleSerializer(serializers.ModelSerializer):
     quiz = QuizSimpleSerializer(read_only=True)

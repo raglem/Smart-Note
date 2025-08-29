@@ -1,9 +1,10 @@
-from .models import Quiz, MultipleChoiceQuestion, FreeResponseQuestion, \
+from django.shortcuts import get_object_or_404
+from .models import FreeResponseGradedRubric, Quiz, MultipleChoiceQuestion, FreeResponseQuestion, \
                     MultipleChoiceAnswer, FreeResponseAnswer, \
                     WrongAnswerChoice, QuizResult, FreeResponseRubric
 from .serializers import QuizCreateUpdateSerializer, QuizSerializer, QuizSimpleSerializer, \
-                            BulkMultipleChoiceQuestionSerializer, BulkFreeResponseQuestionSerializer, QuizResultSerializer, \
-                            QuizResultWriteSerializer, QuizResultSimpleSerializer
+                            BulkMultipleChoiceQuestionSerializer, BulkFreeResponseQuestionSerializer, FreeResponseGradedAnswerSerializer, \
+                            QuizResultSerializer, QuizResultWriteSerializer, QuizResultSimpleSerializer
 from rest_framework.generics import ListAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser
@@ -85,7 +86,7 @@ class QuestionsAPIView(APIView):
             frq.save()
         return Response({"message": "Questions added successfully."}, status=201)
     
-class QuizSubmit(APIView):
+class QuizSubmitAPIView(APIView):
     def post(self, request):
         serializer = QuizResultWriteSerializer(data=request.data)
         if not serializer.is_valid():
@@ -104,7 +105,27 @@ class QuizSubmit(APIView):
             answer_data['quiz_result'] = submitted_quiz
             FreeResponseAnswer.objects.create(**answer_data)
         return Response({"message": "Quiz submitted successfully."}, status=201)
-    
+
+class QuizGradeAPIView(APIView):
+    def post(self, request):
+        answers = request.data.get("answers", [])
+        serializer = FreeResponseGradedAnswerSerializer(data=answers, many=True)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=400)
+        validated_data = serializer.validated_data
+        answers_data = validated_data
+        for answer_data in answers_data:
+            answer = answer_data['answer']
+            if answer.status == 'Graded':
+                continue    # Do NOT grade the same answer twice
+            graded_rubrics_data = answer_data['graded_rubrics']
+            for graded_rubric_data in graded_rubrics_data:
+                graded_rubric_data['answer'] = answer
+                FreeResponseGradedRubric.objects.create(**graded_rubric_data)
+            answer.status = 'Graded'
+            answer.save()
+        return Response({"message": "Quiz graded successfully."}, status=201)
+
 class QuizResultListAPIView(ListAPIView):
     queryset = QuizResult.objects.all()
     serializer_class = QuizResultSimpleSerializer
