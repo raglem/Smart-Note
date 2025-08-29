@@ -18,8 +18,8 @@ export default function Results({ answers }: { answers: AnswerResultType[]}){
         return pages
     })()
     return (
-        <div className="relative flex flex-col h-full w-full gap-y-4">
-            <div className="flex flex-col w-full gap-y-4">
+        <div className="flex flex-col h-full w-full gap-y-8">
+            <div className="flex flex-col min-h-[calc(100vh-450px)] w-full gap-y-4">
                 { paginatedAnswers[currentPage].map(answer => 
                     answer.answer_category === 'MultipleChoice' ? <div className="flex w-full border-b-1 border-primary" key={answer.id}>
                         <MCQAnswerResult answer={answer} />
@@ -28,7 +28,7 @@ export default function Results({ answers }: { answers: AnswerResultType[]}){
                     </div> : null)
                 )}
             </div>
-            <div className="absolute bottom-0 flex flex-col gap-y-2 w-full">
+            <div className="flex flex-col gap-y-2 w-full">
                 <div className="flex flex-row justify-end items-center">
                     <Link href="/quizzes">
                         <button className="p-2 rounded-md text-white bg-primary cursor-pointer hover:opacity-80">

@@ -1,6 +1,6 @@
 import ErrorPage from "@/components/ErrorPage"
 import QuizzesBoard from "@/components/Quiz/QuizzesBoard"
-import { QuizResultSimpleType, QuizType } from "@/types/Quizzes"
+import { QuizResultSimpleType, QuizSimpleType, QuizType } from "@/types/Quizzes"
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 
@@ -35,7 +35,7 @@ export default async function QuizPage(){
         )
     }
 
-    const quizzes: QuizType[] = await quizzesResponse.json()
+    const quizzes: QuizSimpleType[] = await quizzesResponse.json()
     const results: QuizResultSimpleType[] = await resultsResponse.json()
     return (
         <QuizzesBoard quizzes={quizzes} results={results} />

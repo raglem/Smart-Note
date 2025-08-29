@@ -12,6 +12,16 @@ export type QuizType = {
     mcq_questions: MultipleChoiceQuestionType[],
     frq_questions: FreeResponseQuestionType[],
 }
+export type QuizSimpleType = {
+    id: number,
+    name: string,
+    image: File,
+    owner: SimpleMemberType,
+    related_class: ClassSimpleType,
+    related_units: UnitSimpleType[],
+    related_subunits: SubunitSimpleType[]
+    total_questions: number
+}
 export type QuestionType = MultipleChoiceQuestionType | FreeResponseQuestionType
 export type MultipleChoiceQuestionType = {
     id: number,
@@ -43,6 +53,12 @@ export type FreeResponseQuestionRubric = {
     reasoning_text: string,
     possible_points: number,
     question: number
+}
+export type FreeResponseQuestionGradedRubric = {
+    id: number,
+    reasoning_text: string,
+    points_awarded: number,
+    possible_points: number,
 }
 export type AnswerType = MCQAnswerType | FRQAnswerType
 export type MCQAnswerType = {
@@ -84,6 +100,7 @@ export type QuizResultSimpleType = {
     points_awarded: number,
     total_possible_points: number,
     date: string,
+    status: 'Pending' | 'Graded'
 }
 export type QuizResultDetailType = {
     id: number,
@@ -109,6 +126,9 @@ export type FRQAnswerResultType = {
     status: 'Pending' | 'Graded',
     user_answer: string,
     question: FreeResponseQuestionType,
+    points_awarded: number,
+    total_possible_points: number,
+    graded_rubrics: FreeResponseQuestionGradedRubric[]
     order: number,
     answer_category: "FreeResponse"
 }

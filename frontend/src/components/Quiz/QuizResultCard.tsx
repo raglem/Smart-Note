@@ -2,6 +2,7 @@
 import { QuizResultSimpleType } from "@/types/Quizzes"
 import Link from "next/link";
 import { IoIosCheckmarkCircle, IoMdCloseCircle } from "react-icons/io";
+import { FaRegClock } from "react-icons/fa6";
 
 export default function QuizResultCard({ result }: {
     result: QuizResultSimpleType
@@ -10,8 +11,9 @@ export default function QuizResultCard({ result }: {
     return (
         <div className="card rounded-md">
             <header className="flex flex-row justify-between items-end bg-primary text-white px-2 py-5">
-                <div className="flex flex-row gap-x-2">
-                        { score > 70 ? <IoIosCheckmarkCircle className="text-3xl text-green-500" /> : <IoMdCloseCircle className="text-3xl text-red-500" /> }
+                <div className="flex flex-row items-center gap-x-2">
+                        { result.status === 'Pending' && <FaRegClock className="text-3xl text-yellow-500" />}
+                        { result.status === 'Graded' && (score > 70 ? <IoIosCheckmarkCircle className="text-3xl text-green-500" /> : <IoMdCloseCircle className="text-3xl text-red-500" />) }
                         <h2 className="text-2xl">{result.quiz.name}</h2>
                     </div>
                 <span className="text-2xl">{score}%</span>

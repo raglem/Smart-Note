@@ -10,7 +10,7 @@ export default function MCQAnswerResult({answer}: {answer: MCQAnswerResultType})
     return (
         <div className="flex flex-col gap-y-2 w-full py-2">
             <header className="flex flex-row justify-between gap-x-2">
-                <h2 className="text-2xl">{`${answer.order}) `}{ answer.question.question_text }</h2>
+                <h2 className="text-2xl">Q{answer.question.order}: { answer.question.question_text }</h2>
                 {answer.result === 'Correct' && <span className="text-xl">
                     <span className="text-primary">1</span>
                     <span className="text-black">/1</span>

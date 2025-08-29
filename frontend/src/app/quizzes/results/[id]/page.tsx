@@ -32,7 +32,6 @@ export default async function QuizResultPage({ params }: { params: { id: string 
     }
 
     const result: QuizResultDetailType = await res.json()
-    console.log(result)
     const formattedMCQs: MCQAnswerResultType[]  = result.mcq_answers.map(answer => ({ ...answer, answer_category: "MultipleChoice" }))
     const formattedFRQs: FRQAnswerResultType[] = result.frq_answers.map(answer => ({ ...answer, answer_category: "FreeResponse" }))
     const sortedAnswers = [...formattedMCQs, ...formattedFRQs].sort((a, b) => a.order - b.order)

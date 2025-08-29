@@ -18,5 +18,4 @@ export default function ErrorPage({ message }: { message?: string}){
           </div>
         </div>
       );
-      
 }
