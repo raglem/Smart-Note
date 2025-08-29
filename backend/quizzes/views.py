@@ -4,7 +4,7 @@ from .models import FreeResponseGradedRubric, Quiz, MultipleChoiceQuestion, Free
                     WrongAnswerChoice, QuizResult, FreeResponseRubric
 from .serializers import QuizCreateUpdateSerializer, QuizSerializer, QuizSimpleSerializer, \
                             BulkMultipleChoiceQuestionSerializer, BulkFreeResponseQuestionSerializer, FreeResponseGradedAnswerSerializer, \
-                            QuizResultSerializer, QuizResultWriteSerializer, QuizResultSimpleSerializer
+                            QuizResultWriteSerializer, QuizResultReadSerializer, QuizResultSimpleSerializer
 from rest_framework.generics import ListAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser
@@ -88,6 +88,7 @@ class QuestionsAPIView(APIView):
     
 class QuizSubmitAPIView(APIView):
     def post(self, request):
+        print(request.data)
         serializer = QuizResultWriteSerializer(data=request.data)
         if not serializer.is_valid():
             print(serializer.errors)
@@ -137,5 +138,5 @@ class QuizResultListAPIView(ListAPIView):
 
 class QuizResultDetailAPIView(RetrieveAPIView):
     queryset = QuizResult.objects.all()
-    serializer_class = QuizResultSerializer
+    serializer_class = QuizResultReadSerializer
     permission_classes = [IsAuthenticated]

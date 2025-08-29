@@ -86,7 +86,7 @@ class FreeResponseAnswer(models.Model):
     order = models.PositiveIntegerField()
     question = models.ForeignKey(FreeResponseQuestion, on_delete=models.CASCADE, related_name='answers')
     quiz_result = models.ForeignKey(QuizResult, on_delete=models.CASCADE, related_name='frq_answers')
-    
+
 class FreeResponseRubric(models.Model):
     reasoning_text = models.TextField(max_length=1000)
     possible_points = models.PositiveIntegerField()
