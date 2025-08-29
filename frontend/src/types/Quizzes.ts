@@ -91,6 +91,24 @@ export type QuizResultDetailType = {
     points_awarded: number,
     total_possible_points: number,
     date: string,
-    mcq_answers: FormattedAnswerType[],
-    frq_answers: FormattedAnswerType[]
+    mcq_answers: MCQAnswerResultType[],
+    frq_answers: FRQAnswerResultType[],
+    status: 'Pending' | 'Graded'
+}
+export type AnswerResultType = MCQAnswerResultType | FRQAnswerResultType
+export type MCQAnswerResultType = {
+    id: number,
+    wrong_selected_choice: number | null,
+    result: 'Correct' | 'Incorrect',
+    order: number,
+    question: MultipleChoiceQuestionType
+    answer_category: "MultipleChoice"
+}
+export type FRQAnswerResultType = {
+    id: number,
+    status: 'Pending' | 'Graded',
+    user_answer: string,
+    question: FreeResponseQuestionType,
+    order: number,
+    answer_category: "FreeResponse"
 }

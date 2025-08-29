@@ -1,7 +1,8 @@
 import ErrorPage from "@/components/ErrorPage";
-import AnswerResult from "@/components/Quiz/AnswerResult";
-import Results from "@/components/Quiz/Results";
-import { QuizResultDetailType } from "@/types/Quizzes";
+import GradeQuiz from "@/components/Quiz/SelfGrade/GradeQuiz";
+import AnswerResult from "@/components/Quiz/Results/MCQAnswerResult";
+import Results from "@/components/Quiz/Results/Results";
+import { FRQAnswerResultType, MCQAnswerResultType, QuizResultDetailType } from "@/types/Quizzes";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -32,11 +33,14 @@ export default async function QuizResultPage({ params }: { params: { id: string 
 
     const result: QuizResultDetailType = await res.json()
     console.log(result)
-    const sortedAnswers = result.mcq_answers.sort((a, b) => a.order - b.order)
+    const formattedMCQs: MCQAnswerResultType[]  = result.mcq_answers.map(answer => ({ ...answer, answer_category: "MultipleChoice" }))
+    const formattedFRQs: FRQAnswerResultType[] = result.frq_answers.map(answer => ({ ...answer, answer_category: "FreeResponse" }))
+    const sortedAnswers = [...formattedMCQs, ...formattedFRQs].sort((a, b) => a.order - b.order)
     return (
         <div className="flex flex-col h-full w-full max-w-[1280px] gap-y-5">
-            <header className="flex flex-col gap-4 pb-4 border-b-1 border-b-primary">
-                <h1 className="font-normal text-4xl">Quiz Result | {result.quiz.name}</h1>
+            <header className={`flex flex-col gap-4 pb-4 border-b-1 border-b-primary ${result.status === 'Pending' && 'border-b-0'}`}>
+                {result.status === 'Graded' && <h1 className="font-normal text-4xl">Quiz Result | {result.quiz.name}</h1>}
+                {result.status === 'Pending' && <h1 className="font-normal text-4xl">Self-Grade Quiz | {result.quiz.name}</h1>}
                 <h3 className="font-normal text-2xl">{ result.quiz.related_class.name } | Made by { result.quiz.owner.name } </h3>
                 <div className="flex flex-wrap gap-2">
                     {result.quiz.related_units.map(unit => (
@@ -51,7 +55,13 @@ export default async function QuizResultPage({ params }: { params: { id: string 
                     ))}
                 </div>
             </header>
-            {/* <Results answers={sortedAnswers} /> */}
+            {result.status === 'Graded' && <Results answers={sortedAnswers} />}
+            {result.status === 'Pending' && 
+                <GradeQuiz 
+                    quizId={result.quiz.id}
+                    multipleChoiceAnswers={formattedMCQs} multipleChoicePoints={result.points_awarded} 
+                    freeResponseAnswers={formattedFRQs}
+                />}
         </div>
     )
 }

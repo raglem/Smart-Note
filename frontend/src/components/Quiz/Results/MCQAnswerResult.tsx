@@ -1,16 +1,9 @@
 "use client"
 
-import { MultipleChoiceQuestionType } from "@/types/Quizzes"
+import { MCQAnswerResultType } from "@/types/Quizzes"
 import { IoIosCheckmarkCircle, IoMdCloseCircle } from "react-icons/io";
 
-type AnswerResultType = {
-    id: number,
-    wrong_selected_choice: number | null,
-    result: 'Correct' | 'Incorrect',
-    order: number,
-    question: MultipleChoiceQuestionType
-}
-export default function AnswerResult({answer}: {answer: AnswerResultType}) {
+export default function MCQAnswerResult({answer}: {answer: MCQAnswerResultType}) {
     const { related_units, related_subunits } = answer.question
     const sortedRelatedUnits = related_units.sort((a, b) => a.name.localeCompare(b.name))
     const sortedRelatedSubunits = related_subunits.sort((a, b) => a.name.localeCompare(b.name))
@@ -19,26 +12,32 @@ export default function AnswerResult({answer}: {answer: AnswerResultType}) {
             <header className="flex flex-row justify-between gap-x-2">
                 <h2 className="text-2xl">{`${answer.order}) `}{ answer.question.question_text }</h2>
                 {answer.result === 'Correct' && <span className="text-xl">
-                    <span className="text-primary">1 &nbsp;</span>
-                    <span className="text-black">/ 1</span>
+                    <span className="text-primary">1</span>
+                    <span className="text-black">/1</span>
                 </span>}
                 {answer.result === 'Incorrect' && <span className="text-xl">
-                    <span className="text-primary">0 &nbsp;</span>
-                    <span className="text-black">/ 1</span>
+                    <span className="text-primary">0</span>
+                    <span className="text-black">/1</span>
                 </span>}
             </header>
-            <ol className="flex flex-col gap-y-2 w-full">
-                <li className={`flex flex-row w-full p-2 justify-between items-center ${answer.result === 'Correct' ? 'border-1 border-primary': ''}`}>
+            <div>
+                <label>Correct Answer</label>
+                <li className={`flex flex-row w-full p-2 justify-between items-center rounded-md ${answer.result === 'Correct' ? 'border-1 border-primary': 'border-1 border-black'}`}>
                     { answer.question.correct_answer }
                     <IoIosCheckmarkCircle className="text-xl text-green-500" />
                 </li>
+            </div>
+            <div>
+                <label>Alternate Choices</label>
+                <ol className="flex flex-col gap-y-2 w-full">
                 { answer.question.alternate_choices.map(choice => (
-                    <li className={`flex flex-row justify-between w-full p-2 ${answer.wrong_selected_choice && answer.wrong_selected_choice === choice.id ? 'border-1 border-primary': 'border-b-1 border-b-black last-of-type:border-b-0'}`} key={choice.id}>
+                    <li className={`flex flex-row justify-between w-full p-2 rounded-md ${answer.wrong_selected_choice && answer.wrong_selected_choice === choice.id ? 'border-1 border-primary': 'border-1 border-black'}`} key={choice.id}>
                         { choice.choice_text }
                         { answer.wrong_selected_choice && answer.wrong_selected_choice === choice.id && <IoMdCloseCircle className="text-xl text-red-500" /> }
                     </li>
                 ))}
             </ol>
+            </div>
             <div className="flex flex-wrap gap-2 py-2">
                 { sortedRelatedUnits.map(u => (
                     <div className="rounded-md bg-primary text-white py-1 px-4" key={u.id}>
