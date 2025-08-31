@@ -1,39 +1,44 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useContext, useEffect, Suspense } from "react"
 
-import AddUnit from "@/app/components/Class/AddUnit"
-import ClassHeader from "../../components/Class/ClassHeader"
-import { ClassContext, ClassContextType } from "@/app/context/ClassContext"
-import Section from "../../components/Class/Section"
-import { ClassType, UnitType } from "../../../../types/Sections"
+import AddUnit from "@/components/Class/AddUnit"
+import ClassHeader from "../../../components/Class/ClassHeader"
+import { ClassContext } from "@/app/context/ClassContext"
+import Section from "../../../components/Class/Section"
+import { FileType } from "@/types"
+import { ClassDetailType, UnitType } from "../../../types/Sections"
 
 import { closestCenter, DndContext, DragAbortEvent, DragCancelEvent, DragEndEvent, DragStartEvent } from "@dnd-kit/core"
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
-import SortableItem from "@/app/components/SortableItem"
-import { listeners } from "process"
+import SortableItem from "@/components/SortableItem"
+import FilePreview from "@/components/File/FilePreview"
+import FileAdd from "@/components/File/FileAdd"
 
 export default function ClassClientShell({ classInfo }:{
-    classInfo: ClassType
+    classInfo: ClassDetailType
 }){
-    const [addMode, setAddMode] = useState<boolean>(false)
-    const [editMode, setEditMode] = useState<boolean>(false)
-    const [units, setUnits] = useState<UnitType[]>(classInfo.units)
-    const [draggingUnit, setDraggingUnit] = useState<boolean>(false)
-    const [draggingSubunit, setDraggingSubunit] = useState<boolean>(false)
-        
-    const value: ClassContextType = {
-        addMode,
-        setAddMode,
-        editMode,
-        setEditMode,
-        units,
-        setUnits,
-        draggingUnit,
-        setDraggingUnit,
-        draggingSubunit,
-        setDraggingSubunit
-    }
+    // Use context
+    const { 
+        setClassFields, 
+        addMode, setAddMode, 
+        units, setUnits, 
+        setDraggingUnit 
+    } = useContext(ClassContext)
+
+    // Set the context of the units when the page is first rendered
+    useEffect(() => {
+        setClassFields({
+            id: classInfo.id,
+            name: classInfo.name,
+            course_number: classInfo.course_number,
+            join_code: classInfo.join_code,
+            owner: classInfo.owner,
+            members: classInfo.members,
+            files: classInfo.files,
+        })
+        setUnits(classInfo.units.sort((a, b) => a.order - b.order))
+    }, [])
 
     // Update context a unit is being dragged
     const handleDragStart = (event: DragStartEvent) => {
@@ -54,7 +59,7 @@ export default function ClassClientShell({ classInfo }:{
     }
 
     return (
-        <ClassContext.Provider value={value}>
+        <>
             <div className="flex flex-col p-4 gap-y-4 w-full">
                 <ClassHeader classInfo={classInfo} />
                 <div className="flex flex-col gap-y-4">
@@ -65,7 +70,7 @@ export default function ClassClientShell({ classInfo }:{
                                     <SortableItem id={unit.id} key={unit.id}>
                                         {({ listeners, attributes, setNodeRef, style }) => 
                                         <div ref={setNodeRef} style={style}>
-                                            <Section section={unit} {...listeners} {...attributes} />
+                                            <Section sectionId={unit.id} sectionType="Unit" {...listeners} {...attributes} />
                                         </div>
                                         }
                                     </SortableItem>
@@ -74,8 +79,19 @@ export default function ClassClientShell({ classInfo }:{
                         </SortableContext>
                     </DndContext>
                 </div>
-                { addMode && <AddUnit unit_id={classInfo.id} close={() => setAddMode(false)}/> }
+                <div className="flex flex-col w-full pl-6 gap-y-4">
+                    <div className="p-2 text-xl w-full bg-primary text-white rounded-md">
+                        <h2>Class Files</h2>
+                    </div>
+                    <div className="grid grid-cols-4 md:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-4">
+                        {classInfo.files.map(f => (
+                            <FilePreview file={f} key={f.id}></FilePreview>
+                        ))}
+                        <FileAdd section_id={classInfo.id} section="Class" />
+                    </div>
+                </div>
             </div>
-        </ClassContext.Provider>
+            { addMode && <AddUnit class_id={classInfo.id} close={() => setAddMode(false)}/> }
+        </>
     )
 }

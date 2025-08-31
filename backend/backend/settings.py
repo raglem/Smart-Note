@@ -44,11 +44,16 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_extensions',
     'rest_framework',
+    'corsheaders',
+    'storages',
     'users',
     'classes',
+    'study_groups',
+    'quizzes',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -113,6 +118,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
+        'backend.cookieAuth.CookieJWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
@@ -120,7 +126,8 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'SIGNING_KEY': SECRET_KEY,
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
@@ -129,7 +136,8 @@ SIMPLE_JWT = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Los_Angeles'
+USE_TZ = True
 
 USE_I18N = True
 
@@ -149,3 +157,33 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Path to the directory where static files are collected
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+]
+
+# Uncomment the following lines to enable AWS S3 storage for media and static files
+# # AWS configuration
+
+# AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+# AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+
+# AWS_STORAGE_BUCKET_NAME = 'smart-note-bkt'
+# AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+# AWS_S3_FILE_OVERWRITE = False
+
+# STORAGES = {
+#     # Media files
+#     "default": {
+#         "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
+#     },
+#     # CSS and JS file management
+#     "staticfiles": {
+#         "BACKEND": "storages.backends.s3boto3.S3StaticStorage"
+#     }
+# }

@@ -1,0 +1,116 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-primary: #4b6173;
+  --color-secondary: #e3e2e1;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer base{
+  h1{
+    font-size: 2rem;
+  }
+}
+
+@layer components{
+  nav li{
+    padding: 0px 5px;
+  }
+  nav li:hover{
+    opacity: 0.8;
+    background-color: lightgray;
+    border-radius: 5px;
+  }
+  .input-wrapper{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background: var(--color-secondary);
+    border-radius: 8px;
+    color: black;
+    font-size: 1.2rem;
+  }
+  .input-wrapper > button:hover{
+    cursor: pointer;
+    opacity: 0.8;
+  }
+  .default-grid{
+    @apply grid gap-4;
+    @apply grid-cols-1 md:grid-cols-2 xl:grid-cols-3;
+  }
+  .card{
+    background-color: var(--secondary-color);
+    border: 1px solid black;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  }
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+  .loading {
+    background: linear-gradient(to right, #f0f0f0 8%, #e0e0e0 18%, #f0f0f0 33%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite forwards;
+  }
+  .file{
+    @apply aspect-[9/10] w-full max-w-full border-0;
+  }
+  .icon-responsive:hover{
+    pointer-events: auto;
+    cursor: pointer;
+    opacity: 0.8;
+    scale: 1.5;
+    transition: scale 0.2s ease-in-out;
+  }
+  .overlay{
+    position: fixed;
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    inset: 0;
+    z-index: 100;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .form-input{
+    @apply w-full px-2 py-2 border-1 border-black rounded-md outline-none;
+  }
+  .form-input-wrapper{
+    @apply flex flex-row items-center justify-between w-full px-2 py-2 border-1 border-black rounded-md outline-none;
+  }
+  .form-btn-toolbar{
+    @apply flex flex-row justify-end items-center gap-x-2 w-full
+  }
+  .form-btn{
+    @apply px-4 py-2 border-1 border-black rounded-md outline-none hover:cursor-pointer hover:opacity-80;
+  }
+}
