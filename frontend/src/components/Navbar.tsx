@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link"
 import Logout from "@/components/Logout";
 import { FaSearch } from "react-icons/fa";
+import { MdAccountCircle } from "react-icons/md";
 import { UserContext } from "@/app/context/UserContext";
 
 export default function Navbar(){
@@ -18,7 +19,8 @@ export default function Navbar(){
         checkUser()
     }, [path])
 
-    return ( userId ? 
+    if(!userId){
+      return (
         <nav className="flex flex-row justify-between items-center h-[60px] w-[100vw] p-2 bg-primary text-2xl text-white">
           <div className="flex flex-row items-end gap-x-10">
             <span className="text-3xl">
@@ -28,46 +30,41 @@ export default function Navbar(){
               <li>
                 <Link href="/">Home</Link>
               </li>
-              <li>
-                <Link href="/classes">Classes</Link>
-              </li>
-              <li>
-                <Link href="/quizzes">Quizzes</Link>
-              </li>
-              <li>
-                <Link href="/study-groups">Study Groups</Link>
-              </li>
             </ol>
           </div>
-          <div className="flex flex-row gap-x-2">
-            <Logout />
-            <div className="hidden lg:flex input-wrapper">
-              <input type="text" placeholder="Search" className="p-2 placeholder-black outline-none"/>
-              <span className="p-2 hover:cursor-pointer">
-                <FaSearch className="text-black hover:opacity-80"/>
-              </span>
-            </div>
-          </div>
-        </nav> : <nav className="flex flex-row justify-between items-center h-[60px] w-[100vw] p-2 bg-primary text-2xl text-white">
-          <div className="flex flex-row items-end gap-x-10">
-            <span className="text-3xl">
-              SmartNote
-            </span>
-            <ol className="flex flex-row gap-x-5 items-center">
-              <li>
-                <Link href="/">Home</Link>
-              </li>
-            </ol>
-          </div>
-          <div className="flex flex-row gap-x-2">
-            <Logout />
-            <div className="hidden lg:flex input-wrapper">
-              <input type="text" placeholder="Search" className="p-2 placeholder-black outline-none"/>
-              <span className="p-2 hover:cursor-pointer">
-                <FaSearch className="text-black hover:opacity-80"/>
-              </span>
-            </div>
+          <div className="flex flex-row items-center gap-x-2">
+            <Link href="/login"> 
+              <MdAccountCircle className="h-10 w-10 hover:cursor-pointer hover:opacity-80" />
+            </Link>
           </div>
         </nav>
+      )
+    }
+
+    return (
+      <nav className="flex flex-row justify-between items-center h-[60px] w-[100vw] p-2 bg-primary text-2xl text-white">
+        <div className="flex flex-row items-end gap-x-10">
+          <span className="text-3xl">
+            SmartNote
+          </span>
+          <ol className="flex flex-row gap-x-5 items-center">
+            <li>
+              <Link href="/">Home</Link>
+            </li>
+            <li>
+              <Link href="/classes">Classes</Link>
+            </li>
+            <li>
+              <Link href="/quizzes">Quizzes</Link>
+            </li>
+            <li>
+              <Link href="/study-groups">Study Groups</Link>
+            </li>
+          </ol>
+        </div>
+        <div className="flex flex-row gap-x-2">
+          <Logout />
+        </div>
+      </nav>
     )
 }
