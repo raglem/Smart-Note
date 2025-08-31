@@ -1,18 +1,11 @@
 "use client"
 
-import { MultipleChoiceQuestionType } from "@/types/Quizzes"
-import AnswerResult from "./AnswerResult"
 import { useState } from "react"
+import { AnswerResultType } from "@/types/Quizzes"
+import MCQAnswerResult from "./MCQAnswerResult"
+import FRQAnswerResult from "./FRQAnswerResult"
 import { FaCaretLeft, FaCaretRight } from "react-icons/fa"
 import Link from "next/link"
-
-type AnswerResultType = {
-    id: number,
-    wrong_selected_choice: number | null,
-    result: 'Correct' | 'Incorrect',
-    order: number,
-    question: MultipleChoiceQuestionType
-}
 
 export default function Results({ answers }: { answers: AnswerResultType[]}){
     const [currentPage, setCurrentPage] = useState<number>(0)
@@ -25,15 +18,17 @@ export default function Results({ answers }: { answers: AnswerResultType[]}){
         return pages
     })()
     return (
-        <div className="relative flex flex-col h-full w-full gap-y-4">
-            <div className="flex flex-col w-full gap-y-4">
-                { paginatedAnswers[currentPage].map(answer => (
-                    <div className="flex w-full border-b-1 border-primary" key={answer.id}>
-                        <AnswerResult answer={answer} />
-                    </div>
-                ))}
+        <div className="flex flex-col h-full w-full gap-y-8">
+            <div className="flex flex-col min-h-[calc(100vh-450px)] w-full gap-y-4">
+                { paginatedAnswers[currentPage].map(answer => 
+                    answer.answer_category === 'MultipleChoice' ? <div className="flex w-full border-b-1 border-primary" key={answer.id}>
+                        <MCQAnswerResult answer={answer} />
+                    </div> : (answer.answer_category === 'FreeResponse' ? <div className="flex w-full border-b-1 border-primary" key={answer.id}>
+                        <FRQAnswerResult answer={answer} />
+                    </div> : null)
+                )}
             </div>
-            <div className="absolute bottom-0 flex flex-col gap-y-2 w-full">
+            <div className="flex flex-col gap-y-2 w-full">
                 <div className="flex flex-row justify-end items-center">
                     <Link href="/quizzes">
                         <button className="p-2 rounded-md text-white bg-primary cursor-pointer hover:opacity-80">

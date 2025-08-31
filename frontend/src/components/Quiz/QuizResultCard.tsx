@@ -2,16 +2,18 @@
 import { QuizResultSimpleType } from "@/types/Quizzes"
 import Link from "next/link";
 import { IoIosCheckmarkCircle, IoMdCloseCircle } from "react-icons/io";
+import { FaRegClock } from "react-icons/fa6";
 
 export default function QuizResultCard({ result }: {
     result: QuizResultSimpleType
 }){
-    const score = Math.round(result.number_of_correct_answers/ result.number_of_questions * 10000) / 100; // Round to 2 decimal places
+    const score = Math.round(result.points_awarded/ result.total_possible_points * 10000) / 100; // Round to 2 decimal places
     return (
         <div className="card rounded-md">
             <header className="flex flex-row justify-between items-end bg-primary text-white px-2 py-5">
-                <div className="flex flex-row gap-x-2">
-                        { score > 70 ? <IoIosCheckmarkCircle className="text-3xl text-green-500" /> : <IoMdCloseCircle className="text-3xl text-red-500" /> }
+                <div className="flex flex-row items-center gap-x-2">
+                        { result.status === 'Pending' && <FaRegClock className="text-3xl text-yellow-500" />}
+                        { result.status === 'Graded' && (score > 70 ? <IoIosCheckmarkCircle className="text-3xl text-green-500" /> : <IoMdCloseCircle className="text-3xl text-red-500" />) }
                         <h2 className="text-2xl">{result.quiz.name}</h2>
                     </div>
                 <span className="text-2xl">{score}%</span>
@@ -22,7 +24,7 @@ export default function QuizResultCard({ result }: {
             <div className="flex flex-col px-2 py-2 gap-y-2">
                 <div className="flex flex-row justify-between items-center text-md text-gray-600">
                     <span>{ new Date(result.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) }</span>
-                    <span>Score: { result.number_of_correct_answers }/{ result.number_of_questions }</span>
+                    <span>Score: { result.points_awarded }/{ result.total_possible_points }</span>
                 </div>
                 <div className="flex flex-wrap gap-2">
                     {result.quiz.related_units.map(unit => (

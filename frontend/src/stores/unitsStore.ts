@@ -19,10 +19,10 @@ const useUnitsStore = create<unitsStore>((set) => ({
         set({ isLoading: true })
         try{
             const res = await api.get(`/classes/units-subunits/${classId}`)
-            console.log(res.data)
             set({ isLoading: false, units: res.data.units, subunits: res.data.subunits })
         }
         catch(err){
+            console.error(err)
             set({ error: err, isLoading: false, })
         }
     }

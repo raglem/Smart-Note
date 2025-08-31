@@ -1,27 +1,35 @@
 "use client"
 
 import { useEffect, useState } from "react";
-import { AnswerType, MultipleChoiceQuestionType, QuestionAnswerType, QuizResultType } from "@/types/Quizzes";
+import { FRQAnswerType, MCQAnswerType, MCQFormattedAnswerType, QuestionType, QuizResultType, FormattedAnswerType } from "@/types/Quizzes";
 import { FaCaretLeft, FaCaretRight } from "react-icons/fa";
-import AnswerableQuestion from "./AnswerableQuestion";
+import MCQAnswerableQuestion from "./MCQAnswerableQuestion";
 import useMemberStore from "@/stores/memberStore";
 import { toast } from "react-toastify";
 import api from "@/utils/api";
 import { useRouter } from "next/navigation";
+import FRQAnswerableQuestion from "./FRQAnswerableQuestion";
 
 export default function TakeQuiz({ quiz_id, questions } : {
     quiz_id: number,
-    questions: MultipleChoiceQuestionType[]
+    questions: QuestionType[]
 }){
     const [currentPage, setCurrentPage] = useState<number>(0)
-    const [selectedAnswers, setSelectedAnswers] = useState<AnswerType[]>(questions.map(question => ({
+    const [MCQAnswers, setMCQAnswers] = useState<MCQAnswerType[]>(questions.filter(question => question.question_category === 'MultipleChoice').map(question => ({
         question_id: question.id,
         wrong_selected_choice: null,
-        result: "Incorrect"
+        result: 'Incorrect',
+        answer_category: "MultipleChoice"
     })))
-    const paginatedQuestions: MultipleChoiceQuestionType[][] = (() => {
+    const [FRQAnswers, setFRQAnswers] = useState<FRQAnswerType[]>(questions.filter(question => question.question_category === 'FreeResponse').map(question => ({
+        question_id: question.id,
+        user_answer: "",
+        total_possible_points: question.total_possible_points,
+        answer_category: "FreeResponse"
+    })))
+    const paginatedQuestions: QuestionType[][] = (() => {
         const sortedQuestions = [...questions].sort((a, b) => a.order - b.order)
-        const pages: MultipleChoiceQuestionType[][] = []
+        const pages: QuestionType[][] = []
         const questionsPerPage = 5
         for(let i=0; i<questions.length; i+=questionsPerPage){
             pages.push(sortedQuestions.slice(i, i+questionsPerPage))
@@ -38,27 +46,45 @@ export default function TakeQuiz({ quiz_id, questions } : {
 
     const router = useRouter()
 
-    const verifyAnswer = (questionId: number, selectedChoice: number | null, result: "Correct" | "Incorrect") => {
-        setSelectedAnswers(prevAnswers => 
+    const verifyMCQAnswer = (questionId: number, selectedChoice: number | null, result: "Correct" | "Incorrect") => {
+        setMCQAnswers(prevAnswers => 
             prevAnswers.map(answer => 
                 answer.question_id === questionId ? { ...answer, wrong_selected_choice: selectedChoice, result } : answer
             )
         )
     }
+    const saveFRQAnswer = (questionId: number, userAnswer: string) => {
+        setFRQAnswers(prevAnswers => 
+            prevAnswers.map(answer => 
+                answer.question_id === questionId ? { ...answer, user_answer: userAnswer } : answer
+            )
+        )
+    }
     const submitQuiz = async () => {
-        // Calculate the score
-        let numberOfCorrectAnswers = 0
-        let numberOfWrongAnswers = 0
-        const answers: QuestionAnswerType[] = selectedAnswers.map(answer => ({
+        // Format the request data to be sent to the api
+        const mcq_answers: FormattedAnswerType[] = MCQAnswers.map((answer, i) => ({
+            ...answer,
             question: answer.question_id,
-            result: answer.result,
-            wrong_selected_choice: answer.wrong_selected_choice,
-            order: questions.find(q => q.id === answer.question_id)?.order || 0
+            order: i+1
         }))
-        for(const answer of selectedAnswers){
-            if(answer.result === "Correct") numberOfCorrectAnswers++
-            else numberOfWrongAnswers++
-        }
+        const frq_answers: FormattedAnswerType[] = FRQAnswers.map((answer, i) => ({
+            ...answer,
+            question: answer.question_id,
+            order: i+1
+        }))
+
+        // Calculate the score
+        let awardedPoints = 0
+        let totalPossiblePoints = 0
+        mcq_answers.forEach((answer) => {
+            if("result" in answer && answer.result === 'Correct'){
+                awardedPoints += 1
+            }
+            totalPossiblePoints += 1
+        })
+        FRQAnswers.forEach((answer) => {
+            totalPossiblePoints += answer.total_possible_points
+        })
 
         // Retrieve member information to append to the request body
         if(!member || !member.id) {
@@ -72,9 +98,10 @@ export default function TakeQuiz({ quiz_id, questions } : {
             id: -1,
             member_id: member.id,
             quiz_id: quiz_id,
-            number_of_correct_answers: numberOfCorrectAnswers,
-            number_of_questions: numberOfCorrectAnswers + numberOfWrongAnswers,
-            answers: answers
+            points_awarded: awardedPoints,
+            total_possible_points: totalPossiblePoints,
+            mcq_answers,
+            frq_answers
         }
         const body = {
             ...quizResult,
@@ -83,7 +110,7 @@ export default function TakeQuiz({ quiz_id, questions } : {
         }
 
         try{
-            const res = await api.post('/quizzes/results/', body)
+            const res = await api.post('/quizzes/submit/', body)
             toast.success('Quiz submitted successfully')
             router.push('/quizzes/')
         }
@@ -94,12 +121,16 @@ export default function TakeQuiz({ quiz_id, questions } : {
     }
     return (
         <div className="relative flex flex-col h-full gap-y-4">
-            <div className="flex flex-col w-full gap-y-2">
-                {paginatedQuestions[currentPage].map(question => (
-                    <AnswerableQuestion key={question.id} question={question} verifyAnswer={verifyAnswer} />
-                ))}
+            <div className="flex flex-col min-h-[calc(100vh-450px)] w-full gap-y-2">
+                {paginatedQuestions[currentPage].map(question => 
+                    question.question_category === "MultipleChoice" ? (
+                        <MCQAnswerableQuestion key={question.id} question={question} verifyAnswer={verifyMCQAnswer} />
+                    ) : question.question_category === "FreeResponse" ? (
+                        <FRQAnswerableQuestion key={question.id} question={question} saveAnswer={saveFRQAnswer} />
+                    ) : null
+                )}
             </div>
-            <div className="absolute bottom-0 flex flex-col gap-y-2 w-full">
+            <div className="bottom-0 flex flex-col gap-y-2 w-full">
                 {currentPage === paginatedQuestions.length-1 && <div className="flex flex-row justify-end items-center">
                     <button className="p-2 rounded-md text-white bg-primary cursor-pointer hover:opacity-80" onClick={submitQuiz}>
                         Submit Quiz

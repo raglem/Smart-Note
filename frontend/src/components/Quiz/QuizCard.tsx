@@ -1,12 +1,12 @@
 "use client"
 
 import useMemberStore from "@/stores/memberStore";
-import { QuizType } from "@/types/Quizzes";
+import { QuizSimpleType, QuizType } from "@/types/Quizzes";
 import Link from "next/link";
 import { useEffect } from "react";
 import { FaPencilAlt } from "react-icons/fa";
 
-export default function QuizCard({quiz}: {quiz:QuizType}){
+export default function QuizCard({ quiz }: { quiz: QuizSimpleType }){
     const member = useMemberStore(state => state.member)
     const fetchMember = useMemberStore(state => state.fetchMember)
     useEffect(() => {fetchMember()}, [])
@@ -18,7 +18,7 @@ export default function QuizCard({quiz}: {quiz:QuizType}){
                     { member && member.id === quiz.owner.id && <Link href="/quizzes/update/">
                         <FaPencilAlt className="icon-responsive text-white"/>
                     </Link>}
-                    <span className="text-xl">12 Qs</span>
+                    <span className="text-xl whitespace-nowrap">{quiz.total_questions} Qs</span>
                 </div>
             </header>
             <Link href={`/quizzes/${quiz.id}`}>

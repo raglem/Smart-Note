@@ -5,14 +5,15 @@ import UploadImage from "@/components/Quiz/UploadImage";
 import SelectClass from "@/components/Quiz/SelectClass";
 import SelectUnitsSubunits from "@/components/Quiz/SelectUnitsSubunits";
 import CannotSelectUnitsSubunits from "@/components/Quiz/CannotSelectUnitsSubunits";
-import Questions from "@/components/Quiz/Questions";
+import Questions from "@/components/Quiz/CreateQuiz/Questions";
 import api from "@/utils/api";
 import { toast } from "react-toastify";
 import checkForValidCharacters from "@/utils/checkForValidCharacters";
 import { ClassType, UnitSimpleType, SubunitSimpleType } from "@/types/Sections";
-import { MultipleChoiceQuestionType } from "@/types/Quizzes";
+import { QuestionType } from "@/types/Quizzes";
 import RelatedUnitSubunitsContext from "@/app/context/RelatedUnitsSubunitsContext";
 import ValidateQuestions from "@/utils/validateQuestions";
+import { useRouter } from "next/navigation";
 
 export default function CreatePage(){
     const [name, setName] = useState<string>("");
@@ -20,7 +21,9 @@ export default function CreatePage(){
     const [selectedClass, setSelectedClass] = useState<ClassType | null>(null);
     const [selectedUnits, setSelectedUnits] = useState<UnitSimpleType []>([]);
     const [selectedSubunits, setSelectedSubunits] = useState<SubunitSimpleType []>([]);
-    const [questions, setQuestions] = useState<MultipleChoiceQuestionType[]>([])
+    const [questions, setQuestions] = useState<QuestionType[]>([])
+
+    const router = useRouter()
 
     async function handleQuizCreate(){
         if(name.trim().length < 3 || !checkForValidCharacters(name)){
@@ -68,21 +71,38 @@ export default function CreatePage(){
             })
 
             // Format json data for questions request
-            const questionData = {
-                quiz: quizRes.data.id,
-                questions: questions.map((q, i) => ({
-                    ...q,
+            const orderedQuestions = questions.map((q, i) => ({ ...q, order: i+1}))
+            const mcqQuestions = orderedQuestions.filter(q => q.question_category === "MultipleChoice").map((q, i) => ({
+                ...q,
+                id: undefined,
+                related_units: q.related_units.map(u => u.id),
+                related_subunits: q.related_subunits.map(s => s.id)
+            }))
+            const frqQuestions = orderedQuestions.filter(q => q.question_category === "FreeResponse").map((q, i) => ({
+                ...q,
+                id: undefined,
+                related_units: q.related_units.map(u => u.id),
+                related_subunits: q.related_subunits.map(s => s.id),
+                rubrics: q.rubrics.map(r => ({
+                    ...r, 
                     id: undefined,
-                    order: i + 1,
-                    related_units: q.related_units.map(u => u.id),
-                    related_subunits: q.related_subunits.map(s => s.id)
+                    question: undefined,
                 }))
+            }))
+            const requestBody = {
+                mcq_questions: {
+                    quiz: quizRes.data.id,
+                    questions: mcqQuestions
+                },
+                frq_questions: {
+                    quiz: quizRes.data.id,
+                    questions: frqQuestions
+                },
             }
 
-            const questionsRes = await api.post('/quizzes/questions/bulk-create/', questionData)
-            console.log(questionsRes.data)
+            const questionsRes = await api.post('/quizzes/questions/bulk-create/', requestBody)
             toast.success("Quiz created successfully")
-            // router.push('/quizzes')
+            router.push('/quizzes')
         }
         catch(err){
             console.error(err)
