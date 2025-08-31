@@ -1,9 +1,10 @@
 "use client"
 
 import { useState } from "react"
+import CreateClass from "./ClassCreate"
+import Join from "./Join";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { IoMdAddCircle } from "react-icons/io";
-import AddClass from "./AddClass"
 
 export default function ClassesHeader(){
     const [showAddClass, setShowAddClass] = useState<boolean>(false)
@@ -12,22 +13,15 @@ export default function ClassesHeader(){
     }
     return (
         <>
-            {showAddClass && <AddClass close={() => setShowAddClass(false)} />}
-            <header className="flex flex-row justify-between items-center">
-                <div className="flex flex-row items-center gap-x-4">
-                    <h1>Classes</h1>
-                    {!showAddClass ? <IoMdAddCircleOutline 
-                        onClick={handleAdd}
-                        className="icon-responsive text-primary text-4xl"
-                        /> : <IoMdAddCircle 
-                        className="icon-responsive text-primary text-4xl"
-                    />}
-                    </div>
-                <div className="input-wrapper">
-                    <input type="text" placeholder="Enter Class ID" className="p-2 outline-none"/>
-                    <button className="h-full box-border p-2 bg-black text-white border rounded-md">
-                        Join
+            {showAddClass && <CreateClass close={() => setShowAddClass(false)} />}
+            <header className="flex flex-col justify-between">
+                <h1 className="ml-0">Classes</h1>
+                <div className="flex flex-row justify-between items-center w-full">
+                    <button className="flex flex-row justify-between items-center gap-x-2 rounded-md text-white bg-primary py-2 px-4 hover:cursor-pointer" onClick={handleAdd}>
+                        <IoMdAddCircle />
+                        New Class
                     </button>
+                    <Join />
                 </div>
             </header>
         </>

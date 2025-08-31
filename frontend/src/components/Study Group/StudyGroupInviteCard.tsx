@@ -9,6 +9,7 @@ import { StudyGroupType } from "../../types";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import StudyGroupToolbar from "./StudyGroupToolbar";
 import api from "@/utils/api";
+import { toast } from "react-toastify";
 
 export function StudyGroupInviteCard({ group }: { group: StudyGroupType }) {
     const { setStudyGroups } = useContext(StudyGroupContext);
@@ -47,7 +48,7 @@ export function StudyGroupInviteCard({ group }: { group: StudyGroupType }) {
             setStudyGroups(prev => prev.map(sg => sg.id !== studyGroup.id ? sg : studyGroup));
         }
         catch(err){
-            // TODO: Alert user an error has occurred
+            toast.error("Failed to respond to invite. Please try again")
             console.error(err);
         }
     }

@@ -5,6 +5,7 @@ import api from "@/utils/api";
 import { FaEdit, FaPlusCircle } from "react-icons/fa";
 import { CgDanger } from "react-icons/cg";
 import { ImExit } from "react-icons/im";
+import { toast } from "react-toastify";
 
 export default function StudyGroupToolbar({ group, closeToolbar } : { group: StudyGroupType, closeToolbar: () => void }) {
     const { 
@@ -20,7 +21,7 @@ export default function StudyGroupToolbar({ group, closeToolbar } : { group: Stu
             setStudyGroups(prev => prev.filter(sg => sg.id !== group.id))
         }
         catch(err){
-            // TODO: Alert user an error has occurred deleting the study group
+            toast.error(`Failed to leave study group ${group.name}. Please try again`)
         }
     }
 

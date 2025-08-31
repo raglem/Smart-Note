@@ -36,11 +36,12 @@ export type ClassContextType = {
 
 export const ClassContextProvider = ({ children }: { children: React.ReactNode }) => {
     const [classFields, setClassFields] = useState<ClassFields>({
-        id: 0,
+        id: -1,
         name: "",
         join_code: "",
         owner: {
-            id: 0,
+            id: -1,
+            member_id: -1,
             name: ""
         },
         members: [],
@@ -52,32 +53,6 @@ export const ClassContextProvider = ({ children }: { children: React.ReactNode }
     const [draggingUnit, setDraggingUnit] = useState<boolean>(false)
     const [draggingSubunit, setDraggingSubunit] = useState<boolean>(false)
     const handleSave = async () => {
-        // type FileCreate = {
-        //     name: string,
-        //     file: FileType,
-        //     section_id: number,
-        //     section_type: "Class" | "Unit" | "Subunit"
-        // }
-        // // Function to call api route to create files
-        // const handleBulkFileCreation = async (new_files: FileCreate[]) => {
-        //     async function fileFromPath(path: string, name: string) {
-        //         const response = await fetch(path);
-        //         const blob = await response.blob();
-        //         const filename = path.split('/').pop();
-        //         return new File([blob], name, { type: blob.type });
-        //     }
-
-        //     const fd = new FormData()
-        //     for(let i=0; i<new_files.length; i++){
-        //         const retrievedFile = await fileFromPath(new_files[i].file.file, file.name)
-        //         fd.append(`files[${i}][name]`, new_files[i].name)
-        //         fd.append(`files[${i}][file]`, retrievedFile)
-        //         fd.append(`files[${i}][section_id]`, )
-        //     }
-
-        // }
-        // Helper to change the order 
-        // Unlike the name field of a unit or subunit which is changed at the component level, the order key is overwrriten inside the context
         const handleUnitSubunitOrderValidation = () => {
             return units.map((unit, i) => {
                 const formattedSubunits = unit.subunits.map((subunit, i) => {
@@ -93,10 +68,6 @@ export const ClassContextProvider = ({ children }: { children: React.ReactNode }
                 }
             })
         }
-        // TODO: Handle PUT request to backend
-        // Validate class fields
-        if(!classFields)    return
-
         // Validate order of units and subunits
         const formattedUnits = handleUnitSubunitOrderValidation()
         const body = {

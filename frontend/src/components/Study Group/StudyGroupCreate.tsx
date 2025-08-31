@@ -4,6 +4,7 @@ import { useState, useContext } from "react"
 import { StudyGroupContext } from "@/app/context/StudyGroupContext"
 import api from "@/utils/api"
 import { StudyGroupType } from "@/types"
+import { toast } from "react-toastify"
 
 export default function StudyGroupCreate(){
     const [name, setName] = useState<string>("")
@@ -19,6 +20,10 @@ export default function StudyGroupCreate(){
             datetime,
             visibility: "Public",
             members: []
+        }
+        if(name.trim() === "" || name.length < 3){
+            toast.error("Study group name must be at least 3 characters long")
+            return
         }
         try{
             const res = await api.post('/study-groups/', body)

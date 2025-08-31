@@ -11,6 +11,7 @@ import { FaClock, FaPlusCircle } from "react-icons/fa";
 import { IoIosCheckmarkCircle, IoMdPersonAdd } from "react-icons/io";
 import { TbFaceIdError } from "react-icons/tb";
 import InviteMembersList from "./InviteMembersList";
+import { toast } from "react-toastify";
 
 export default function StudyGroupInvite({ id, name, studyGroup }: { id: number, name: string, studyGroup: StudyGroupType}) {
     // Retrieve classes from zustand store
@@ -29,11 +30,10 @@ export default function StudyGroupInvite({ id, name, studyGroup }: { id: number,
     const selectedClass: ClassType = classes.find(c => c.id === selectedClassId) || classes[0]
 
     if(error){
-        // TODO: Notify user classes request failed
+        toast.error("Failed to load class members. Please try again")
         return
     }
     if(!classes || classes.length === 0){
-        // TODO: Edge case, user has no classes
         return (
             <div className="overlay">
                 <div className="card flex flex-col gap-y-2 py-4 min-w-[300px] w-[50vw] max-w-[768px] bg-secondary">
