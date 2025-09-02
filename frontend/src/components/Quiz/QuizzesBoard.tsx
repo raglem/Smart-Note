@@ -88,6 +88,14 @@ export default function QuizzesBoard({quizzes, results}: {quizzes: QuizSimpleTyp
                     </div>
                 ))}
             </div>}
+            {(display==='quizzes' && classGroupedQuizzes.length === 0) && <div className="flex flex-col min-h-[calc(100vh-400px)] w-full justify-center items-center gap-y-2">
+                <Empty message={"No available quizzes."} />
+                <Link href='/quizzes/create/'>
+                    <p className="text-primary text-lg hover:underline">
+                        Create a quiz yourself to get started
+                    </p>
+                </Link>
+            </div>}
             {(display==='results' && sortedResults.length > 0) && <div className="flex flex-col w-full items-left gap-y-4">
                 <div className="flex flex-col gap-y-2">
                     <h2 className="text-3xl underline">Pending Results (Requires Self-Grading)</h2>
