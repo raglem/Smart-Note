@@ -178,21 +178,21 @@ export default function Section({ sectionId, sectionType, ...dragProps }: {
                     }
                     {editMode &&
                         <div className="flex flex-row items-center gap-x-4">
-                            <FaTrashAlt className="icon-responsive" onClick={handleSectionDelete}/>
-                            <GiHamburgerMenu {...dragProps} className="icon-responsive w-4" />
+                            <FaTrashAlt className="icon-responsive text-primary" onClick={handleSectionDelete}/>
+                            <GiHamburgerMenu {...dragProps} className="icon-responsive w-4 text-primary" />
                         </div>
                     }
                 </div>
             </div>
             {showSubsection && (
                 <div className="relative flex flex-col gap-y-2 pl-6">
-                    <div className="grid grid-cols-4 md:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-4">
+                    <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
                         {section.files.map((note) => (
                             <FilePreview file={note} key={note.id}>
                                 { editMode && <RemoveFile file={ note } /> }
                             </FilePreview>
                         ))}
-                        <FileAdd section_id={section.id} section={sectionType} />
+                        {!editMode && <FileAdd section_id={section.id} section={sectionType} />}
                     </div>
                     {subsections && <div className="flex flex-col gap-y-4">
                         <DndContext collisionDetection={closestCenter} onDragPending={handleDragPending} onDragEnd={handleDragEnd}>

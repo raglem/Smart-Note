@@ -64,7 +64,7 @@ export default function RemoveFile({ file } : { file: FileType }){
                 close={() => setShowDeleteConfirmation(false)}
             /> }
             <div onClick={() => setShowDeleteConfirmation(true)} className="absolute top-0 left-0 right-0 bottom-0 flex justify-center items-center hover:cursor-pointer bg-black/20">
-                <CiCircleRemove className="h-1/2 w-1/2 icon-responsive"/>
+                <CiCircleRemove className="h-1/2 w-1/2 icon-responsive text-primary"/>
             </div>
         </>
     )
