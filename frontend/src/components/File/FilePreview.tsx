@@ -15,7 +15,7 @@ export default function FilePreview({ file, isPDF, children } : {
 
     return (
         <div onClick={children ? undefined : handleFullPreview} className={`relative file-wrapper ${children ? '' : 'hover:cursor-pointer hover:opacity-80'}`}>
-            <div className="flex justify-center items-center relative w-full min-h-[calc(100%-28px)] bg-gray-100">
+            <div className="flex justify-center items-center relative w-full aspect-[8/10] bg-gray-100">
                 {isPDF ? (
                     <iframe src={path} width="100%" height="100%" />
                 ) : (

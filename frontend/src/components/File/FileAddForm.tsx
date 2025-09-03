@@ -97,46 +97,49 @@ export default function FileAdd({ section_id, section, close } : { section_id: n
     }
     return (
         <div className="overlay">
-            <div className="card flex flex-col py-4 gap-y-2 min-w-[300px] w-[50vw] max-w-[768px] bg-secondary">
-                <header className="flex flex-row items-center px-2 text-3xl border-b-1 border-b-primary">Add File</header>
-                { !filePreview ? (
-                    <label htmlFor="file-input" className="flex h-[200px] w-full justify-center items-center">
-                        <FaFileUpload className="icon-responsive text-8xl text-primary" />
-                        <input 
-                            type="file" id="file-input" 
-                            className="opacity-0 absolute top-0 left-0 right-0 bottom-0 -z-1"
-                            onChange={handleFileChange}
-                        /> 
-                    </label>
-                ) : (
-                    <FilePreview file={filePreview} isPDF={isPDF} />
-                )}
-                { !file ? (
-                    <div className="form-btn-toolbar justify-end px-2">
-                        <button className="form-btn bg-primary text-white hover:cursor-not-allowed opacity-80 whitespace-nowrap">Save File</button>
-                        <button onClick={close} className="form-btn bg-secondary text-primary">Cancel</button>
-                    </div>
-                    
-                ): (
-                    <div className="form-btn-toolbar justify-between px-2">
-                        <div className="flex flex-row items-center">
-                            <label htmlFor="file-input" className="relative">
-                                <FaFileUpload className="text-4xl text-primary icon-responsive" />
-                                <input 
-                                    type="file" id="file-input" 
-                                    className="opacity-0 absolute top-0 left-0 right-0 bottom-0 -z-1"
-                                    onChange={handleFileChange}
-                                /> 
-                            </label>
-                            <MdDeleteForever className="icon-responsive text-5xl text-primary" onClick={handleFileRemoval} />
+            <div className="card flex flex-col gap-y-2 min-w-[300px] w-[50vw] max-w-[768px] border-1 border-primary bg-white z-1">
+                <header className="flex flex-row items-center pt-4 pb-2 px-4 text-3xl bg-primary text-white">Add File</header>
+                <div className="flex flex-col w-full justify-center items-center">
+                    { !filePreview ? (
+                        <label htmlFor="file-input" className="relative flex h-[200px] w-full justify-center items-center">
+                            <FaFileUpload className="icon-responsive text-8xl text-primary" />
+                            <input 
+                                type="file" id="file-input" 
+                                className="opacity-0 absolute top-0 left-0 right-0 bottom-0 -z-1"
+                                onChange={handleFileChange}
+                            /> 
+                        </label>
+                    ) : (
+                        <FilePreview file={filePreview} isPDF={isPDF} />
+                    )}
+                </div>
+                <form>
+                    { !file ? (
+                        <div className="form-btn-toolbar justify-end p-4">
+                            <button className="form-btn border-0 bg-primary text-white hover:cursor-not-allowed opacity-80 whitespace-nowrap">Save File</button>
+                            <button onClick={close} className="form-btn border-1 border-primary text-primary bg-white cursor-pointer hover:opacity-80">Cancel</button>
                         </div>
-                        <div className="flex flex-row items-center gap-x-2">
-                            <button className="form-btn bg-primary text-white whitespace-nowrap" onClick={handleFileSave}>Save File</button>
-                            <button onClick={close} className="form-btn bg-secondary text-primary">Cancel</button>
+                        
+                    ): (
+                        <div className="form-btn-toolbar justify-between p-4">
+                            <div className="flex flex-row items-center">
+                                <label htmlFor="file-input" className="relative">
+                                    <FaFileUpload className="text-4xl text-primary icon-responsive" />
+                                    <input 
+                                        type="file" id="file-input" 
+                                        className="opacity-0 absolute top-0 left-0 right-0 bottom-0 -z-1"
+                                        onChange={handleFileChange}
+                                    /> 
+                                </label>
+                                <MdDeleteForever className="icon-responsive text-5xl text-primary" onClick={handleFileRemoval} />
+                            </div>
+                            <div className="flex flex-row items-center gap-x-2">
+                                <button className="form-btn border-0 bg-primary text-white whitespace-nowrap cursor-pointer hover:opacity-80" onClick={handleFileSave}>Save File</button>
+                                <button onClick={close} className="form-btn bg-white border-1 border-primary text-primary cursor-pointer hover:opacity-80">Cancel</button>
+                            </div>
                         </div>
-                    </div>
-                )}
-                
+                    )}
+                </form>
             </div>
         </div>
     )

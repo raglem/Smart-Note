@@ -15,11 +15,13 @@ export default function ClassCard({ classItem }: { classItem: ClassType }){
     }
     return (
         <div className="card flex flex-col justify-between gap-y-4 rounded-2xl">
-            <img 
-                className="w-full h-64 object-cover rounded-t-2xl"
-                src={ classItem.image }
-                alt="Couldn't load image"
-            />
+            <Link href={`/classes/${classItem.id}`}>
+                <img 
+                    className="w-full h-64 object-cover rounded-t-2xl cursor-pointer hover:opacity-80"
+                    src={ classItem.image }
+                    alt={`${classItem.name} Image`}
+                />
+            </Link>
             <header className="flex flex-row justify-between items-center p-2">
                 <div className="flex flex-col w-[80%]">
                     <h1 className="text-3xl text-bold hover:underline hover:text-primary hover:cursor-pointer">
