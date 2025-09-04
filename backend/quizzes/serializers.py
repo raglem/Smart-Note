@@ -109,7 +109,6 @@ class FreeResponseNestedGradedRubricSerializer(serializers.ModelSerializer):
 
 class FreeResponseAnswerReadSerializer(serializers.ModelSerializer):
     question = FreeResponseQuestionReadSerializer(read_only=True)
-    points_awarded = serializers.SerializerMethodField()
     total_possible_points = serializers.SerializerMethodField()
     graded_rubrics = FreeResponseNestedGradedRubricSerializer(read_only=True, many=True)
     class Meta:
@@ -120,23 +119,11 @@ class FreeResponseAnswerReadSerializer(serializers.ModelSerializer):
             'total_possible_points', 'graded_rubrics'
         ]
 
-    def get_points_awarded(self, instance):
-        points_awarded = 0
-        if instance.status == 'Pending':
-            return 0
-        rubrics = instance.question.rubrics.all()
-        for rubric in rubrics:
-            graded_rubric = FreeResponseGradedRubric.objects.get(rubric=rubric, answer=instance)
-            if graded_rubric:
-                points_awarded += graded_rubric.points_awarded
-        return points_awarded
-
     def get_total_possible_points(self, instance):
         total_possible_points = 0
         rubrics = instance.question.rubrics.all()
         for rubric in rubrics:
             total_possible_points += rubric.possible_points
-        print(total_possible_points)
         return total_possible_points
 
 class FreeResponseAnswerWriteSerializer(serializers.ModelSerializer):

@@ -11,7 +11,7 @@ from .serializers import StudyGroupSerializer, StudyGroupMemberSerializer
 from users.serializers import SimpleMemberSerializer
 from users.models import Member
 
-class StudyGroupCreateAPIView(ListCreateAPIView):
+class StudyGroupCreateListAPIView(ListCreateAPIView):
     queryset = StudyGroup.objects.all()
     serializer_class = StudyGroupSerializer
     permission_classes = [IsAuthenticated]

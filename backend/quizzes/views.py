@@ -79,10 +79,14 @@ class QuestionsAPIView(APIView):
             frq = FreeResponseQuestion.objects.create(**question_data)
             frq.related_units.set(related_units)
             frq.related_subunits.set(related_subunits)
+            # Accumulate total_possible_points of question based on multiple rubrics
+            total_possible_points = 0
             # Nested creation of rubrics
             for rubric_data in rubrics:
                 rubric_data['question'] = frq
+                total_possible_points += rubric_data['possible_points']
                 FreeResponseRubric.objects.create(**rubric_data)
+            frq.total_possible_points = total_possible_points
             frq.save()
         return Response({"message": "Questions added successfully."}, status=201)
     
@@ -114,17 +118,33 @@ class QuizGradeAPIView(APIView):
         if not serializer.is_valid():
             return Response(serializer.errors, status=400)
         validated_data = serializer.validated_data
-        answers_data = validated_data
-        for answer_data in answers_data:
+        graded_answers = validated_data
+        for answer_data in graded_answers:
             answer = answer_data['answer']
             if answer.status == 'Graded':
                 continue    # Do NOT grade the same answer twice
             graded_rubrics_data = answer_data['graded_rubrics']
+            points_awarded = 0
             for graded_rubric_data in graded_rubrics_data:
                 graded_rubric_data['answer'] = answer
+                points_awarded += graded_rubric_data['points_awarded']
                 FreeResponseGradedRubric.objects.create(**graded_rubric_data)
             answer.status = 'Graded'
+            answer.points_awarded += points_awarded
             answer.save()
+        # Verify the quiz grade
+        quiz_result = None
+        if len(graded_answers) > 0: 
+            quiz_result = graded_answers[0]['answer'].quiz_result
+        if quiz_result:
+            points_awarded = 0
+            for mcq_answer in quiz_result.mcq_answers.all():
+                if mcq_answer.result == 'Correct':
+                    points_awarded += 1
+            for frq_answer in quiz_result.frq_answers.all():
+                points_awarded += frq_answer.points_awarded
+            quiz_result.points_awarded = points_awarded
+            quiz_result.save()
         return Response({"message": "Quiz graded successfully."}, status=201)
 
 class QuizResultListAPIView(ListAPIView):

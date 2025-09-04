@@ -65,15 +65,6 @@ class Subunit(models.Model):
     name = models.CharField(max_length=50)
     order = models.PositiveIntegerField()
     unit = models.ForeignKey(Unit, on_delete=models.CASCADE, related_name='subunits')
-
-    # def clean(self):
-    #     # the subunit name is not unique within the unit
-    #     if Subunit.objects.filter(name=self.name, unit=self.unit).exists():
-    #         raise ValidationError("SubUnit name must be unique within the Unit.")
-
-    #     # the order is not unique within the unit
-    #     if Subunit.objects.filter(order=self.order, unit=self.unit).exists():
-    #         raise ValidationError("SubUnit must be unique within the Class.")
         
     def save(self, *args, **kwargs):
         is_new = self.pk is None
