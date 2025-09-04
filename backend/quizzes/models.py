@@ -14,7 +14,7 @@ class Quiz(models.Model):
         return self.name
     
 class Question(models.Model):
-    question_text = models.CharField(max_length=200)
+    question_text = models.CharField(max_length=1000)
     order = models.PositiveIntegerField()
 
     class Meta:
@@ -82,6 +82,7 @@ class FreeResponseAnswer(models.Model):
         ('Graded', 'Graded')
     ]
     status = models.CharField(max_length=10, choices=FRQ_ANSWER_STATUS_CHOICES, default='Pending')
+    points_awarded = models.PositiveIntegerField(default=0)
     user_answer = models.TextField(max_length=1000)
     order = models.PositiveIntegerField()
     question = models.ForeignKey(FreeResponseQuestion, on_delete=models.CASCADE, related_name='answers')

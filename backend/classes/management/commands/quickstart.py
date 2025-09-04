@@ -191,7 +191,7 @@ class Command(BaseCommand):
                         study_group=study_group,
                         status=random_status[random.randint(0, 1)]
                     )
-                StudyGroupMember.objects.create(
+                    StudyGroupMember.objects.create(
                         member=owner,
                         study_group=study_group,
                         status=random_status[1]
