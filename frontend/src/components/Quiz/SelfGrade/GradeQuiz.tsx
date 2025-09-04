@@ -8,10 +8,14 @@ import api from "@/utils/api";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 
+type RubricGradeType = {
+    rubric_id: number,
+    grade: number
+}
 type GradedStatusType = {
     answer_id: number,
     status: "Pending" | "Graded"
-    points_awarded: number,
+    rubricGrades: RubricGradeType[]
 }
 export default function GradeQuiz({ quizId, multipleChoiceAnswers, multipleChoicePoints, freeResponseAnswers }: 
 { 
@@ -23,7 +27,13 @@ export default function GradeQuiz({ quizId, multipleChoiceAnswers, multipleChoic
     // State variables
     const [viewMCQs, setViewMCQs] = useState<boolean>(false)
     const [currentMCQPage, setCurrentMCQPage] = useState<number>(0)
-    const [statuses, setStatuses] = useState<GradedStatusType[]>(freeResponseAnswers.map(answer => ({ answer_id: answer.id, status: "Pending", points_awarded: 0 })))
+    const [statuses, setStatuses] = useState<GradedStatusType[]>(
+        freeResponseAnswers.map(answer => ({ 
+            answer_id: answer.id, 
+            status: "Pending", 
+            rubricGrades: answer.question.rubrics.map(rubric => ({ rubric_id: rubric.id, grade: 0 }))
+        }))
+    )
 
     // Computed properties
     const sortedMCQs = multipleChoiceAnswers.sort((a,b) => a.order - b.order)
@@ -39,23 +49,35 @@ export default function GradeQuiz({ quizId, multipleChoiceAnswers, multipleChoic
 
     const router = useRouter()
 
-    // Functions
+    // Parent function for FRQAnswerGrade to update the graded statuses (specifically the status field "Pending" or "Graded")
     const setStatus = (answer_id: number, newStatus: "Pending" | "Graded") => {
         setStatuses(prevStatuses => prevStatuses.map(prevStatus => prevStatus.answer_id === answer_id ? {
             ...prevStatus,
             status: newStatus
         } : prevStatus))
     }
+    // Parent function for FRQAnswerGrade to set the graded score of a rubric nested in statuses
+    const setPointsAwarded = (answerId: number, rubricId: number, pointsAwarded: number) => {
+        setStatuses(prevStatuses => prevStatuses.map(currentStatus => currentStatus.answer_id === answerId ? {
+            ...currentStatus,
+            rubricGrades: currentStatus.rubricGrades.map(currentRubric => currentRubric.rubric_id === rubricId ? {
+                ...currentRubric,
+                grade: pointsAwarded
+            }: currentRubric)
+        } : currentStatus))
+    }
+
     const handleSubmitGrading = async () => {
         const formattedAnswers = freeResponseAnswers.map(answer => ({
             answer: answer.id,
-            graded_rubrics: answer.question.rubrics.map(rubric => {
-                const foundGradedStatus = statuses.find(status => status.answer_id === answer.id)
-                return {
-                    rubric: rubric.id,
-                    points_awarded: foundGradedStatus?.points_awarded || 0
-                }
-            })}))
+            graded_rubrics: (() => {
+                // Retrieve the status of the current answer
+                const foundStatus = statuses.find(status => status.answer_id === answer.id)
+                if(!foundStatus)    return []
+                // With the matching status, return the rubric grades
+                return foundStatus.rubricGrades.map(gradedRubric => ({ rubric: gradedRubric.rubric_id, points_awarded: gradedRubric.grade }))
+            })()
+        }))
         try{
             const res = await api.post('/quizzes/grade/', { answers: formattedAnswers })
             console.log(res.data)
@@ -78,7 +100,7 @@ export default function GradeQuiz({ quizId, multipleChoiceAnswers, multipleChoic
                 {viewMCQs && <FaCaretDown className="icon-responsive"/>}
                 {!viewMCQs && <FaCaretUp className="icon-responsive" />}
             </div>
-            {viewMCQs && <div className="flex flex-col p-4 w-full border-1 border-primary border-t-0 bg-white">
+            {viewMCQs && <div className="flex flex-col p-4 w-full border-1 border-primary bg-white rounded-md">
                 { paginatedMCQAnswers[currentMCQPage].map(answer => (
                     <MCQAnswerResult answer={answer} key={answer.id} />
                 ))}
@@ -103,6 +125,7 @@ export default function GradeQuiz({ quizId, multipleChoiceAnswers, multipleChoic
                         answer={answer} 
                         status={foundStatus.status} 
                         setStatus={(newStatus: "Pending" | "Graded") => setStatus(answer.id, newStatus)} 
+                        setPointsAwarded={(rubricId: number, newPointsAwarded: number) => setPointsAwarded(answer.id, rubricId, newPointsAwarded)}
                         key={answer.id} 
                     />
                 })}

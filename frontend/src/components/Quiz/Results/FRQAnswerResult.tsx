@@ -24,7 +24,7 @@ export default function FRQAnswerResult({ answer }: { answer: FRQAnswerResultTyp
             </div>
             <div className="flex flex-col w-full gap-y-1">
                 <label>Rubric</label>
-                <div className="flex flex-col gap-y-2 border-1 border-primary p-2">
+                <div className="flex flex-col gap-y-2 border-1 border-primary p-4 rounded-md">
                     { answer.graded_rubrics.map(graded_rubric => (
                         <div className="flex flex-row items-center w-full gap-x-4 text-xl" key={graded_rubric.id}>
                             <div className="flex flex-row items-center">
@@ -36,7 +36,7 @@ export default function FRQAnswerResult({ answer }: { answer: FRQAnswerResultTyp
                                 </span>
                             </div>
                             <p className="text-sm border-1 border-primary p-2 w-full">
-                                {answer.question.correct_answer}
+                                {graded_rubric.reasoning_text}
                             </p>
                         </div>
                     ))}

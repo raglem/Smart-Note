@@ -6,7 +6,8 @@ import SortableItem from "../SortableItem";
 import { closestCenter, DndContext, DragEndEvent, useDroppable } from "@dnd-kit/core";
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 
-import { IoIosAddCircleOutline, IoIosRemoveCircleOutline } from "react-icons/io";
+import { IoMdRemoveCircle } from "react-icons/io";
+import { FaCirclePlus } from "react-icons/fa6";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { ClassContext } from "@/app/context/ClassContext";
 import api from "@/utils/api";
@@ -92,8 +93,17 @@ export default function AddUnit({ class_id, close }: { class_id: number, close: 
         try{
             const res = await api.post('/classes/units/', body)
             const newUnit: UnitType = res.data
+            // Include files on the newUnit
+            const formattedUnit = {
+                ...newUnit,
+                files: [],
+                subunits: newUnit.subunits.map(subunit => ({
+                    ...subunit,
+                    files: []
+                }))
+            }
             // Add unit to class context
-            setUnits([...units, newUnit])
+            setUnits([...units, formattedUnit])
         }
         catch(err){
             console.error(err)
@@ -105,27 +115,27 @@ export default function AddUnit({ class_id, close }: { class_id: number, close: 
     }
     return (
         <div className="overlay">
-            <div className="card pt-8 min-w-[300px] w-[50vw] max-w-[768px] bg-secondary">
-                <header className="flex flex-row items-center px-2 text-3xl border-b-1 border-b-primary">
+            <div className="card min-w-[300px] w-[50vw] max-w-[768px] bg-white">
+                <header className="flex flex-row items-center pt-4 pb-2 px-4 text-3xl bg-primary text-white">
                     Add Unit
                 </header>
-                <form className="flex flex-col items-stretch gap-y-4 py-4 px-2" onSubmit={(e) => {e.preventDefault()}}>
+                <div className="flex flex-col items-stretch gap-y-4 p-4" onSubmit={(e) => {e.preventDefault()}}>
                     <input 
-                        type="text" placeholder="Unit Name" id="unit-input" required className="form-input"
+                        type="text" placeholder="Unit Name" id="unit-input" required className="form-input border-1 border-primary"
                         value={unitName} onChange={(e) => setUnitName(e.target.value)}
                     />
-                    <div className="form-input-wrapper">
+                    <div className="form-input-wrapper border-1 border-primary">
                         <input 
                             type="text" placeholder="Add Subunit" id="subunit-input" className="form-input p-0 border-0"
                             value={subunit} onChange={(e) => setSubunit(e.target.value)}
                         />
-                        <IoIosAddCircleOutline className="icon-responsive" onClick={handleSubunitAdd}/>
+                        <FaCirclePlus className="icon-responsive text-primary" onClick={handleSubunitAdd}/>
                     </div>
                     {subunits.length > 0 && <div className="flex flex-col w-full">
                         <h3>Subunits</h3>
                         <DndContext collisionDetection={closestCenter} onDragEnd={handleSubunitDragEnd}>
                             <SortableContext items={subunits} strategy={verticalListSortingStrategy}>
-                                <ol className="flex flex-col border-1 border-y-primary rounded-sm">
+                                <ol className="flex flex-col border-1 border-primary rounded-sm">
                                     {
                                         subunits.map((currentSubunit, i) => (
                                             <SortableItem id={i} key={i}>
@@ -134,14 +144,14 @@ export default function AddUnit({ class_id, close }: { class_id: number, close: 
                                                         {currentSubunit}
                                                         <span className="flex flex-row items-center gap-x-2">
                                                             <GiHamburgerMenu {...attributes} {...listeners} className="icon-responsive cursor-grab" />
-                                                            <IoIosRemoveCircleOutline className="icon-responsive" onClick={() => handleSubunitRemove(currentSubunit)}/>
+                                                            <IoMdRemoveCircle className="icon-responsive text-primary" onClick={() => handleSubunitRemove(currentSubunit)}/>
                                                         </span>
                                                     </li> : ({ listeners, attributes, setNodeRef, style }) => 
                                                     <li ref={setNodeRef} style={style} className="flex flex-row justify-between items-center p-2" key={i}>
                                                         {currentSubunit}
                                                         <span className="flex flex-row items-center gap-x-2">
                                                             { i!=0 && <GiHamburgerMenu {...attributes} {...listeners} className="icon-responsive cursor-grab" />}
-                                                            <IoIosRemoveCircleOutline className="icon-responsive" onClick={() => handleSubunitRemove(currentSubunit)}/>
+                                                            <IoMdRemoveCircle className="icon-responsive text-primary" onClick={() => handleSubunitRemove(currentSubunit)}/>
                                                         </span>
                                                     </li>
                                                 }
@@ -154,10 +164,10 @@ export default function AddUnit({ class_id, close }: { class_id: number, close: 
                     </div>
                     }
                     <div className="form-btn-toolbar">
-                        <button onClick={handleUnitCreate} className="form-btn bg-primary text-white">Save</button>
-                        <button onClick={handleCancel} className="form-btn bg-secondary text-primary">Cancel</button>
+                        <button onClick={handleUnitCreate} className="form-btn bg-primary text-white border-0">Save</button>
+                        <button onClick={handleCancel} className="form-btn bg-white border-1 border-primary">Cancel</button>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
     )

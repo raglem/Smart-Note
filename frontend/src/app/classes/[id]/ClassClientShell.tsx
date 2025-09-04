@@ -23,6 +23,7 @@ export default function ClassClientShell({ classInfo }:{
     const { 
         setClassFields, 
         addMode, setAddMode, 
+        editMode, 
         units, setUnits, 
         setDraggingUnit 
     } = useContext(ClassContext)
@@ -88,7 +89,7 @@ export default function ClassClientShell({ classInfo }:{
                         {classInfo.files.map(f => (
                             <FilePreview file={f} key={f.id}></FilePreview>
                         ))}
-                        <FileAdd section_id={classInfo.id} section="Class" />
+                        {!editMode && <FileAdd section_id={classInfo.id} section="Class" />}
                     </div>
                 </div>
             </div>

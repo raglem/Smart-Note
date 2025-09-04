@@ -19,6 +19,9 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "SmartNote",
+  icons: {
+    icon: '/favicon.png'
+  }
 };
 
 export default function RootLayout({
@@ -38,7 +41,10 @@ export default function RootLayout({
             {children}
           </main>
           <footer className="flex flex-row justify-center items-center py-2 border-t-1 border-t-primary h-[40px]">
-            Footer
+            Made by&nbsp;
+            <a href="https://www.linkedin.com/in/theoden-melgar/" className="text-primary hover:underline">
+              Theoden Melgar
+            </a>
           </footer>
         </body>
       </UserProvider>

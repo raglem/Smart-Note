@@ -39,8 +39,9 @@ export function StudyGroupCard({ group }: { group: StudyGroupType }) {
     }, [showToolbar])
 
     const handleToolbar = () => {
-        setShowSidebar(true)
-        setShowToolbar(!showToolbar)
+        if(selectedStudyGroup && selectedStudyGroup.id === group.id){
+            setShowToolbar(!showToolbar)
+        }
     }
 
     group.members.sort((a,b) => {

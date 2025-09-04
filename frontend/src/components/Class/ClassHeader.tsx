@@ -11,6 +11,7 @@ import { MdDeleteForever } from "react-icons/md";
 import { ClassDetailType } from "../../types/Sections";
 import LeaveClass from "./LeaveClass";
 import { toast } from "react-toastify";
+import LoadingBar from "../LoadingBar";
 
 export default function ClassHeader({ classInfo }: { classInfo: ClassDetailType }) {
     // Gather context
@@ -20,6 +21,7 @@ export default function ClassHeader({ classInfo }: { classInfo: ClassDetailType 
     const [showToolbar, setShowToolbar] = useState<boolean>(false)
     const [name, setName] = useState<string>(classInfo.name)
     const [courseNumber, setCourseNumber] = useState<string>(classInfo.course_number || "")
+    const [loading, setLoading] = useState<boolean>(false)
 
     // State for deleting a class
     const [showDelete, setShowDelete] = useState<boolean>(false)
@@ -70,7 +72,9 @@ export default function ClassHeader({ classInfo }: { classInfo: ClassDetailType 
         setShowToolbar(false)
     }
     const closeEditMode = async () => {
+        setLoading(true)
         await handleSave()
+        setLoading(false)
         setEditMode(false)
         setShowToolbar(false)
     }
@@ -78,8 +82,8 @@ export default function ClassHeader({ classInfo }: { classInfo: ClassDetailType 
     return (
         <>
             {showDelete && <LeaveClass close = {() => setShowDelete(false)}/>}
-            <header className="flex flex-row justify-between items-center text-3xl">
-                <div className="flex items-center gap-x-4">
+            <header className="flex flex-col w-full gap-y-4 md:flex-row md:justify-between md:items-center text-3xl">
+                <div className="flex items-center w-full gap-x-4">
                     <div className="relative">
                         {!editMode &&
                             <FaCog className="hover:cursor-pointer hover:opacity-80 text-2xl text-primary" onClick={openToolbar}/>
@@ -105,43 +109,42 @@ export default function ClassHeader({ classInfo }: { classInfo: ClassDetailType 
                         }
                     </div>
                     {
-                        !editMode ? (
-                            courseNumber.length > 0 ? (
-                                <div>
-                                    { name } | { courseNumber }
+                        !editMode ? ( <>
+                            {courseNumber.length > 0 && <div>{ name } | { courseNumber }</div>}
+                            {courseNumber.length == 0 && <div>{ name }</div>}
+                        </>) : (
+                            <div className="flex flex-row justify-between items-center w-full">
+                                <div className="flex flex-row gap-x-4">
+                                    <div className="flex flex-col">
+                                        <label htmlFor="name" className="text-sm italic">Name</label>
+                                        <input 
+                                            type="text" className="border-1 border-primary px-1 text-[1.5rem]" 
+                                            id="name" value={name} required
+                                            onChange={(e) => setName(e.target.value)}
+                                            onBlur={handleBlurForNameAndCourseNumber}
+                                        />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <label htmlFor="course number" className="text-sm italic">Course Number (Optional)</label>
+                                        <input 
+                                            type="text" className="border-1 border-primary px-1 text-[1.5rem]" 
+                                            id="course number" value={courseNumber} 
+                                            onChange={(e) => setCourseNumber(e.target.value)}
+                                            onBlur={handleBlurForNameAndCourseNumber}
+                                        />
+                                    </div>
                                 </div>
-                            ) : (
-                                <div>
-                                    { name }
+                                { loading && <div className="flex flex-row items-center gap-x-2 min-w-[300px]">
+                                    <h3 className="text-primary">Saving...</h3>
+                                    <LoadingBar />
                                 </div>
-                            )
-                        ) : (
-                            <div className="flex flex-row gap-x-4">
-                                <div className="flex flex-col">
-                                    <label htmlFor="name" className="text-sm italic">Name</label>
-                                    <input 
-                                        type="text" className="border-1 border-primary px-1 text-[1.5rem]" 
-                                        id="name" value={name} required
-                                        onChange={(e) => setName(e.target.value)}
-                                        onBlur={handleBlurForNameAndCourseNumber}
-                                    />
-                                </div>
-                                <div className="flex flex-col">
-                                    <label htmlFor="course number" className="text-sm italic">Course Number (Optional)</label>
-                                    <input 
-                                        type="text" className="border-1 border-primary px-1 text-[1.5rem]" 
-                                        id="course number" value={courseNumber} 
-                                        onChange={(e) => setCourseNumber(e.target.value)}
-                                        onBlur={handleBlurForNameAndCourseNumber}
-                                    />
-                                </div>
+                                }
                             </div>
                         )
                     }
-
                 </div>
-                {!editMode && <div className="flex flex-row items-end justify-end">
-                    <span className="text-2xl text-primary">Join Code: &nbsp; </span>
+                {!editMode && <div className="flex flex-row gap-x-2 text-4xl items-end md:items-end md:justify-end md:text-2xl">
+                    <span className="text-lg md:text-2xl text-primary whitespace-nowrap">Join Code:</span>
                     <DuplicateCode code={classInfo.join_code} />
                 </div>}
             </header>

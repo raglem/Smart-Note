@@ -24,6 +24,16 @@ export default function ValidateQuestions(questions: QuestionType[]){
                 }
             }
         }
+        if(question.question_category === "FreeResponse"){
+            for(const rubric of question.rubrics){
+                if(rubric.possible_points === 0){
+                    return { valid: false, message: `Q${i+1}: A rubric category must be worth more than 0 points` }
+                }
+                if(rubric.reasoning_text.trim().length < 5){
+                    return { valid: false, message: `Q${i+1}: The reasoning for a rubric category must have a length of at least 5 characters` }
+                }
+            }
+        }
     }
     return { valid: true, message: "Questions are valid" }
 }

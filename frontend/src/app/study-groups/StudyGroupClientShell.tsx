@@ -1,6 +1,6 @@
 "use client"
 
-import { useContext, useRef, useState } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import { StudyGroupContext } from "../context/StudyGroupContext"
 import StudyGroupCreate from "../../components/Study Group/StudyGroupCreate"
 import StudyGroupCalendar from "../../components/Study Group/StudyGroupCalendar"
@@ -17,11 +17,16 @@ export default function StudyGroupClientShell({ studyGroupsInfo }: { studyGroups
     const initializedRef = useRef(false)
 
     const { 
-        studyGroups, setStudyGroups, 
+        studyGroups, setStudyGroups, setLoadingStudyGroups,
         selectedStudyGroup, setSelectedStudyGroup, 
         creatingGroup, setCreatingGroup, 
         invitingGroup, managingGroup 
     } = useContext(StudyGroupContext)
+
+    // Update loading state to false
+    useEffect(() => {
+        setLoadingStudyGroups(false)
+    }, [])
 
     return (
         <>

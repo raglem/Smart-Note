@@ -68,8 +68,8 @@ export default function StudyGroupCalendar() {
     }
 
     return (
-        <div className="flex flex-col h-full gap-y-4 min-w-xl">
-            <div className="grid grid-cols-7 h-full gap-y-0">
+        <div className="flex flex-col h-full gap-y-4 overflow-x-scroll max-w-[100vw]">
+            <div className="grid grid-cols-7 h-full gap-y-0 min-w-md w-full">
                 <div className="flex flex-row justify-center items-end text-center border-b-1 border-primary">Sun</div>
                 <div className="flex flex-row justify-center items-end text-center border-b-1 border-primary">Mon</div>
                 <div className="flex flex-row justify-center items-end text-center border-b-1 border-primary">Tue</div>

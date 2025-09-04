@@ -105,7 +105,7 @@ export default function AddMembers({
                     </li>
                 }
             </ol> }
-            <div className="flex flex-col max-h-[210px] bg-gray-300 border-1 border-y-primary overflow-auto">
+            <div className="flex flex-col max-h-[210px] bg-gray-200 border-1 border-primary rounded-md overflow-auto">
                 <div className="flex flex-row justify-between items-center p-2 bg-primary text-white">
                     Added Members
                     {showAddedMembers ? <BiCaretUp className="icon-responsive" onClick={() => setShowAddedMembers(false)}/> : 
@@ -123,7 +123,7 @@ export default function AddMembers({
                                     <div className="flex flex-row items-center gap-x-2">
                                         { m.name }
                                     </div>
-                                    <IoRemoveCircleOutline className="hover:scale-150 transition-transform duration-200 ease-in-out text-xl text-primary" onClick={() => handleRemoveMember(m.id)}/> 
+                                    <IoRemoveCircleOutline className="icon-responsive transition-transform duration-200 ease-in-out text-xl text-primary" onClick={() => handleRemoveMember(m.id)}/> 
                                 </li>
                             ))
                         )}

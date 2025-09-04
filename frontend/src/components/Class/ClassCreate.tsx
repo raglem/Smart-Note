@@ -80,11 +80,11 @@ export default function ClassCreate({ close }: { close: () => void }){
     
     return (
         <div className="overlay">
-            <div className="card flex flex-col py-4 gap-y-2 min-w-[300px] w-[50vw] max-w-[768px] bg-secondary">
-                <header className="flex flex-row items-center px-2 text-3xl border-b-1 border-b-primary">
-                    Add Class
+            <div className="card flex flex-col gap-y-2 min-w-[300px] w-[50vw] max-w-[768px] bg-white border-1 border-primary">
+                <header className="flex flex-row items-center pt-4 pb-2 px-4 text-3xl bg-primary text-white">
+                    <h1>Add Class</h1>
                 </header>
-                <form className="flex flex-col items-stretch gap-y-4 py-4 px-2" onSubmit={(e) => {e.preventDefault()}}>
+                <form className="flex flex-col items-stretch gap-y-4 p-4" onSubmit={(e) => {e.preventDefault()}}>
                     <div className="flex flex-row gap-x-4 items-center w-full">
                         <div className="flex flex-col justify-end h-full w-full">
                             <label htmlFor="class-name">Name</label>
@@ -109,7 +109,7 @@ export default function ClassCreate({ close }: { close: () => void }){
                             Image
                         </label>
                         {!image &&  <label htmlFor="class-image">
-                            <div className="relative flex flex-col justify-center items-center gap-y-2 w-full h-[150px] border-1 border-black rounded-md bg-secondary hover:cursor-pointer">
+                            <div className="relative flex flex-col justify-center items-center gap-y-2 w-full h-[150px] border-1 border-black rounded-md bg-white hover:cursor-pointer">
                                 <FaUpload className="hover:opacity-80 hover:cursor-pointer text-5xl text-primary" />
                                 <p className="text-center text-primary text-xl">Upload a class image</p>
                                 <input 
@@ -120,7 +120,7 @@ export default function ClassCreate({ close }: { close: () => void }){
                         </label>}
                         {image && imagePreview && 
                             <div className="relative flex flex-col justify-center items-center gap-y-2 w-full h-[150px] border-1 border-black rounded-md">
-                                <img src={imagePreview.previewUrl} alt={imagePreview.name} className="object-contain h-full"/>
+                                <img src={imagePreview.previewUrl} alt={imagePreview.name} className="object-cover h-full"/>
                             </div>
                         }
                     </div>
@@ -132,13 +132,13 @@ export default function ClassCreate({ close }: { close: () => void }){
                     />
                     <div className="form-btn-toolbar">
                         <button 
-                            className="form-btn bg-primary text-white"
+                            className="form-btn border-0 bg-primary text-white"
                             onClick={handleClassCreate}
                         >
-                            Save
+                            Create
                         </button>
                         <button 
-                            type="reset" className="form-btn bg-secondary text-primary"
+                            type="reset" className="form-btn border-1 border-primary bg-white text-primary"
                             onClick={close}
                         >
                             Cancel
