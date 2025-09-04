@@ -13,16 +13,13 @@ export default function QuizCard({ quiz }: { quiz: QuizSimpleType }){
     return (
         <div className="card rounded-md">
             <header className="flex flex-row justify-between items-end bg-primary text-white px-2 py-5">
-                <h2 className="text-3xl hover:underline">{quiz.name}</h2>
-                <div className="flex flex-row items-center gap-x-2">
-                    { member && member.id === quiz.owner.id && <Link href="/quizzes/update/">
-                        <FaPencilAlt className="icon-responsive text-white"/>
-                    </Link>}
-                    <span className="text-xl whitespace-nowrap">{quiz.total_questions} Qs</span>
-                </div>
+                <Link href={`/quizzes/${quiz.id}`}>
+                    <h2 className="text-3xl hover:underline"> {quiz.name} </h2>
+                </Link>
+                <span className="text-xl whitespace-nowrap">{quiz.total_questions} Qs</span>
             </header>
             <Link href={`/quizzes/${quiz.id}`}>
-                <img src={quiz.image} className="object-cover w-full h-50px cursor-pointer"/>
+                <img src={quiz.image} className="object-cover w-full h-50px cursor-pointer hover:opacity-80"/>
             </Link>
             <div className="px-2 py-5 flex flex-wrap gap-2">
                 {quiz.related_units.map(unit => (

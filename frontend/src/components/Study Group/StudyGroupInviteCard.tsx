@@ -55,7 +55,7 @@ export function StudyGroupInviteCard({ group }: { group: StudyGroupType }) {
     return (
         <>
             <div className="card flex flex-col py-2 gap-y-2 min-w-full bg-white text-primary">
-                <header className="flex flex-row items-center py-2 px-4 gap-x-4 border-b-1 border-b-primary">
+                <header className="flex flex-row items-center pt-4 pb-2 px-4  gap-x-4 border-b-1 border-b-primary">
                     <h1 className={`text-${group.name.length > 15 ? "sm" : "xl"} m-0`}>{ group.name }</h1>
                     <i className="text-xs text-right">{ new Intl.DateTimeFormat('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }).format(new Date(group.datetime)) }</i>
                 </header>

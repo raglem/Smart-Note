@@ -31,7 +31,12 @@ export default function Page(){
         // Redirect
         router.push('/classes')
       } else {
-        console.error('Login failed')
+        if(res.status === 401){
+          toast.error('Invalid credentials. Please try again')
+        }
+        else{
+          toast.error('Something went wrong on login. Please try again')
+        }
       }
     }
 
@@ -47,7 +52,7 @@ export default function Page(){
         }
         else{
           console.error(err)
-        toast.error('Something went wrong creating a new account. Please try again.')
+          toast.error('Something went wrong creating a new account. Please try again.')
         }
       }
     }

@@ -36,11 +36,11 @@ export default function StudyGroupInvite({ id, name, studyGroup }: { id: number,
     if(!classes || classes.length === 0){
         return (
             <div className="overlay">
-                <div className="card flex flex-col gap-y-2 py-4 min-w-[300px] w-[50vw] max-w-[768px] bg-secondary">
-                    <header className="flex flex-row items-center px-2 text-3xl border-b-1 border-b-primary">
+                <div className="card flex flex-col gap-y-2 min-w-[300px] w-[50vw] max-w-[768px] bg-white">
+                    <header className="flex flex-row items-center pt-4 pb-2 px-4 text-3xl bg-primary text-white">
                         Invite to Study Group
                     </header>
-                    <div className="flex flex-row px-2 gap-x-2">
+                    <div className="flex flex-row p-4 gap-x-2">
                         <TbFaceIdError className="text-primary text-5xl"/>
                         <p>
                             You're not in any classes. <br/>
@@ -57,18 +57,18 @@ export default function StudyGroupInvite({ id, name, studyGroup }: { id: number,
 
     return (
         <div className="overlay">
-            <div className="card flex flex-col gap-y-2 pt-8 pb-4 min-w-[300px] w-[50vw] max-w-[768px] bg-secondary">
-                <header className="flex flex-row items-center px-2 text-3xl border-b-1 border-b-primary">
+            <div className="card flex flex-col gap-y-2 min-w-[300px] w-[50vw] max-w-[768px] bg-white">
+                <header className="flex flex-row items-center pt-4 pb-2 px-4 text-3xl bg-primary text-white">
                     Invite to Study Group
                 </header>
-                <div className="flex flex-col px-2 gap-y-2">
+                <div className="flex flex-col p-4 gap-y-2">
                     <div className="flex flex-col py-2">
                         <label htmlFor="name">
                             <h3 className="m-0">Choose Class: </h3>
                         </label>
                         <select 
                             id="name"
-                            className="form-input" value={selectedClassId || ''} 
+                            className="form-input border-1 border-primary" value={selectedClassId || ''} 
                             onChange={(e) => setSelectedClassId(parseInt(e.target.value))}
                         >
                             {classes.map((c) => (
@@ -81,8 +81,8 @@ export default function StudyGroupInvite({ id, name, studyGroup }: { id: number,
                         classMembers={selectedClass.members}
                     />
                 </div>
-                <div className="form-btn-toolbar p-2">
-                    <button className="form-btn py-1 px-4 bg-primary text-white" onClick={() => setInvitingGroup(false)}>Close</button>
+                <div className="form-btn-toolbar pt-0 px-4 pb-8">
+                    <button className="form-btn py-1 px-4 bg-primary text-white border-0" onClick={() => setInvitingGroup(false)}>Close</button>
                 </div>
             </div>
         </div>

@@ -62,10 +62,10 @@ export default function SelectClass({ selected, setSelected }: {
                 />
                 {classQuery.length > 0 && <CiCircleRemove className="icon-responsive text-gray-500 text-2xl" onClick={() => setClassQuery("")}/>}
             </div>
-            {isFocused && <div className="flex flex-col border-1 border-primary rounded-md bg-white">
+            {isFocused && <div className="flex flex-col border-1 border-primary rounded-md bg-white max-h-[220px] overflow-auto">
                 {filteredOptions.length > 0 && filteredOptions.map((option: ClassType) => (
                     <option 
-                        key={option.id} className="flex flex-row items-center w-full gap-x-2 p-2 border-b-1 border-b-primary last-of-type:border-none hover:cursor-pointer hover:bg-gray-100"
+                        key={option.id} className="flex flex-row items-center min-h-fit w-full gap-x-2 p-2 border-b-1 border-b-primary last-of-type:border-none hover:cursor-pointer hover:bg-gray-100"
                         onClick={() => handleSelection(option)}
                     >
                         {option.name}

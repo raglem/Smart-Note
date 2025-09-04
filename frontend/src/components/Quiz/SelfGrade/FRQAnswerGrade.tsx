@@ -1,6 +1,8 @@
+"use client"
+
 import { FRQAnswerResultType } from "@/types/Quizzes";
 import FRQRubricGrade from "./FRQRubricGrade";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoIosCheckmark, IoMdClose } from "react-icons/io";
 
 type GradedRubricType = {
@@ -9,10 +11,11 @@ type GradedRubricType = {
     total_possible_points: number,
     criteria: string
 }
-export default function FRQAnswerResult({ answer, status, setStatus }: { 
+export default function FRQAnswerResult({ answer, status, setStatus, setPointsAwarded }: { 
     answer: FRQAnswerResultType ,
     status: "Pending" | "Graded",
     setStatus: (newStatus: "Pending" | "Graded") => void
+    setPointsAwarded: (rubricId: number, newPointsAwarded: number) => void
 }){
     const rubrics = answer.question.rubrics
     const [gradedRubrics, setGradedRubrics] = useState<GradedRubricType[]>((() => {
@@ -23,18 +26,24 @@ export default function FRQAnswerResult({ answer, status, setStatus }: {
             criteria: rubric.reasoning_text
         }))
     }))
-    const totalScoreOfRubrics = gradedRubrics.reduce((acc, currentRubric) => {
-        return acc + currentRubric.points_awarded
-    }, 0)
+    
     const gradeRubric = (rubricId: number, pointsAwarded: number) => {
+        // Update the local state variable tracking the rubrics specific to the frq answer
         setGradedRubrics(prevGradedRubrics =>
             prevGradedRubrics.map(rubric =>
-              rubric.rubric_id === rubricId
+                rubric.rubric_id === rubricId
                 ? { ...rubric, points_awarded: pointsAwarded || 0 }
                 : rubric
             )
-          )
+        )
+        // Update the parent state variable with the rubric id and awarded points
+        setPointsAwarded(rubricId, pointsAwarded)
     }
+
+    const totalScoreOfRubrics: number = gradedRubrics.reduce((acc, currentRubric) => {
+        return acc + currentRubric.points_awarded
+    }, 0)
+    
     return (
         <div className="flex flex-col w-full gap-y-2 border-b-1 border-b-primary last-of-type:border-b-0">
             <header className="flex flex-row gap-x-2">
@@ -49,7 +58,7 @@ export default function FRQAnswerResult({ answer, status, setStatus }: {
             </div>
             <div className="flex flex-col w-full gap-y-1">
                 <label>Rubric</label>
-                <div className="flex flex-col w-full gap-y-4 p-2 border-1 border-primary">
+                <div className="flex flex-col w-full gap-y-4 p-2 border-1 border-primary rounded-md">
                     <div className="flex flex-col gap-y-2">
                         { gradedRubrics.map(gradedRubric => (
                             <FRQRubricGrade 
@@ -61,7 +70,7 @@ export default function FRQAnswerResult({ answer, status, setStatus }: {
                             />
                         ))}
                     </div>
-                    <div className="flex flex-row w-full justify-between items-center py-2 gap-x-4">
+                    <div className="flex flex-col md:flex-row w-full md:justify-between items-center py-2 gap-4">
                         { status === 'Pending' && 
                             <button 
                                 className="flex flex-row items-center gap-x-2 p-2 w-fit border-1 border-primary rounded-md cursor-pointer hover:opacity-80"
