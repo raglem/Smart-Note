@@ -26,7 +26,7 @@ export default function StudyGroupToolbar({ group, closeToolbar } : { group: Stu
     }
 
     return (
-        <div id="toolbar" className={`absolute top-full left-0 min-w-fit w-40 bg-white border-1 ${ selectedStudyGroup?.id === group.id ? "border-white" : "border-primary"} text-[1.2rem] shadow-md z-1 text-primary`}>
+        <div id="toolbar" className={`absolute top-full left-0 min-w-fit w-40 bg-white border-1 border-primary rounded-md text-[1.2rem] shadow-md z-1 text-primary`}>
             <div 
                 className="flex flex-row justify-between items-center p-2 border-b-1 border-b-primary hover:opacity-80 hover:cursor-pointer" 
                 onClick={() => {

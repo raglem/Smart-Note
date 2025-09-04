@@ -12,14 +12,16 @@ export default function QuizResultCard({ result }: {
         <div className="card rounded-md">
             <header className="flex flex-row justify-between items-end bg-primary text-white px-2 py-5">
                 <div className="flex flex-row items-center gap-x-2">
-                        { result.status === 'Pending' && <FaRegClock className="text-3xl text-yellow-500" />}
-                        { result.status === 'Graded' && (score > 70 ? <IoIosCheckmarkCircle className="text-3xl text-green-500" /> : <IoMdCloseCircle className="text-3xl text-red-500" />) }
-                        <h2 className="text-2xl">{result.quiz.name}</h2>
-                    </div>
+                    { result.status === 'Pending' && <FaRegClock className="text-3xl text-yellow-500" />}
+                    { result.status === 'Graded' && (score > 70 ? <IoIosCheckmarkCircle className="text-3xl text-green-500" /> : <IoMdCloseCircle className="text-3xl text-red-500" />) }
+                    <Link href={`/quizzes/results/${result.id}`}>
+                        <h2 className="text-2xl hover:underline cursor-pointer">{result.quiz.name}</h2>
+                    </Link>
+                </div>
                 <span className="text-2xl">{score}%</span>
             </header>
             <Link href={`/quizzes/results/${result.id}`}>
-                <img src={result.quiz.image} className="object-cover w-full h-50px cursor-pointer"/>
+                <img src={result.quiz.image} className="object-cover w-full h-50px cursor-pointer hover:opacity-80"/>
             </Link>
             <div className="flex flex-col px-2 py-2 gap-y-2">
                 <div className="flex flex-row justify-between items-center text-md text-gray-600">

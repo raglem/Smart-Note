@@ -48,7 +48,7 @@ export default function MembersList({ studyGroupId, classMembers }: {
     }
 
     return (
-        <ol className="flex flex-col max-h-[210px] border-1 border-y-primary rounded-sm overflow-auto">
+        <ol className="flex flex-col max-h-[200px] border-1 border-primary rounded-sm overflow-auto">
             {classMembers.length > 0 && sortedClassMembers.map((classMember) => (
                 <li className="flex flex-row justify-between items-center p-2 not-last-of-type:border-b-1 border-b-primary" key={classMember.id}>
                     <span>{classMember.name}</span>

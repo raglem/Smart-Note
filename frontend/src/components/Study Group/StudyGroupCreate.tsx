@@ -62,33 +62,26 @@ export default function StudyGroupCreate(){
 
     return (
         <div className="overlay">
-            <div className="card flex flex-col gap-y-4 pt-8 pb-4 min-w-[300px] w-[50vw] max-w-[768px] bg-secondary">
-                <header className="flex flex-row items-center px-2 text-3xl border-b-1 border-b-primary">
+            <div className="card flex flex-col gap-y-4 min-w-[300px] w-[50vw] max-w-[768px] bg-white border-1 border-primary">
+                <header className="flex flex-row items-center pt-4 pb-2 px-4 bg-primary text-white text-3xl border-b-1 border-b-primary">
                     Create Study Group
                 </header>
-                <div className="flex flex-col gap-y-4 px-2">
+                <div className="flex flex-col gap-y-4 p-4">
                     <div className="flex flex-col">
                         <label htmlFor="name" className="text-xl">Name</label>
-                        <input type="text" placeholder="Name" id="name" className="form-input" value={name} onChange={(e) => setName(e.target.value)} />
+                        <input type="text" placeholder="Name" id="name" className="form-input border-1 border-primary" value={name} onChange={(e) => setName(e.target.value)} />
                     </div>
                     <div className="flex flex-col">
                         <label htmlFor="date" className="text-xl">Date</label>
-                        <input type="date" placeholder="Date" id="date" className="form-input" value={formattedLocalDate} onChange={handleDateChange} />
+                        <input type="date" placeholder="Date" id="date" className="form-input border-1 border-primary" value={formattedLocalDate} onChange={handleDateChange} />
                     </div>
                     <div className="flex flex-col">
                         <label htmlFor="time" className="text-xl">Time</label>
-                        <input type="time" placeholder="Time" id="time" className="form-input" value={formattedLocalTime} onChange={handleTimeChange} />
-                    </div>
-                    <div className="flex flex-col">
-                        <label htmlFor="visibility" className="text-xl">Visibility</label>
-                        <select id="visibility" className="form-input px-0" value={visibility} onChange={(e) => setVisibility(e.target.value as "Public" | "Private")}>
-                            <option value="Public">Public</option>
-                            <option value="Private">Private</option>
-                        </select>
+                        <input type="time" placeholder="Time" id="time" className="form-input border-1 border-primary" value={formattedLocalTime} onChange={handleTimeChange} />
                     </div>
                     <div className="form-btn-toolbar">
-                        <button className="form-btn bg-primary text-white" onClick={handleCreate} >Create</button>
-                        <button className="form-btn bg-white text-primary" onClick={() => setCreatingGroup(false)} >Cancel</button>
+                        <button className="form-btn bg-primary text-white border-0" onClick={handleCreate} >Create</button>
+                        <button className="form-btn bg-white text-primary border-1 border-primary" onClick={() => setCreatingGroup(false)} >Cancel</button>
                     </div>
                 </div>
             </div>

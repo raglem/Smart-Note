@@ -1,19 +1,37 @@
 "use client"
 
 import { StudyGroupContext } from "@/app/context/StudyGroupContext";
+import useMemberStore from "@/stores/memberStore";
 import { StudyGroupType } from "@/types";
 import { setGlobal } from "next/dist/trace";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 
 export default function StudyGroupCalendarDay({ events }: { events: StudyGroupType[] }){
-    const { studyGroups, setShowSidebar, selectedStudyGroup, setSelectedStudyGroup } = useContext(StudyGroupContext)
+    const { studyGroups, setShowSidebar, setSidebarMode, selectedStudyGroup, setSelectedStudyGroup } = useContext(StudyGroupContext)
+
+    // Retrieve member state to check if mode should be switched to "My Groups" or "Invited"
+    const member = useMemberStore((state) => state.member)
+    const fetchMember = useMemberStore((state) => state.fetchMember)
+    useEffect(() => {fetchMember()}, [])
+
     const handleSelect = (groupId: number) => {
         if(selectedStudyGroup && selectedStudyGroup.id === groupId){
             setSelectedStudyGroup(null)
             return
         }
-        setSelectedStudyGroup(studyGroups.find(sg => sg.id === groupId) || null)
+        const studyGroup = studyGroups.find(sg => sg.id === groupId) || null
+        setSelectedStudyGroup(studyGroup)
         setShowSidebar(true)
+        if(member && studyGroup){
+            if(studyGroup.members.some(sgMember => sgMember.member.id === member.id && sgMember.status === "Joined")){
+                console.log("Setting tab to my groups")
+                setSidebarMode("My Groups")
+            }
+            else{
+                console.log("Setting tab to my invites")
+                setSidebarMode("Invites")
+            }
+        }
     }
     return (
         <div className="flex flex-col gap-y-2 h-full">

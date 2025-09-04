@@ -8,12 +8,14 @@ export default function StudyGroupCalendarHeader(){
     const { year, month } = useContext(StudyGroupDateContext)
     const monthYearString = `${new Intl.DateTimeFormat('en-US', { month: 'long' }).format(new Date(year, month, 1))} / ${year}`
     return (
-        <header className="flex flex-row justify-between items-center">
-            <div className="flex flex-row items-center gap-x-4 text-3xl text-primary">
-                { !showSidebar && <MdMenu className="icon-responsive" onClick={() => setShowSidebar(true)}/> }
+        <header className="flex flex-row gap-x-4 items-center">
+            <MdMenu className={`icon-responsive text-3xl text-primary ${showSidebar && 'opacity-0 sm:opacity-100'}`} onClick={() => setShowSidebar(true)}/>
+            <div className="flex flex-col sm:flex-row w-full justify-between items-center gap-2 text-xl md:text-3xl text-primary">
                 <h2>{monthYearString}</h2>
+                <button className="flex py-2 px-4 bg-primary text-sm md:text-base text-white rounded-md cursor-pointer hover:opacity-80 whitespace-nowrap" onClick={() => setCreatingGroup(prev => !prev)}>
+                    Create Study Group
+                </button>
             </div>
-            <button className="flex py-2 px-4 bg-primary text-white rounded-md cursor-pointer hover:opacity-80" onClick={() => setCreatingGroup(prev => !prev)}>Create Study Group</button>
         </header>
     )
 }

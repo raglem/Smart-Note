@@ -112,8 +112,8 @@ export default function FreeResponseQuestion({ question, setQuestion }: {
             <div className="flex flex-col w-full">
                 <label htmlFor="question-text">Sample Correct Answer</label>
                 <textarea 
-                    id="question-text" value={correctAnswer} 
-                    className="flex flex-1 h-xl p-1 text-xl min-w-2 border-1 border-primary outline-none"
+                    id="question-text" value={correctAnswer} rows={5}
+                    className="flex flex-1 p-1 text-xl min-w-2 border-1 border-primary outline-none"
                     onChange={e => setCorrectAnswer(e.target.value)}
                 />
             </div>

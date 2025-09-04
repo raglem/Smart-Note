@@ -61,7 +61,7 @@ export default function MCQAnswerableQuestion({ question, verifyAnswer }: {
                 </header>
                 <div className="flex flex-col gap-y-1 w-full">
                     {shuffledChoices.map((choice, i) => (
-                        <label key={choice.id} className={`flex flex-row items-center gap-x-2 w-full py-4 px-2 ${choice.id === selectedChoice ? 'border-1 border-primary' : ''}`}>
+                        <label key={choice.id} className={`flex flex-row items-center gap-x-2 w-full py-4 px-2 ${choice.id === selectedChoice ? 'border-1 border-primary' : ''} cursor-pointer`}>
                             <input 
                                 type="radio" name={`question-${question.id}`} 
                                 value={choice.choice_text} className="accent-primary appearance-none"

@@ -22,7 +22,7 @@ export default function SelectUnitsSubunits({selectedUnits, setSelectedUnits, se
     const [unitIsFocused, setUnitIsFocused] = useState<boolean>(false)
 
     const [subunitQuery, setSubunitQuery] = useState<string>("")
-    const [filteredSubunits, setFilteredSubunits] = useState<UnitSimpleType[]>([])
+    const [filteredSubunits, setFilteredSubunits] = useState<SubunitSimpleType[]>([])
     const [subunitIsFocused, setSubunitIsFocused] = useState<boolean>(false)
 
     useEffect(() => {
@@ -75,7 +75,7 @@ export default function SelectUnitsSubunits({selectedUnits, setSelectedUnits, se
     
         setFilteredSubunits(
             subunits.filter(option =>
-                option.name.trim().toLowerCase().includes(unitQuery.trim().toLowerCase()) &&
+                option.name.trim().toLowerCase().includes(subunitQuery.trim().toLowerCase()) &&
                 !selectedSubunits.find(s => s.id === option.id)
             ).sort((a, b) => a.name.localeCompare(b.name))
         );
@@ -111,10 +111,10 @@ export default function SelectUnitsSubunits({selectedUnits, setSelectedUnits, se
                             </div>
                         ))}
                     </div>
-                    {unitIsFocused && selectedUnits.length !== units.length && <div className="flex flex-col border-1 border-primary rounded-md bg-white">
+                    {unitIsFocused && selectedUnits.length !== units.length && <div className="flex flex-col border-1 border-primary rounded-md bg-white max-h-[220px] overflow-auto">
                         {filteredUnits.length > 0 && filteredUnits.map((option: UnitSimpleType) => (
                             <option 
-                                key={option.id} className="flex flex-row items-center w-full gap-x-2 p-2 border-b-1 border-b-primary last-of-type:border-none hover:cursor-pointer hover:bg-gray-100"
+                                key={option.id} className="flex flex-row items-center min-h-fit w-full gap-x-2 p-2 border-b-1 border-b-primary last-of-type:border-none hover:cursor-pointer hover:bg-gray-100"
                                 onClick={() => handleAddUnit(option)}
                             >
                                 {option.name}
@@ -142,10 +142,10 @@ export default function SelectUnitsSubunits({selectedUnits, setSelectedUnits, se
                             </div>
                         ))}
                     </div>
-                    {subunitIsFocused && selectedSubunits.length !== subunits.length && <div className="flex flex-col border-1 border-primary rounded-md bg-white">
+                    {subunitIsFocused && selectedSubunits.length !== subunits.length && <div className="flex flex-col border-1 border-primary rounded-md bg-white max-h-[220px] overflow-y-scroll">
                         {filteredSubunits.length > 0 && filteredSubunits.map((option: SubunitSimpleType) => (
                             <option 
-                                key={option.id} className="flex flex-row items-center w-full gap-x-2 p-2 border-b-1 border-b-primary last-of-type:border-none hover:cursor-pointer hover:bg-gray-100"
+                                key={option.id} className="flex flex-row items-center min-h-fit w-full gap-x-2 p-2 border-b-1 border-b-primary last-of-type:border-none hover:cursor-pointer hover:bg-gray-100"
                                 onClick={() => handleAddSubunit(option)}
                             >
                                 {option.name}

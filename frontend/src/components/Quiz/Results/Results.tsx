@@ -10,10 +10,12 @@ import Link from "next/link"
 export default function Results({ answers }: { answers: AnswerResultType[]}){
     const [currentPage, setCurrentPage] = useState<number>(0)
     const paginatedAnswers: AnswerResultType[][] = (() => {
+        const sortedAnswers = answers.sort((a,b) => a.question.order - b.question.order)
+        console.log(sortedAnswers)
         const pages: AnswerResultType[][] = []
         const answersPerPage = 5
-        for(let i=0; i<answers.length; i+=answersPerPage){
-            pages.push(answers.slice(i, i+answersPerPage))
+        for(let i=0; i<sortedAnswers.length; i+=answersPerPage){
+            pages.push(sortedAnswers.slice(i, i+answersPerPage))
         }
         return pages
     })()
@@ -21,11 +23,10 @@ export default function Results({ answers }: { answers: AnswerResultType[]}){
         <div className="flex flex-col h-full w-full gap-y-8">
             <div className="flex flex-col min-h-[calc(100vh-450px)] w-full gap-y-4">
                 { paginatedAnswers[currentPage].map(answer => 
-                    answer.answer_category === 'MultipleChoice' ? <div className="flex w-full border-b-1 border-primary" key={answer.id}>
-                        <MCQAnswerResult answer={answer} />
-                    </div> : (answer.answer_category === 'FreeResponse' ? <div className="flex w-full border-b-1 border-primary" key={answer.id}>
-                        <FRQAnswerResult answer={answer} />
-                    </div> : null)
+                    <div className="flex w-full border-b-1 border-primary last-of-type:border-0" key={answer.id}>
+                        { answer.answer_category === 'MultipleChoice' && <MCQAnswerResult answer={answer} /> }
+                        { answer.answer_category === 'FreeResponse' && <FRQAnswerResult answer={answer} /> }
+                    </div>
                 )}
             </div>
             <div className="flex flex-col gap-y-2 w-full">

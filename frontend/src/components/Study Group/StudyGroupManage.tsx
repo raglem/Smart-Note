@@ -1,12 +1,13 @@
 "use client"
 
-import { useState, useContext } from "react"
+import { useState, useContext, useEffect } from "react"
 import { StudyGroupContext } from "@/app/context/StudyGroupContext"
 import { IoIosCheckmarkCircle, IoMdRemoveCircleOutline } from "react-icons/io"
 import { FaClock } from "react-icons/fa"
 import { StudyGroupMemberType, StudyGroupType } from "../../types"
 import api from "@/utils/api"
 import { toast } from "react-toastify"
+import useMemberStore from "@/stores/memberStore"
 
 export default function StudyGroupManage({ id, studyGroup }: { id: number, studyGroup: StudyGroupType}){
     const [name, setName] = useState<string>(studyGroup.name)
@@ -14,7 +15,12 @@ export default function StudyGroupManage({ id, studyGroup }: { id: number, study
     const [visibility, setVisibility] = useState<"Public" | "Private">("Private")
     const [members, setMembers] = useState<StudyGroupMemberType[]>(studyGroup.members)
 
-    // Retrieve context
+    // Retrieve member context so current member is excluded from members list
+    const currentMember = useMemberStore(state => state.member)
+    const fetchMember = useMemberStore(state => state.fetchMember)
+    useEffect(() => {fetchMember()}, [])
+
+    // Retrieve study group context
     const { studyGroups, setStudyGroups, setManagingGroup } = useContext(StudyGroupContext)
 
     const handleSave = async () => {
@@ -72,46 +78,45 @@ export default function StudyGroupManage({ id, studyGroup }: { id: number, study
 
     return (
         <div className="overlay">
-            <div className="card flex flex-col gap-y-4 pt-8 pb-4 min-w-[300px] w-[50vw] max-w-[768px] bg-secondary">
-                <header className="flex flex-row items-center px-2 text-3xl border-b-1 border-b-primary">
+            <div className="card flex flex-col gap-y-4 min-w-[300px] w-[50vw] max-w-[768px] bg-white border-1 border-primary">
+                <header className="flex flex-row items-center pt-4 pb-2 px-4 text-3xl bg-primary text-white">
                     Manage { studyGroup.name }
                 </header>
-                <div className="flex flex-col gap-y-4 px-2">
+                <div className="flex flex-col gap-y-4 p-4">
                     <div className="flex flex-col">
                         <label htmlFor="name" className="text-xl">Name</label>
-                        <input type="text" placeholder={ name } id="name" className="form-input" value={name} onChange={(e) => setName(e.target.value)} />
+                        <input type="text" placeholder={ name } id="name" className="form-input border-1 border-primary" value={name} onChange={(e) => setName(e.target.value)} />
                     </div>
                     <div className="flex flex-col">
                         <label htmlFor="date" className="text-xl">Date</label>
-                        <input type="date" placeholder="Date" id="date" className="form-input" value={formattedLocalDate} onChange={handleDateChange} />
+                        <input type="date" placeholder="Date" id="date" className="form-input border-1 border-primary" value={formattedLocalDate} onChange={handleDateChange} />
                     </div>
                     <div className="flex flex-col">
                         <label htmlFor="time" className="text-xl">Time</label>
-                        <input type="time" placeholder="Time" id="time" className="form-input" value={formattedLocalTime} onChange={handleTimeChange} />
+                        <input type="time" placeholder="Time" id="time" className="form-input border-1 border-primary" value={formattedLocalTime} onChange={handleTimeChange} />
                     </div>
                     <div className="flex flex-col">
-                        <label htmlFor="visibility" className="text-xl">Visibility</label>
-                        <select id="visibility" className="form-input px-0" value={visibility} onChange={(e) => setVisibility(e.target.value as "Public" | "Private")}>
-                            <option value="Public">Public</option>
-                            <option value="Private">Private</option>
-                        </select>
+                        <label htmlFor="members" className="text-xl">Members</label>
+                        { members.length > 0 && <ol className="flex flex-col max-h-[210px] border-1 border-primary rounded-sm overflow-auto">
+                            {members.map((m) => 
+                                m.member.id !== currentMember?.id && <li className="flex flex-row justify-between items-center p-2 not-last-of-type:border-b-1 border-b-primary" key={m.id}>
+                                    <div className="flex flex-row items-center gap-x-2">
+                                        <div>{ m.member.name }</div>
+                                        { m.status === "Joined" ? <IoIosCheckmarkCircle className="hover:scale-150 transition-transform duration-200 ease-in-out text-xl text-green-500"/> 
+                                                : <FaClock className="hover:scale-150 transition-transform duration-200 ease-in-out text-xl text-yellow-500"/>}
+                                    </div>
+                                    <IoMdRemoveCircleOutline className="icon-responsive text-primary text-xl" onClick={() => handleRemoveMember(m.id)}/>
+                                </li>
+                            )}
+                        </ol> }
+                        { members.length == 0 && <div className="flex flex-row p-2 border-1 border-primary">
+                            No Members Added
+                        </div> }
                     </div>
                 </div>
-                { members.length > 0 && <ol className="flex flex-col max-h-[210px] mx-2 border-1 border-y-primary rounded-sm overflow-auto">
-                    {members.map((m) => (
-                        <li className="flex flex-row justify-between items-center p-2 not-last-of-type:border-b-1 border-b-primary" key={m.id}>
-                            <div className="flex flex-row items-center gap-x-2">
-                                <div>{ m.member.name }</div>
-                                { m.status === "Joined" ? <IoIosCheckmarkCircle className="hover:scale-150 transition-transform duration-200 ease-in-out text-xl text-green-500"/> 
-                                        : <FaClock className="hover:scale-150 transition-transform duration-200 ease-in-out text-xl text-yellow-500"/>}
-                            </div>
-                            <IoMdRemoveCircleOutline className="icon-responsive text-primary text-xl" onClick={() => handleRemoveMember(m.id)}/>
-                        </li>
-                    ))}
-                </ol> }
-                <div className="form-btn-toolbar px-2">
-                    <button className="form-btn bg-primary text-white" onClick={handleSave} >Save</button>
-                    <button className="form-btn bg-white text-primary" onClick={() => setManagingGroup(false)} >Cancel</button>
+                <div className="form-btn-toolbar pt-0 px-4 pb-8">
+                    <button className="form-btn bg-primary text-white border-0" onClick={handleSave} >Save</button>
+                    <button className="form-btn bg-white text-primary border-1 border-primary" onClick={() => setManagingGroup(false)} >Cancel</button>
                 </div>
             </div>
         </div>

@@ -26,7 +26,7 @@ export default function CreatePage(){
     const router = useRouter()
 
     async function handleQuizCreate(){
-        if(name.trim().length < 3 || !checkForValidCharacters(name)){
+        if(name.trim().length < 3){
             toast.error("Quiz name must be at least 3 characters long and contain only valid characters")
             return
 
