@@ -1,0 +1,14 @@
+name: Smart-Note
+
+services:
+  app: 
+    build:
+      context: .
+      dockerfile: dockerfile
+    image: smart-note-image
+    container_name: smart-note-container
+    platform: linux/amd64
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
