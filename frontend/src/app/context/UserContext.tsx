@@ -1,5 +1,6 @@
 "use client"
 
+import api from "@/utils/api";
 import { createContext, useEffect, useState } from "react";
 
 type UserContextType = {
@@ -13,20 +14,25 @@ export const UserContext = createContext({} as UserContextType)
 
 export const UserProvider =({ children }: { children: React.ReactNode }) => {
     async function checkUser() {
-        const res = await fetch('/api/me', { credentials: 'include' })
-        if (res.status === 401 || !res.ok) {
-            // Clear state variables if user is unauthenticated and information cannot be retrieved
+        // If there is no access token, return
+        const token = localStorage.getItem('ACCESS_TOKEN')
+        if(!token)  return false
+
+        try{
+            const res = await api.get('/users/members/me/')
+            const data = res.data
+            // Set state variables if response is successful
+            const { id, name } = data
+            setUserId(id)
+            setUsername(name)
+            return true
+        }
+        catch(err){
+            console.error(err)
             setUserId(null)
             setUsername("")
             return false
         }
-        
-        // Set state variables if response is successful
-        const data = await res.json()
-        const { userId, username } = data.user
-        setUserId(userId)
-        setUsername(username)
-        return true
     }
     
     const [username, setUsername] = useState<string>("")

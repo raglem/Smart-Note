@@ -30,6 +30,7 @@ const useClassesStore = create<classesStore>((set) => ({
             set({ classes: formatted_data, isLoading: false, error: null })
         }
         catch(err){
+            console.error(err)
             set({ isLoading: false, error: err })
         }
     },

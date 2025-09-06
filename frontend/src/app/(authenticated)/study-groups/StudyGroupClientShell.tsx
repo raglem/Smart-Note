@@ -1,14 +1,13 @@
 "use client"
 
 import { useContext, useEffect, useRef, useState } from "react"
-import { StudyGroupContext } from "../context/StudyGroupContext"
-import StudyGroupCreate from "../../components/Study Group/StudyGroupCreate"
-import StudyGroupCalendar from "../../components/Study Group/StudyGroupCalendar"
-import StudyGroupInvite from "../../components/Study Group/StudyGroupInvite"
-import StudyGroupManage from "../../components/Study Group/StudyGroupManage"
+import { StudyGroupContext } from "@/app/context/StudyGroupContext"
+import StudyGroupCreate from "@/components/StudyGroup/StudyGroupCreate"
+import StudyGroupCalendar from "@/components/StudyGroup/StudyGroupCalendar"
+import StudyGroupInvite from "@/components/StudyGroup/StudyGroupInvite"
+import StudyGroupManage from "@/components/StudyGroup/StudyGroupManage"
 import { StudyGroupType } from "@/types"
-import { MdMenu } from "react-icons/md"
-import StudyGroupCalendarHeader from "@/components/Study Group/StudyGroupCalendarHeader"
+import StudyGroupCalendarHeader from "@/components/StudyGroup/StudyGroupCalendarHeader"
 
 export default function StudyGroupClientShell({ studyGroupsInfo }: { studyGroupsInfo: StudyGroupType[] }){
     const { showSidebar, setShowSidebar } = useContext(StudyGroupContext)

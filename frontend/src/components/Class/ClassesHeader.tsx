@@ -16,7 +16,7 @@ export default function ClassesHeader(){
             {showAddClass && <CreateClass close={() => setShowAddClass(false)} />}
             <header className="flex flex-col justify-between">
                 <h1 className="ml-0">Classes</h1>
-                <div className="flex flex-row justify-between items-center w-full">
+                <div className="flex flex-col md:flex-row justify-between items-start w-full gap-2">
                     <button className="flex flex-row justify-between items-center gap-x-2 rounded-md text-white bg-primary py-2 px-4 hover:cursor-pointer" onClick={handleAdd}>
                         <IoMdAddCircle />
                         New Class

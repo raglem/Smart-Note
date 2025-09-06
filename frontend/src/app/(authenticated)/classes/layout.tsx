@@ -1,4 +1,4 @@
-import { ClassContextProvider } from "../context/ClassContext";
+import { ClassContextProvider } from "@/app/context/ClassContext";
 export default function ClassesLayout({
     children,
 }: {

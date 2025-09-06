@@ -29,16 +29,12 @@ export default function ClassCard({ classItem }: { classItem: ClassType }){
                             { classItem.name } { classItem.course_number && `| ${classItem.course_number}`}
                         </Link>
                     </h1>
-                    <p className="lg hover:cursor-copy" onClick={handleCopyJoinCode}>{classItem.join_code}</p>
+                    <p className="lg hover:cursor-copy" onClick={handleCopyJoinCode}>{classItem.join_code || 'Preparing join code...'}</p>
                 </div>
                 <div className="flex flex-row w-[20%] justify-end gap-x-4 pr-2 text-2xl">
                     <div className="flex flex-row items-center gap-x-1">
                         <IoPeopleSharp />
                         { classItem.members.length}
-                    </div>
-                    <div className="flex flex-row items-center gap-x-1">
-                        <LuNotebookPen />
-                        { classItem.number_of_notes}
                     </div>
                 </div>
             </header>

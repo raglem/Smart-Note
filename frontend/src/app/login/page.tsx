@@ -6,45 +6,59 @@ import { UserContext } from "../context/UserContext";
 import Link from "next/link";
 import api from "@/utils/api";
 import { toast } from "react-toastify";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function Page(){
     const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [mode, setMode] = useState<"Login" | "Register">("Login")
+    const [loading, setLoading] = useState<boolean>(false)
     const { setUsername: setUsernameContext, setUserId } = useContext(UserContext)
     const router = useRouter()
 
     const handleLogin = async () => {
-      const res = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-      })
-    
-      if (res.ok) {
-        const data = await res.json()
-        const { userId, username } = data.user
-        // Set user context
-        setUserId(userId)
-        setUsernameContext(username)
-
-        // Redirect
-        router.push('/classes')
-      } else {
-        if(res.status === 401){
+      setLoading(true)
+      const delayTimer = setTimeout(() => {
+        toast.error('Initial request will take extra time due to server spinup. Initial response may be delayed up to a minute')
+      }, 5000);
+      try{
+        const res = await api.post('/users/login/', { username, password })
+        clearTimeout(delayTimer)
+        toast.success('User login successful')
+        localStorage.setItem('ACCESS_TOKEN', res.data.access)
+        
+        // Reset fields
+        router.push('/classes/')
+      }
+      catch(err: any){
+        console.error(err)
+        clearTimeout(delayTimer)
+        if(err.status === 401){
           toast.error('Invalid credentials. Please try again')
         }
         else{
-          toast.error('Something went wrong on login. Please try again')
+          toast.error('Something went wrong logging in. Please try again')
         }
+      }
+      finally{
+        clearTimeout(delayTimer)
+        setLoading(false)
       }
     }
 
     const handleRegister = async () => {
+      setLoading(true)
+      const delayTimer = setTimeout(() => {
+        toast.error('Initial request will take extra time due to server spinup. Initial response may be delayed up to a minute')
+      }, 5000);
       try{
         const res = await api.post('/users/register/', { username, password })
         toast.success('User registration successful. Please login with the same credentials.')
-        window.location.reload()
+        
+        // Reset fields
+        setUsername("")
+        setPassword("")
+        setMode("Login")
       }
       catch(err: any){
         if(err?.response?.data?.username){
@@ -55,6 +69,14 @@ export default function Page(){
           toast.error('Something went wrong creating a new account. Please try again.')
         }
       }
+      finally{
+        clearTimeout(delayTimer)
+        setLoading(false)
+      }
+    }
+
+    const sendRequestWithDelay = async () => {
+      const res = await api.post('/users/login/', { username, password })
     }
 
     return (
@@ -87,6 +109,9 @@ export default function Page(){
               type="password" placeholder="Password" className="form-input px-2 rounded-full border-1 border-primary" 
               value={password} onChange={(e) => setPassword(e.target.value)}
             />
+            {loading && <div className="flex justify-center items-center w-full py-2">
+              <LoadingSpinner />
+            </div>}
             <div className="flex flex-col w-full gap-y-1">
               {mode === 'Login' && 
                 <>
