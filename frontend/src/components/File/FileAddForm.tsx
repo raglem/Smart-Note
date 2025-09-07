@@ -7,12 +7,19 @@ import FilePreview from "./FilePreview";
 import api from "@/utils/api";
 import { ClassContext } from "@/app/context/ClassContext";
 import { toast } from "react-toastify";
+import LoadingSpinner from "../LoadingSpinner";
 
 export default function FileAdd({ section_id, section, close } : { section_id: number, section: SectionEnumType, close: () => void }){
     const { setClassFields, units, setUnits } = useContext(ClassContext)
+
+    // State to handle file upload
     const [file, setFile] = useState<File | null>(null)
     const [filePreview, setFilePreview] = useState<FileType|null>(null)
     const [isPDF, setIsPDF] = useState<boolean>(false)
+
+    // Loading state
+    const [loading, setLoading] = useState<boolean>(false)
+
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if(!e.target.files) return
         
@@ -44,6 +51,7 @@ export default function FileAdd({ section_id, section, close } : { section_id: n
         fd.append('section_id', section_id.toString())
         fd.append('section_type', section)
 
+        setLoading(true)
         try{
             const res = await api.post('/classes/files/create/', fd, {
                 headers: { 'Content-Type': 'multipart/form-data'}
@@ -89,9 +97,14 @@ export default function FileAdd({ section_id, section, close } : { section_id: n
                     }))
                 })))
             }
+            toast.success(`${filePreview.name} successfully uploaded. It may take up to a minute for your changes to be visible`)
         }
         catch(err){
+            toast.error(`Something went wrong uploading ${filePreview.name}. Please try again`)
             console.error(err)
+        }
+        finally{
+            setLoading(false)
         }
         close()
     }
@@ -113,7 +126,10 @@ export default function FileAdd({ section_id, section, close } : { section_id: n
                         <FilePreview file={filePreview} isPDF={isPDF} />
                     )}
                 </div>
-                <form>
+                { loading && <div className="flex p-2 pb-0 justify-center items-center w-full">
+                    <LoadingSpinner />
+                </div>}
+                <div>
                     { !file ? (
                         <div className="form-btn-toolbar justify-end p-4">
                             <button className="form-btn border-0 bg-primary text-white hover:cursor-not-allowed opacity-80 whitespace-nowrap">Save File</button>
@@ -139,7 +155,7 @@ export default function FileAdd({ section_id, section, close } : { section_id: n
                             </div>
                         </div>
                     )}
-                </form>
+                </div>
             </div>
         </div>
     )

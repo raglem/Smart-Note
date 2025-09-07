@@ -186,7 +186,7 @@ export default function Section({ sectionId, sectionType, ...dragProps }: {
             </div>
             {showSubsection && (
                 <div className="relative flex flex-col gap-y-2 pl-6">
-                    <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
                         {section.files.map((note) => (
                             <FilePreview file={note} key={note.id}>
                                 { editMode && <RemoveFile file={ note } /> }

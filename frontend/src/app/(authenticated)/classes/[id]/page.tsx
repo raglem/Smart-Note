@@ -12,9 +12,8 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 export default function Page(){
     const params = useParams()
     const id = params.id
-    
+
     const router = useRouter()
-    const accessToken = localStorage.getItem('ACCESS_TOKEN')
 
     const [classInfo, setClassInfo] = useState<ClassDetailType | null>(null)
     const [error, setError] = useState<boolean>(false)
@@ -24,6 +23,7 @@ export default function Page(){
     }, [])
 
     const fetchClass = async () => {
+      const accessToken = localStorage.getItem('ACCESS_TOKEN')
       if (!accessToken) {
           toast.error('Current user session expired. Please login again')
           router.push('/login')

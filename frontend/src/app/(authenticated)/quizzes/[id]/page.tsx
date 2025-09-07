@@ -1,46 +1,68 @@
+"use client"
+
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
 import ErrorPage from "@/components/ErrorPage";
 import TakeQuiz from "@/components/Quiz/TakeQuiz/TakeQuiz";
-import { FreeResponseQuestionType, MultipleChoiceQuestionType, QuestionType, QuizType } from "@/types/Quizzes";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import { TimerProvider } from "@/app/context/TimerContext";
 import QuizTimer from "@/components/Quiz/QuizTimer";
+import LoadingSpinner from "@/components/LoadingSpinner";
+import { FreeResponseQuestionType, MultipleChoiceQuestionType, QuestionType, QuizType } from "@/types/Quizzes";
+import { TimerProvider } from "@/app/context/TimerContext";
+import api from "@/utils/api";
+import { toast } from "react-toastify";
 
-export default async function Page({ params }: { params: { id: string }}){
-    const { id } = await params
-    const cookieStore = await cookies()
-    const accessToken = cookieStore.get('access_token')?.value
+export default function Page(){
+    const router = useRouter()
+    const params = useParams()
+    const id = params.id    
 
-    if (!accessToken) {
-        redirect('/login');
+    const [quiz, setQuiz] = useState<QuizType | null>(null)
+    const [questions, setQuestions] = useState<QuestionType[]>([])
+    const [error, setError] = useState<boolean>(false)
+
+    useEffect(() => {fetchQuiz()}, [])
+
+    const fetchQuiz = async () => {
+        const accessToken = localStorage.getItem('ACCESS_TOKEN')
+        if(!accessToken){
+            toast.error('Current user session expired. Please login again')
+            router.push('/login')
+        }
+        
+        try{
+            const res = await api.get(`/quizzes/${id}`)
+            const data = res.data as QuizType
+            const formattedMultipleChoiceQuestions: MultipleChoiceQuestionType[] = data.mcq_questions.map(mcq => ({
+                ...mcq,
+                question_category: "MultipleChoice"
+            }))
+            const formattedFreeResponseQuestions: FreeResponseQuestionType[] = data.frq_questions.map(frq => ({
+                ...frq,
+                question_category: "FreeResponse"
+            }))
+            setQuiz(data)
+            setQuestions([...formattedMultipleChoiceQuestions, ...formattedFreeResponseQuestions])
+        }
+        catch(err){
+            toast.error('Something went wrong fetching the class. Please try again')
+            setError(true)
+        }
     }
 
-    const res = await fetch(`${process.env.DJANGO_API}/quizzes/${id}`, {
-        method: 'GET',
-        headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`,
-        },
-        // Ensure Next.js doesn’t cache the request
-        cache: 'no-store',
-    })
-
-    if(!res.ok){
+    if(error){
         return (
             <ErrorPage message={"Failed to retrieve quiz"} />
         )
     }
 
-    const quiz: QuizType = await res.json()
-    const formattedMultipleChoiceQuestions: MultipleChoiceQuestionType[] = quiz.mcq_questions.map(mcq => ({
-        ...mcq,
-        question_category: "MultipleChoice"
-    }))
-    const formattedFreeResponseQuestions: FreeResponseQuestionType[] = quiz.frq_questions.map(frq => ({
-        ...frq,
-        question_category: "FreeResponse"
-    }))
-    const questions: QuestionType[] = [...formattedMultipleChoiceQuestions, ...formattedFreeResponseQuestions]
+    if(!quiz){
+        return (
+            <div className="h-[calc(100vh-150px)] w-full flex justify-center items-center">
+                <LoadingSpinner />
+            </div>
+        )
+    }
+    
     return (
         <div className="flex flex-col h-full w-full max-w-[1280px] gap-y-5">
             <TimerProvider>

@@ -13,12 +13,14 @@ import { ClassContext } from "@/app/context/ClassContext";
 import api from "@/utils/api";
 import { UnitType } from "@/types/Sections";
 import { toast } from "react-toastify";
+import LoadingSpinner from "../LoadingSpinner";
 
 export default function AddUnit({ class_id, close }: { class_id: number, close: () => void }) {
     const { units, setUnits } = useContext(ClassContext)
     const [unitName, setUnitName] = useState<string>("")
     const [subunit, setSubunit] = useState<string>("")
     const [subunits, setSubunits] = useState<string[]>([])
+    const [loading, setLoading] = useState<boolean>(false)
     // Handle input enters
     useEffect(() => {
         const handleEnter = (event: KeyboardEvent) => {
@@ -90,6 +92,7 @@ export default function AddUnit({ class_id, close }: { class_id: number, close: 
             })
         }
 
+        setLoading(true)
         try{
             const res = await api.post('/classes/units/', body)
             const newUnit: UnitType = res.data
@@ -106,7 +109,11 @@ export default function AddUnit({ class_id, close }: { class_id: number, close: 
             setUnits([...units, formattedUnit])
         }
         catch(err){
+            toast.error('Something went wrong creating a new unit. Please try again')
             console.error(err)
+        }
+        finally{
+            setLoading(false)
         }
         close()
     }
@@ -163,6 +170,9 @@ export default function AddUnit({ class_id, close }: { class_id: number, close: 
                         </DndContext>
                     </div>
                     }
+                    <div className="flex justify-center items-center w-full">
+                        { loading && <LoadingSpinner /> }
+                    </div>
                     <div className="form-btn-toolbar">
                         <button onClick={handleUnitCreate} className="form-btn bg-primary text-white border-0">Save</button>
                         <button onClick={handleCancel} className="form-btn bg-white border-1 border-primary">Cancel</button>

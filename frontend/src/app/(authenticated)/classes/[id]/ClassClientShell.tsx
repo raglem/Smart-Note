@@ -79,7 +79,7 @@ export default function ClassClientShell({ classInfo }:{
                         </SortableContext>
                     </DndContext>
                 </div>
-                <div className="flex flex-col w-full pl-6 gap-y-4">
+                <div className="flex flex-col w-full gap-y-4">
                     <div className="p-2 text-xl w-full bg-primary text-white rounded-md">
                         <h2>Class Files</h2>
                     </div>

@@ -3,20 +3,28 @@
 import { ClassContext } from "@/app/context/ClassContext"
 import api from "@/utils/api"
 import router from "next/router"
-import { useContext } from "react"
+import { useContext, useState } from "react"
+import { toast } from "react-toastify"
+import LoadingSpinner from "../LoadingSpinner"
 
 export default function LeaveClass({ close} : {
     close: () => void,
 }){
     const { classFields } = useContext(ClassContext)
     const { id, name } = classFields
+    const [loading, setLoading] = useState<boolean>(false)
     const handleLeave = async () => {
+        setLoading(true)
         try{
             const res = await api.delete(`/classes/leave/${id}/`)
             router.push('/classes')
         }
         catch(err){
+            toast.error(`Something went wrong leaving clas ${name}. Please try again`)
             console.error(err)
+        }
+        finally{
+            setLoading(false)
         }
     }
     return (
@@ -30,6 +38,9 @@ export default function LeaveClass({ close} : {
                     <br/>
                     <i className="text-md">This action cannot be undone</i>
                 </p>
+                { loading && <div className="flex justify-center items-center">
+                    <LoadingSpinner />
+                </div>}
                 <div className="form-btn-toolbar px-2">
                     <button onClick={handleLeave} className="form-btn bg-red-500 text-white">Leave</button>
                     <button onClick={close} className="form-btn bg-white text-black">Cancel</button>
