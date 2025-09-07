@@ -44,11 +44,11 @@ export default function AddSubunit({ unit, order }: { unit: number, order: numbe
             <div className="flex items-center w-full border-b-1 border-b-primary text-xl py-2">
                 <div className="flex flex-row items-stretch border-0">
                     <input
-                        type="text" className="border-1 border-primary px-1"
+                        type="text" className="border-1 border-primary p-1"
                         id="newSubunitName" placeholder="New Subunit"
                         value={name} onChange={(e) => setName(e.target.value)}
                     />
-                    <button className="flex flex-row justify-center px-2 bg-primary text-white cursor-pointer hover:opacity-80" onClick={handleCreateSubunit}>
+                    <button className="flex flex-row justify-center py-1 px-4 bg-primary text-white cursor-pointer hover:opacity-80 rounded-r-md" onClick={handleCreateSubunit}>
                         Create
                     </button>
                 </div>

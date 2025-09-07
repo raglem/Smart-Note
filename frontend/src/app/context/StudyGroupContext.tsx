@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { StudyGroupType } from "../../types";
 
 export const StudyGroupContext = createContext({} as StudyGroupContextType);
@@ -33,6 +33,11 @@ export const StudyGroupProvider = ({ children, initialStudyGroups }: { children:
     const [creatingGroup, setCreatingGroup] = useState(false);
     const [invitingGroup, setInvitingGroup] = useState(false);
     const [managingGroup, setManagingGroup] = useState(false);
+
+    // Ensure studyGroups is properly updated when the parent passes a new value for initialStudyGroups into the provider
+    useEffect(() => {
+        setStudyGroups(initialStudyGroups)
+      }, [initialStudyGroups])
 
     return (
         <StudyGroupContext.Provider

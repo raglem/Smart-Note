@@ -14,6 +14,7 @@ import { QuestionType } from "@/types/Quizzes";
 import RelatedUnitSubunitsContext from "@/app/context/RelatedUnitsSubunitsContext";
 import ValidateQuestions from "@/utils/validateQuestions";
 import { useRouter } from "next/navigation";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function CreatePage(){
     const [name, setName] = useState<string>("");
@@ -22,6 +23,7 @@ export default function CreatePage(){
     const [selectedUnits, setSelectedUnits] = useState<UnitSimpleType []>([]);
     const [selectedSubunits, setSelectedSubunits] = useState<SubunitSimpleType []>([]);
     const [questions, setQuestions] = useState<QuestionType[]>([])
+    const [loading, setLoading] = useState<boolean>(false)
 
     const router = useRouter()
 
@@ -65,6 +67,7 @@ export default function CreatePage(){
             })
         }
 
+        setLoading(true)
         try{
             const quizRes = await api.post('/quizzes/', fd, {
                 headers: { 'Content-Type': 'multipart/form-data'}
@@ -108,6 +111,9 @@ export default function CreatePage(){
             console.error(err)
             toast.error("An error occurred while creating your quiz")
         }
+        finally{
+            setLoading(false)
+        }
     }
 
     return (
@@ -127,9 +133,9 @@ export default function CreatePage(){
                         <UploadImage image={image} setImage={setImage} />
                     </div>
                 </div>
-                <div className="flex flex-col w-full gap-y-2">
+                <div className="flex flex-col w-full gap-y-4">
                     <div>
-                        <label htmlFor="quiz-name">Classes</label>
+                        <label htmlFor="quiz-name">Class</label>
                         <SelectClass selected={selectedClass} setSelected={setSelectedClass}/>
                     </div>
                     {selectedClass ? <SelectUnitsSubunits 
@@ -142,8 +148,11 @@ export default function CreatePage(){
             <RelatedUnitSubunitsContext.Provider value={{units: selectedUnits, subunits: selectedSubunits}}>
                 <Questions questions={questions} setQuestions={setQuestions} />
             </RelatedUnitSubunitsContext.Provider>
+            {loading && <div className="flex justify-center items-center w-full p-2">
+                <LoadingSpinner />
+            </div>}
             <div className="flex flex-row justify-end items-center">
-                <button className="p-2 rounded-md bg-primary text-2xl text-white cursor-pointer" onClick={handleQuizCreate}>
+                <button className="p-2 rounded-md bg-primary text-xl text-white cursor-pointer" onClick={handleQuizCreate}>
                     Create Quiz
                 </button>
             </div>

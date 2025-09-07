@@ -15,11 +15,11 @@ export default function Navbar(){
     const { userId, checkUser } = useContext(UserContext)
     const path = usePathname()
 
-    // // Every time the user navigates to a new page, we will run checkUser from UserContext
-    // // This will reset the user state variables (ex. userId) and redirect to login page
-    // useEffect(() => {
-    //     checkUser()
-    // }, [path])
+    // Every time the user navigates to a new page, we will run checkUser from UserContext
+    // This will reset the user state variables (ex. userId) and redirect to login page
+    useEffect(() => {
+      checkUser()
+    }, [path])
 
     useEffect(() => {
       function handleClickOutside(e: MouseEvent){
@@ -34,24 +34,24 @@ export default function Navbar(){
       }
     }, [])
 
-    // if(!userId){
-    //   return (
-    //     <nav className="flex flex-row justify-between items-center h-[60px] w-[100vw] py-2 px-4 bg-primary text-2xl text-white">
-    //       <div className="flex flex-row items-center gap-x-10">
-    //         <Link href="/">
-    //           <span className="text-3xl cursor-pointer hover:opacity-80">
-    //             SmartNote
-    //           </span>
-    //         </Link>
-    //       </div>
-    //       <div className="flex flex-row items-center gap-x-2">
-    //         <Link href="/login"> 
-    //           <MdAccountCircle className="h-10 w-10 hover:cursor-pointer hover:opacity-80" />
-    //         </Link>
-    //       </div>
-    //     </nav>
-    //   )
-    // }
+    if(!userId){
+      return (
+        <nav className="flex flex-row justify-between items-center h-[60px] w-[100vw] py-2 px-4 bg-primary text-2xl text-white">
+          <div className="flex flex-row items-center gap-x-10">
+            <Link href="/">
+              <span className="text-3xl cursor-pointer hover:opacity-80">
+                SmartNote
+              </span>
+            </Link>
+          </div>
+          <div className="flex flex-row items-center gap-x-2">
+            <Link href="/login"> 
+              <MdAccountCircle className="h-10 w-10 hover:cursor-pointer hover:opacity-80" />
+            </Link>
+          </div>
+        </nav>
+      )
+    }
 
     return (
       <nav className="relative flex flex-row justify-between md:justify-start items-center h-[60px] w-[100vw] py-2 px-4 gap-x-8 bg-primary text-2xl text-white">

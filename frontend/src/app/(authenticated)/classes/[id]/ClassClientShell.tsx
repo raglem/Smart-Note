@@ -3,18 +3,16 @@
 import { useState, useContext, useEffect, Suspense } from "react"
 
 import AddUnit from "@/components/Class/AddUnit"
-import ClassHeader from "../../../components/Class/ClassHeader"
+import ClassHeader from "@/components/Class/ClassHeader"
 import { ClassContext } from "@/app/context/ClassContext"
-import Section from "../../../components/Class/Section"
-import { FileType } from "@/types"
-import { ClassDetailType, UnitType } from "../../../types/Sections"
+import Section from "@/components/Class/Section"
+import { ClassDetailType } from "@/types/Sections"
 
-import { closestCenter, DndContext, DragAbortEvent, DragCancelEvent, DragEndEvent, DragStartEvent } from "@dnd-kit/core"
+import { closestCenter, DndContext, DragEndEvent, DragStartEvent } from "@dnd-kit/core"
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import SortableItem from "@/components/SortableItem"
 import FilePreview from "@/components/File/FilePreview"
 import FileAdd from "@/components/File/FileAdd"
-import { toast } from "react-toastify"
 
 export default function ClassClientShell({ classInfo }:{
     classInfo: ClassDetailType
@@ -81,11 +79,11 @@ export default function ClassClientShell({ classInfo }:{
                         </SortableContext>
                     </DndContext>
                 </div>
-                <div className="flex flex-col w-full pl-6 gap-y-4">
+                <div className="flex flex-col w-full gap-y-4">
                     <div className="p-2 text-xl w-full bg-primary text-white rounded-md">
                         <h2>Class Files</h2>
                     </div>
-                    <div className="grid grid-cols-4 md:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-4">
+                    <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
                         {classInfo.files.map(f => (
                             <FilePreview file={f} key={f.id}></FilePreview>
                         ))}

@@ -18,6 +18,7 @@ export default function Logout(){
         }
         setUserId(null)
         setUsername("")
+        localStorage.clear()
         router.push('/login')
     }
 
