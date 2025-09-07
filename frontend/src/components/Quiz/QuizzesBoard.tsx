@@ -54,7 +54,7 @@ export default function QuizzesBoard({quizzes, results}: {quizzes: QuizSimpleTyp
     // On initial render, sort results by date
     useEffect(() => {
         setSortedResults(results.sort((a, b) => a.date < b.date ? 1 : -1))
-    }, results)
+    }, [])
 
     return (
         <div className="flex flex-col items-center w-full gap-y-8">

@@ -8,6 +8,7 @@ from users.models import Member
 
 class Class(models.Model):
     name = models.CharField(max_length=50)
+    image = models.ImageField(upload_to='class-images/')
     course_number = models.CharField(max_length=50, null=True, blank=True)
     join_code = models.CharField(max_length=8, blank=True, unique=True)
     owner = models.ForeignKey(Member, on_delete=models.SET_NULL, related_name='owned_classes', null=True, blank=True)
@@ -21,6 +22,8 @@ class Class(models.Model):
 
         if not self.join_code:
             self.join_code = self._generate_join_code()
+
+        self.clean()
         super().save(*args, **kwargs)
 
         if is_new:
@@ -62,15 +65,6 @@ class Subunit(models.Model):
     name = models.CharField(max_length=50)
     order = models.PositiveIntegerField()
     unit = models.ForeignKey(Unit, on_delete=models.CASCADE, related_name='subunits')
-
-    # def clean(self):
-    #     # the subunit name is not unique within the unit
-    #     if Subunit.objects.filter(name=self.name, unit=self.unit).exists():
-    #         raise ValidationError("SubUnit name must be unique within the Unit.")
-
-    #     # the order is not unique within the unit
-    #     if Subunit.objects.filter(order=self.order, unit=self.unit).exists():
-    #         raise ValidationError("SubUnit must be unique within the Class.")
         
     def save(self, *args, **kwargs):
         is_new = self.pk is None
@@ -118,7 +112,7 @@ class FileCategory(models.Model):
         
 class File(models.Model):
     name = models.CharField(max_length=50)
-    file = models.FileField(upload_to='')
+    file = models.FileField(upload_to='class-files/')
     owner = models.ForeignKey(Member, on_delete=models.SET_NULL, related_name='files', null=True, blank=True)
     category = models.ForeignKey(FileCategory, on_delete=models.CASCADE, related_name='files')
     updated_at = models.DateTimeField(auto_now=True)

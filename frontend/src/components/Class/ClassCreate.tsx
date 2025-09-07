@@ -9,6 +9,7 @@ import api from "@/utils/api"
 import checkForValidCharacters from "@/utils/checkForValidCharacters"
 import { FaUpload } from "react-icons/fa6";
 import { toast } from "react-toastify"
+import LoadingSpinner from "../LoadingSpinner"
 
 export default function ClassCreate({ close }: { close: () => void }){
     const [className, setClassName] = useState<string>("")
@@ -19,6 +20,8 @@ export default function ClassCreate({ close }: { close: () => void }){
 
     const [currentMemberQuery, setCurrentMemberQuery] = useState<string>("")
     const [addedMembers, setAddedMembers] = useState<SimpleMemberType[]>([])
+
+    const [loading, setLoading] = useState<boolean>(false)
 
     const addClass = useClassesStore(state => state.addClass)
 
@@ -59,21 +62,20 @@ export default function ClassCreate({ close }: { close: () => void }){
             })
         }
 
+        setLoading(true)
         try{
             const res = await api.post('/classes/', fd, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             })
             const newClass = res.data
-            console.log(newClass)
-            addClass({
-                ...newClass,
-                members: newClass.members.sort((a: SimpleMemberType, b: SimpleMemberType) => a.name.localeCompare(b.name)),
-                number_of_notes: 0
-            })
+            addClass(newClass)
             toast.success(`Class ${fd.get('name')} created successfully`)
         }
         catch(err){
             console.error(err)
+        }
+        finally{
+            setLoading(false)
         }
         close()
     }
@@ -130,6 +132,9 @@ export default function ClassCreate({ close }: { close: () => void }){
                         addedMembers={addedMembers} 
                         setAddedMembers={setAddedMembers} 
                     />
+                    {loading && <div className="flex justify-center items-center w-full">
+                        <LoadingSpinner />
+                    </div>}
                     <div className="form-btn-toolbar">
                         <button 
                             className="form-btn border-0 bg-primary text-white"

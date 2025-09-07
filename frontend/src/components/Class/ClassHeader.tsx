@@ -78,12 +78,16 @@ export default function ClassHeader({ classInfo }: { classInfo: ClassDetailType 
         setEditMode(false)
         setShowToolbar(false)
     }
+    const openAddMode = () => {
+        setAddMode(true)
+        setShowToolbar(false)
+    }
 
     return (
         <>
             {showDelete && <LeaveClass close = {() => setShowDelete(false)}/>}
-            <header className="flex flex-col w-full gap-y-4 md:flex-row md:justify-between md:items-center text-3xl">
-                <div className="flex items-center w-full gap-x-4">
+            <header className="flex flex-col w-full gap-y-4 md:flex-row md:justify-between items-center text-3xl">
+                <div className="flex justify-center md:justify-start items-center w-full gap-x-4">
                     <div className="relative">
                         {!editMode &&
                             <FaCog className="hover:cursor-pointer hover:opacity-80 text-2xl text-primary" onClick={openToolbar}/>
@@ -97,7 +101,7 @@ export default function ClassHeader({ classInfo }: { classInfo: ClassDetailType 
                                     <span>Edit Class</span>
                                     <FaEdit className="hover:cursor-pointer hover:opacity-80" />
                                 </div>
-                                <div className="flex flex-row justify-between items-center p-2 border-b-1 border-b-primary hover:opacity-80 hover:cursor-pointer" onClick={() => setAddMode(true)}>
+                                <div className="flex flex-row justify-between items-center p-2 border-b-1 border-b-primary hover:opacity-80 hover:cursor-pointer" onClick={openAddMode}>
                                     <span>Add Unit</span>
                                     <IoIosAddCircleOutline className="hover:cursor-pointer hover:opacity-80" />
                                 </div>
@@ -113,12 +117,12 @@ export default function ClassHeader({ classInfo }: { classInfo: ClassDetailType 
                             {courseNumber.length > 0 && <div>{ name } | { courseNumber }</div>}
                             {courseNumber.length == 0 && <div>{ name }</div>}
                         </>) : (
-                            <div className="flex flex-row justify-between items-center w-full">
-                                <div className="flex flex-row gap-x-4">
+                            <div className="flex flex-col md:flex-row justify-between md:items-center w-full">
+                                <div className="flex flex-col md:flex-row gap-x-4 max-w-fit">
                                     <div className="flex flex-col">
                                         <label htmlFor="name" className="text-sm italic">Name</label>
                                         <input 
-                                            type="text" className="border-1 border-primary px-1 text-[1.5rem]" 
+                                            type="text" className="border-1 border-primary px-1 text-xl" 
                                             id="name" value={name} required
                                             onChange={(e) => setName(e.target.value)}
                                             onBlur={handleBlurForNameAndCourseNumber}
@@ -127,14 +131,14 @@ export default function ClassHeader({ classInfo }: { classInfo: ClassDetailType 
                                     <div className="flex flex-col">
                                         <label htmlFor="course number" className="text-sm italic">Course Number (Optional)</label>
                                         <input 
-                                            type="text" className="border-1 border-primary px-1 text-[1.5rem]" 
+                                            type="text" className="border-1 border-primary px-1 text-xl" 
                                             id="course number" value={courseNumber} 
                                             onChange={(e) => setCourseNumber(e.target.value)}
                                             onBlur={handleBlurForNameAndCourseNumber}
                                         />
                                     </div>
                                 </div>
-                                { loading && <div className="flex flex-row items-center gap-x-2 min-w-[300px]">
+                                { loading && <div className="flex flex-row items-center gap-x-2 max-w-full">
                                     <h3 className="text-primary">Saving...</h3>
                                     <LoadingBar />
                                 </div>
@@ -143,7 +147,7 @@ export default function ClassHeader({ classInfo }: { classInfo: ClassDetailType 
                         )
                     }
                 </div>
-                {!editMode && <div className="flex flex-row gap-x-2 text-4xl items-end md:items-end md:justify-end md:text-2xl">
+                {!editMode && <div className="flex flex-row gap-x-2 text-4xl items-end md:justify-end md:text-2xl">
                     <span className="text-lg md:text-2xl text-primary whitespace-nowrap">Join Code:</span>
                     <DuplicateCode code={classInfo.join_code} />
                 </div>}

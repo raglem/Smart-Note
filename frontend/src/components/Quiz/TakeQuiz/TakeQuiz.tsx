@@ -124,9 +124,9 @@ export default function TakeQuiz({ quiz_id, questions } : {
             <div className="flex flex-col min-h-[calc(100vh-450px)] w-full gap-y-2">
                 {paginatedQuestions[currentPage].map(question => 
                     question.question_category === "MultipleChoice" ? (
-                        <MCQAnswerableQuestion key={question.id} question={question} verifyAnswer={verifyMCQAnswer} />
+                        <MCQAnswerableQuestion key={`MCQ${question.id}`} question={question} verifyAnswer={verifyMCQAnswer} />
                     ) : question.question_category === "FreeResponse" ? (
-                        <FRQAnswerableQuestion key={question.id} question={question} saveAnswer={saveFRQAnswer} />
+                        <FRQAnswerableQuestion key={`FRQ${question.id}`} question={question} saveAnswer={saveFRQAnswer} />
                     ) : null
                 )}
             </div>

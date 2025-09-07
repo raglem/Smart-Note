@@ -16,8 +16,8 @@ const useClassesStore = create<classesStore>((set) => ({
     classes: [],
     isLoading: false,
     error: null,
-
     fetchClasses: async () => {
+        set({ isLoading: true })
         try{
             const res = await api.get(`/classes/`)
             const formatted_data = res.data.map((item: any) => {
@@ -30,6 +30,7 @@ const useClassesStore = create<classesStore>((set) => ({
             set({ classes: formatted_data, isLoading: false, error: null })
         }
         catch(err){
+            console.error(err)
             set({ isLoading: false, error: err })
         }
     },

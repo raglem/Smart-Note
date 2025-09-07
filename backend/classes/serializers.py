@@ -1,3 +1,4 @@
+import json
 from rest_framework import serializers
 from users.models import Member
 from users.serializers import SimpleMemberSerializer
@@ -54,6 +55,10 @@ class FileCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Category not found")
 
         owner = self.context['request'].user.member
+
+        # Validate that the file name is unique within the category
+        if File.objects.filter(name=validated_data['name'], category=category).exists():
+             raise serializers.ValidationError("File name must be unique within the Category.")
 
         return File.objects.create(
             name=validated_data['name'],
@@ -144,6 +149,12 @@ class UnitSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'order', 'class_field']
         read_only_fields = ['id']
 
+class UnitNestedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Unit
+        fields = ['id', 'name', 'order']
+        read_only_fields = ['id']
+
 # This serializer is used to serialize the Unit model for a POST or PUT request
 # The class_field should be included in the validated data
 class UnitCreateSerializer(serializers.ModelSerializer):
@@ -224,55 +235,54 @@ class ClassSerializer(serializers.ModelSerializer):
     owner = SimpleMemberSerializer()
     members = SimpleMemberSerializer(many=True, read_only=True)
     units = UnitSerializer(many=True, read_only=True)
-    latest_files = serializers.SerializerMethodField()
     number_of_files = serializers.SerializerMethodField()
-    number_of_units = serializers.SerializerMethodField()
 
     class Meta:
         model = Class
         fields = [
-            'id', 'name', 'course_number', 
+            'id', 'name', 'image', 'course_number', 
             'owner', 'members', 'units', 'join_code',
-            'latest_files', 'number_of_units', 'number_of_files'
+            'number_of_files'
         ]
         read_only_fields = ['id']
-
-    def get_latest_files(self, obj):
-        category = FileCategory.objects.get(class_field=obj)
-        files = File.objects.filter(category=category)
-        latest_files = sorted(files)[0:2]
-        serialized_files = FileSerializer(latest_files, many=True)
-        return serialized_files.data
     
     def get_number_of_files(self, obj):
         category = FileCategory.objects.get(class_field=obj)
         return category.files.count()
     
-    def get_number_of_units(self, obj):
-        return obj.units.count()
+class ClassSimpleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Class
+        fields = ['id', 'name', 'image']
+        read_only_fields = ['id']
+    
+# This serializer is used for the ClassSearchAPIView, only retrieving minimal information about the class
+class ClassSearchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Class
+        fields = ['id', 'name', 'join_code', 'image']
+        read_only_fields = ['id', 'name', 'join_code', 'image']
 
 # This serializer is used to serializer the Class model for a POST request
 class ClassCreateSerializer(serializers.ModelSerializer):
-    members = serializers.PrimaryKeyRelatedField(queryset=Member.objects.all(), many=True)
-    units = UnitCreateSerializerWithoutClass(many=True)
+    members = serializers.PrimaryKeyRelatedField(queryset=Member.objects.all(), many=True, required=False)
+    units = UnitCreateSerializerWithoutClass(many=True, required=False)
 
     class Meta:
         model = Class
-        fields = ['name', 'course_number', 'members', 'units']
+        fields = ['id', 'name', 'image', 'course_number', 'members', 'units']
+        read_only_fields = ['id']
     
     def create(self, validated_data):
         units = validated_data.pop('units', [])
         members = validated_data.pop('members', [])
+        owner = self.context['request'].user.member
 
         with transaction.atomic():
-            new_class = Class.objects.create(**validated_data)
+            new_class = Class.objects.create(owner=owner, **validated_data)
             # Create units and associate them with the class
             for unit in units:
-                subunits = unit.pop('subunits', [])
-                new_unit = Unit.objects.create(class_field=new_class, **unit)
-                # Create subunits and associate them with the unit
-                for subunit in subunits:
-                    Subunit.objects.create(unit=new_unit,**subunit)
+                Unit.objects.create(class_field=new_class, **unit)
             # Associate members with the class
             new_class.members.set(members)
         return new_class
@@ -288,22 +298,24 @@ class ClassCreateSerializer(serializers.ModelSerializer):
             new_class.members.set(members)
 
         return new_class
-
-# This serializer returns information of the class along with its units and subunits
+    
+# This serializer displays the units and subunits of a class
 class ClassUnitSubunitSerializer(serializers.ModelSerializer):
-    units = UnitSubunitSerializer(many=True, read_only=True)
-    members = SimpleMemberSerializer(many=True, read_only=True)
+    units = UnitNestedSerializer(read_only=True, many=True)
+    subunits = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Class
-        fields = ['id', 'name', 'course_number', 'units', 'members']
+        fields = ['id', 'units', 'subunits']
         read_only_fields = ['id']
 
-    def to_representation(self, instance):
-        response = super().to_representation(instance)
-        response["units"] = sorted(response["units"], key=lambda x: x["order"])
-        
-        return response
+    def get_subunits(self, obj):
+        subunits = []
+        for unit in obj.units.all():
+            for subunit in unit.subunits.all():
+                serialized_subunit = SubunitNestedSerializer(subunit)
+                subunits.append(serialized_subunit.data)
+        return subunits
 
 # This serializer is used to display/edit the full information of the class, including the nested unit and subunit
 class ClassUnitSubunitSerializerFull(serializers.ModelSerializer):
@@ -392,8 +404,6 @@ class ClassUnitSubunitSerializerFull(serializers.ModelSerializer):
                     original_subunit.name = subunit['name']
                 if subunit['order'] != original_subunit.order:
                     original_subunit.order = subunit['order']
-
-                # Todo: Check if any were files were changed
 
                 original_subunit.save()
 
