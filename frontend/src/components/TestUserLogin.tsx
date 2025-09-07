@@ -1,40 +1,78 @@
 "use client"
 
-import { UserContext } from "@/app/context/UserContext"
+import api from "@/utils/api"
 import { useRouter } from "next/navigation"
-import { useContext } from "react"
+import { useState } from "react"
 import { toast } from "react-toastify"
 
 export default function TestUserLogin(){
     const [username, password] = ["test_user", "mypassword"]
-    const { setUsername: setUsernameContext, setUserId } = useContext(UserContext)
+    const [loading, setLoading] = useState<boolean>(false)
     const router = useRouter()
     const handleLogin = async () => {
-        const res = await fetch('/api/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password }),
-        })
-        
-        if (res.ok) {
-            const data = await res.json()
-            const { userId, username } = data.user
-            // Set user context
-            setUserId(userId)
-            setUsernameContext(username)
-
-            // Redirect
-            router.push('/classes')
-        } else {
-            toast.error('Something went wrong logging into the demo user')
+        setLoading(true)
+        const delayTimer = setTimeout(() => {
+            toast.error('Initial response may be delayed up to a minute due to server spinup. Thank you for your patience')
+        }, 5000);
+        try{
+            const res = await api.post('/users/login/', { username, password })
+            clearTimeout(delayTimer)
+            toast.success(`${username} login successful`)
+            localStorage.setItem('ACCESS_TOKEN', res.data.access)
+            
+            // Reset fields
+            router.push('/classes/')
+        }
+        catch{
+            toast.error('Something went wrong logging into the test_user. Please try again')
+        }
+        finally{
+            clearTimeout(delayTimer)
+            setLoading(false)
         }
     }
     return (
         <button 
-            className="w-fit py-2 px-5 border-1 border-primary bg-none rounded-full cursor-pointer hover:opacity-80 whitespace-nowrap"
+            className="flex flex-row items-center gap-x-4 w-fit py-2 px-5 border-1 border-primary bg-none rounded-full cursor-pointer hover:opacity-80 whitespace-nowrap"
             onClick={handleLogin}
         >
             Try the demo user
+            {loading && <SmallLoadingSpinner />}
         </button>
     )
+}
+
+function SmallLoadingSpinner(){
+    return (<div className="flex items-center justify-center">
+        <div
+          className="
+            inline-block
+            h-6 w-6
+            aspect-square
+            animate-spin
+            rounded-full
+            border-4
+            border-solid
+            border-current
+            border-r-transparent
+            align-[-0.125em]
+            text-primary
+            motion-reduce:animate-[spin_1.5s_linear_infinite]
+          "
+          role="status">
+          <span
+            className="
+              !absolute
+              !-m-px
+              !h-px
+              !w-px
+              !overflow-hidden
+              !whitespace-nowrap
+              !border-0
+              !p-0
+              ![clip:rect(0,0,0,0)]
+            "
+          >Loading...</span>
+        </div>
+      </div>)
 }
