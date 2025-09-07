@@ -30,10 +30,10 @@ export default function Page(){
             const res = await api.get('/study-groups/')    
         
             // Process response data
-            const studyGroups: StudyGroupType[] = res.data
-            studyGroups.sort((a, b) => 
+            const data: StudyGroupType[] = res.data
+            data.sort((a, b) => 
                 new Date(a.datetime).getTime() - new Date(b.datetime).getTime())
-            setStudyGroups(studyGroups)
+            setStudyGroups(data)
         }
         catch(err){
             console.error(err)
@@ -52,7 +52,7 @@ export default function Page(){
             <StudyGroupDateProvider>
                 <div className="flex flex-row min-h[calc(100vh-100px)] w-full">
                     <StudyGroupSidebar />
-                    <StudyGroupClientShell studyGroupsInfo={studyGroups} />
+                    <StudyGroupClientShell/>
                 </div>
             </StudyGroupDateProvider>
         </StudyGroupProvider>

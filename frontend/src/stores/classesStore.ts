@@ -16,8 +16,8 @@ const useClassesStore = create<classesStore>((set) => ({
     classes: [],
     isLoading: false,
     error: null,
-
     fetchClasses: async () => {
+        set({ isLoading: true })
         try{
             const res = await api.get(`/classes/`)
             const formatted_data = res.data.map((item: any) => {

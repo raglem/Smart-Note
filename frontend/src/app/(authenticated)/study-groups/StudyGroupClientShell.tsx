@@ -9,13 +9,15 @@ import StudyGroupManage from "@/components/StudyGroup/StudyGroupManage"
 import { StudyGroupType } from "@/types"
 import StudyGroupCalendarHeader from "@/components/StudyGroup/StudyGroupCalendarHeader"
 
-export default function StudyGroupClientShell({ studyGroupsInfo }: { studyGroupsInfo: StudyGroupType[] }){
-    const { showSidebar, setShowSidebar } = useContext(StudyGroupContext)
+export default function StudyGroupClientShell(){
+    // Initialize state to view calendar
     const [month, setMonth] = useState(new Date().getMonth())
     const [year, setYear] = useState(new Date().getFullYear())
     const initializedRef = useRef(false)
 
+    // Retrieve context to view and manage study groups
     const { 
+        showSidebar, setShowSidebar,
         studyGroups, setStudyGroups, setLoadingStudyGroups,
         selectedStudyGroup, setSelectedStudyGroup, 
         creatingGroup, setCreatingGroup, 

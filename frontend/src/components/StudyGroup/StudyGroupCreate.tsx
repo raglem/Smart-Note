@@ -5,11 +5,13 @@ import { StudyGroupContext } from "@/app/context/StudyGroupContext"
 import api from "@/utils/api"
 import { StudyGroupType } from "@/types"
 import { toast } from "react-toastify"
+import LoadingSpinner from "../LoadingSpinner"
 
 export default function StudyGroupCreate(){
     const [name, setName] = useState<string>("")
     const [datetime, setDatetime] = useState<Date>(new Date())
     const [visibility, setVisibility] = useState<"Public" | "Private">("Private")
+    const [loading, setLoading] = useState<boolean>(false)
 
     // Retrieve context
     const { setStudyGroups, setCreatingGroup } = useContext(StudyGroupContext)
@@ -25,13 +27,19 @@ export default function StudyGroupCreate(){
             toast.error("Study group name must be at least 3 characters long")
             return
         }
+        setLoading(true)
         try{
             const res = await api.post('/study-groups/', body)
             const data = res.data as StudyGroupType
             setStudyGroups((prev) => [...prev, data].sort((a: StudyGroupType, b:StudyGroupType) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime()))
+            toast.success(`Study group ${name} successfully created`)
         }
         catch(err){
             console.error(err)
+            toast.error(`Something went wrong creating ${name}. Please try again`)
+        }
+        finally{
+            setLoading(false)
         }
         setCreatingGroup(false)
     }
@@ -79,6 +87,9 @@ export default function StudyGroupCreate(){
                         <label htmlFor="time" className="text-xl">Time</label>
                         <input type="time" placeholder="Time" id="time" className="form-input border-1 border-primary" value={formattedLocalTime} onChange={handleTimeChange} />
                     </div>
+                    {loading && <div className="flex justify-center items-center w-full">
+                        <LoadingSpinner />
+                    </div>}
                     <div className="form-btn-toolbar">
                         <button className="form-btn bg-primary text-white border-0" onClick={handleCreate} >Create</button>
                         <button className="form-btn bg-white text-primary border-1 border-primary" onClick={() => setCreatingGroup(false)} >Cancel</button>
