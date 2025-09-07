@@ -30,7 +30,7 @@ export default function Join(){
                 const filteredClasses: SearchedClass[] = fetchedClasses.filter(fetchedClasses => !currentClasses.some(currentClass => currentClass.id === fetchedClasses.id))
                 setClasses(filteredClasses)
             }
-            catch(err){
+            catch{
                 toast.error(`Classes with join code ${joinCodeQuery} could not be retrieved`)
             }
             finally{
@@ -42,7 +42,7 @@ export default function Join(){
             return
         }
         searchClasses()
-    }, [joinCodeQuery])
+    }, [joinCodeQuery, currentClasses])
 
     const handleJoin = async (joinCode: string) => {
         if(joinCodeQuery.length !== 8){
@@ -60,7 +60,7 @@ export default function Join(){
             addClass(newClass)
             toast.success(`Successfully joined class ${newClass.name}`)
         }
-        catch(err){
+        catch{
             const matchingClass = classes.find(c => c.join_code === joinCode)
             if(!matchingClass)  return
             toast.error(`An error occurred joining class ${matchingClass.name} with join code ${joinCode}`)
@@ -83,7 +83,7 @@ export default function Join(){
                         key={classItem.id} className="flex flex-row items-center h-[50px] w-full gap-x-2 py-4 px-2 border-b-1 border-b-primary last-of-type:border-none hover:cursor-pointer hover:bg-gray-100"
                         onClick={() => setJoinCodeQuery(classItem.join_code)}
                     >
-                        <img src={classItem.image} className="rounded-[50] h-full aspect-square"></img>
+                        <img alt={`${classItem.name} Image`} src={classItem.image} className="rounded-[50] h-full aspect-square"/>
                         <span className="text-clip">{ classItem.name } | { classItem.join_code } </span>
                     </div>
                 ))}

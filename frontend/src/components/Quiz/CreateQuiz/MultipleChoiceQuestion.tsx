@@ -1,8 +1,8 @@
 "use client"
 import { useContext, useEffect, useState } from "react"
-import { AlternateChoiceType, MultipleChoiceQuestionType } from "@/types/Quizzes"
+import { MultipleChoiceQuestionType } from "@/types/Quizzes"
 import { CiCircleMinus, CiCirclePlus } from "react-icons/ci";
-import { IoIosAdd, IoIosCheckmarkCircle, IoMdCloseCircle } from "react-icons/io";
+import { IoIosAdd, IoIosCheckmarkCircle } from "react-icons/io";
 import RelatedUnitSubunitsContext from "@/app/context/RelatedUnitsSubunitsContext";
 import { SubunitSimpleType, UnitSimpleType } from "@/types/Sections";
 
@@ -52,7 +52,7 @@ export default function MultipleChoiceQuestion({question, setQuestion}:{
         };
         document.addEventListener('keydown', handleEnterKey)
         return () => document.removeEventListener('keydown', handleEnterKey)
-    })
+    }, [alternateChoices, question, setQuestion])
 
     // Update parent component when question changes
     useEffect(() => {
@@ -65,14 +65,14 @@ export default function MultipleChoiceQuestion({question, setQuestion}:{
                 choice_text: choice
             }))
         })
-    }, [questionText, correctAnswer, alternateChoices])
+    }, [question, setQuestion, questionText, correctAnswer, alternateChoices])
     useEffect(() => {
         setQuestion({
             ...question,
             related_units: questionRelatedUnits,
             related_subunits: questionRelatedSubunits
         })
-    }, [questionRelatedUnits, questionRelatedSubunits])
+    }, [question, setQuestion, questionRelatedUnits, questionRelatedSubunits])
 
     return (
         <div className="flex flex-col w-full gap-y-3">

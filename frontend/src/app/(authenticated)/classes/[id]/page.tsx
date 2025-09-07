@@ -19,31 +19,30 @@ export default function Page(){
     const [error, setError] = useState<boolean>(false)
 
     useEffect(() => {
+      const fetchClass = async () => {
+        const accessToken = localStorage.getItem('ACCESS_TOKEN')
+        if (!accessToken) {
+            toast.error('Current user session expired. Please login again')
+            router.push('/login')
+        }
+        try{
+          const res = await api.get(`/classes/${id}`)
+          const data = res.data
+          setClassInfo({
+            ...data,
+            owner: {
+              id: data.owner.member_id,
+              name: data.owner.name,
+            }
+          })
+        }
+        catch{
+            toast.error('Something went wrong fetching the class. Please try again')
+            setError(true)
+        }
+      }
       fetchClass()
-    }, [])
-
-    const fetchClass = async () => {
-      const accessToken = localStorage.getItem('ACCESS_TOKEN')
-      if (!accessToken) {
-          toast.error('Current user session expired. Please login again')
-          router.push('/login')
-      }
-      try{
-        const res = await api.get(`/classes/${id}`)
-        const data = res.data
-        setClassInfo({
-          ...data,
-          owner: {
-            id: data.owner.member_id,
-            name: data.owner.name,
-          }
-        })
-      }
-      catch(err){
-          toast.error('Something went wrong fetching the class. Please try again')
-          setError(true)
-      }
-  }
+    }, [id, router])
 
   if(error){
     return (

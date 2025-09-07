@@ -1,15 +1,13 @@
 "use client"
 
 import useMemberStore from "@/stores/memberStore";
-import { QuizSimpleType, QuizType } from "@/types/Quizzes";
+import { QuizSimpleType } from "@/types/Quizzes";
 import Link from "next/link";
 import { useEffect } from "react";
-import { FaPencilAlt } from "react-icons/fa";
 
 export default function QuizCard({ quiz }: { quiz: QuizSimpleType }){
-    const member = useMemberStore(state => state.member)
     const fetchMember = useMemberStore(state => state.fetchMember)
-    useEffect(() => {fetchMember()}, [])
+    useEffect(() => {fetchMember()}, [fetchMember])
     return (
         <div className="card rounded-md flex flex-col">
             <header className="flex flex-row justify-between items-end bg-primary text-white px-2 py-5">
@@ -19,7 +17,7 @@ export default function QuizCard({ quiz }: { quiz: QuizSimpleType }){
                 <span className="text-xl whitespace-nowrap">{quiz.total_questions} Qs</span>
             </header>
             <Link href={`/quizzes/${quiz.id}`}>
-                <img src={quiz.image} className="object-cover w-full h-50px cursor-pointer hover:opacity-80"/>
+                <img alt={`${quiz.name} Image`} src={quiz.image} className="object-cover w-full h-50px cursor-pointer hover:opacity-80"/>
             </Link>
             <div className="flex flex-col justify-center h-full">
                 <div className="px-2 py-5 flex flex-wrap gap-2">

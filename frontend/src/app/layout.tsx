@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { UserProvider } from "./context/UserContext";
 import Navbar from "@/components/Navbar";
-import Logout from "@/components/Logout";
 
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";

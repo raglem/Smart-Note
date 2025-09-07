@@ -12,16 +12,16 @@ import useMemberStore from "@/stores/memberStore"
 export default function StudyGroupManage({ id, studyGroup }: { id: number, studyGroup: StudyGroupType}){
     const [name, setName] = useState<string>(studyGroup.name)
     const [datetime, setDatetime] = useState<Date>(new Date(studyGroup.datetime))
-    const [visibility, setVisibility] = useState<"Public" | "Private">("Private")
+    const visibility = "Private"
     const [members, setMembers] = useState<StudyGroupMemberType[]>(studyGroup.members)
 
     // Retrieve member context so current member is excluded from members list
     const currentMember = useMemberStore(state => state.member)
     const fetchMember = useMemberStore(state => state.fetchMember)
-    useEffect(() => {fetchMember()}, [])
+    useEffect(() => {fetchMember()}, [fetchMember])
 
     // Retrieve study group context
-    const { studyGroups, setStudyGroups, setManagingGroup } = useContext(StudyGroupContext)
+    const { setStudyGroups, setManagingGroup } = useContext(StudyGroupContext)
 
     const handleSave = async () => {
         const body = {
@@ -31,7 +31,6 @@ export default function StudyGroupManage({ id, studyGroup }: { id: number, study
             members
         }
         try{
-            console.log(body)
             const res = await api.put(`/study-groups/${id}/`, body)
             const data = res.data
             

@@ -1,14 +1,11 @@
 "use client"
 
 import { useEffect, useState } from "react";
-import { ClassType, UnitSimpleType, SubunitSimpleType } from "@/types/Sections";
+import { ClassType } from "@/types/Sections";
 import useClassesStore from "@/stores/classesStore";
 import { CiCircleRemove } from "react-icons/ci";
 
-export default function SelectClass({ selected, setSelected }: { 
-    selected: ClassType | null, 
-    setSelected: React.Dispatch<React.SetStateAction<ClassType | null>>,
-}){
+export default function SelectClass({ setSelected }: {  setSelected: React.Dispatch<React.SetStateAction<ClassType | null>> }){
     const [classQuery, setClassQuery] = useState<string>("");
     const [isFocused, setIsFocused] = useState<boolean>(false)
 
@@ -17,7 +14,7 @@ export default function SelectClass({ selected, setSelected }: {
     const fetchClasses = useClassesStore(state => state.fetchClasses)
     useEffect(() => {
         fetchClasses()
-    }, [])
+    }, [fetchClasses])
     const [filteredOptions, setFilteredOptions] = useState<ClassType[]>(classes)
 
     useEffect(() => {

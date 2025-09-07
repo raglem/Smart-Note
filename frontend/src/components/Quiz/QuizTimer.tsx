@@ -12,7 +12,7 @@ export default function QuizTimer() {
         return () => {
             clearInterval(timerIntervalId)
         }
-    }, [])
+    }, [setTimer])
     const formatTime = (time: number) => {
         const minutes = Math.floor(time / 60)
         const seconds = time % 60

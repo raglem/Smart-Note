@@ -3,24 +3,23 @@ import { StudyGroupContext } from "@/app/context/StudyGroupContext";
 import { StudyGroupType } from "@/types";
 import api from "@/utils/api";
 import { FaEdit, FaPlusCircle } from "react-icons/fa";
-import { CgDanger } from "react-icons/cg";
 import { ImExit } from "react-icons/im";
 import { toast } from "react-toastify";
 
 export default function StudyGroupToolbar({ group, closeToolbar } : { group: StudyGroupType, closeToolbar: () => void }) {
     const { 
         setStudyGroups,
-        selectedStudyGroup, setSelectedStudyGroup, 
+        setSelectedStudyGroup, 
         setInvitingGroup, 
         setManagingGroup 
     } = useContext(StudyGroupContext)
 
     const handleLeaveStudyGroup = async () => {
         try{
-            const res = await api.delete(`/study-groups/leave/${group.id}/`)
+            await api.delete(`/study-groups/leave/${group.id}/`)
             setStudyGroups(prev => prev.filter(sg => sg.id !== group.id))
         }
-        catch(err){
+        catch{
             toast.error(`Failed to leave study group ${group.name}. Please try again`)
         }
     }

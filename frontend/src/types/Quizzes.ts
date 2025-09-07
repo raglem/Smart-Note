@@ -4,7 +4,7 @@ import { ClassSimpleType, SubunitSimpleType, UnitSimpleType } from "./Sections"
 export type QuizType = {
     id: number,
     name: string,
-    image: File,
+    image: string,
     owner: SimpleMemberType,
     related_class: ClassSimpleType,
     related_units: UnitSimpleType[],
@@ -15,7 +15,7 @@ export type QuizType = {
 export type QuizSimpleType = {
     id: number,
     name: string,
-    image: File,
+    image: string,
     owner: SimpleMemberType,
     related_class: ClassSimpleType,
     related_units: UnitSimpleType[],

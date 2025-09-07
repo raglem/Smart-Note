@@ -50,20 +50,20 @@ export default function FreeResponseQuestion({ question, setQuestion }: {
             question_text: questionText,
             correct_answer: correctAnswer
         })
-    }, [questionText, correctAnswer])
+    }, [question, setQuestion, questionText, correctAnswer])
     useEffect(() => {
         setQuestion({
             ...question,
             rubrics: rubrics
         })
-    }, [rubrics])
+    }, [question, setQuestion, rubrics])
     useEffect(() => {
         setQuestion({
             ...question,
             related_units: questionRelatedUnits,
             related_subunits: questionRelatedSubunits
         })
-    }, [questionRelatedUnits, questionRelatedSubunits])
+    }, [question, setQuestion, questionRelatedUnits, questionRelatedSubunits])
 
     return (
         <div className="flex flex-col w-full gap-y-3">

@@ -2,7 +2,7 @@
 
 import { FRQAnswerResultType } from "@/types/Quizzes";
 import FRQRubricGrade from "./FRQRubricGrade";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { IoIosCheckmark, IoMdClose } from "react-icons/io";
 
 type GradedRubricType = {

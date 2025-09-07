@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useContext, useEffect, Suspense } from "react"
+import { useContext, useEffect } from "react"
 
 import AddUnit from "@/components/Class/AddUnit"
 import ClassHeader from "@/components/Class/ClassHeader"
@@ -8,7 +8,7 @@ import { ClassContext } from "@/app/context/ClassContext"
 import Section from "@/components/Class/Section"
 import { ClassDetailType } from "@/types/Sections"
 
-import { closestCenter, DndContext, DragEndEvent, DragStartEvent } from "@dnd-kit/core"
+import { closestCenter, DndContext, DragEndEvent } from "@dnd-kit/core"
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import SortableItem from "@/components/SortableItem"
 import FilePreview from "@/components/File/FilePreview"
@@ -31,17 +31,17 @@ export default function ClassClientShell({ classInfo }:{
         setClassFields({
             id: classInfo.id,
             name: classInfo.name,
-            course_number: classInfo.course_number,
+            course_number: classInfo?.course_number,
             join_code: classInfo.join_code,
             owner: classInfo.owner,
             members: classInfo.members,
             files: classInfo.files,
         })
         setUnits(classInfo.units.sort((a, b) => a.order - b.order))
-    }, [])
+    }, [classInfo, setClassFields, setUnits])
 
     // Update context a unit is being dragged
-    const handleDragStart = (event: DragStartEvent) => {
+    const handleDragStart = () => {
         setDraggingUnit(true)
     }
 
@@ -63,7 +63,7 @@ export default function ClassClientShell({ classInfo }:{
             <div className="flex flex-col p-4 gap-y-4 w-full">
                 <ClassHeader classInfo={classInfo} />
                 <div className="flex flex-col gap-y-4">
-                    <DndContext collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+                    <DndContext collisionDetection={closestCenter} onDragStart={() => handleDragStart()} onDragEnd={handleDragEnd}>
                         <SortableContext items={units} strategy={verticalListSortingStrategy}>
                             {
                                 units.map(unit => (

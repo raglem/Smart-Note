@@ -3,7 +3,6 @@
 import { StudyGroupContext } from "@/app/context/StudyGroupContext";
 import useMemberStore from "@/stores/memberStore";
 import { StudyGroupType } from "@/types";
-import { setGlobal } from "next/dist/trace";
 import { useContext, useEffect } from "react";
 
 export default function StudyGroupCalendarDay({ events }: { events: StudyGroupType[] }){
@@ -12,7 +11,7 @@ export default function StudyGroupCalendarDay({ events }: { events: StudyGroupTy
     // Retrieve member state to check if mode should be switched to "My Groups" or "Invited"
     const member = useMemberStore((state) => state.member)
     const fetchMember = useMemberStore((state) => state.fetchMember)
-    useEffect(() => {fetchMember()}, [])
+    useEffect(() => {fetchMember()}, [fetchMember])
 
     const handleSelect = (groupId: number) => {
         if(selectedStudyGroup && selectedStudyGroup.id === groupId){

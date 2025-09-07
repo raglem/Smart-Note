@@ -46,7 +46,7 @@ export default function RemoveFile({ file } : { file: FileType }){
     }
     const handleFileDelete = async () => {
         try{
-            const res = await api.delete(`/classes/files/${file.id}/`)
+            await api.delete(`/classes/files/${file.id}/`)
             toast.success(`File ${file.name} deleted successfully`)
             removeFileFromClassContext(file.id)
         }

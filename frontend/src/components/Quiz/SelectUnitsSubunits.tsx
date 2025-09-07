@@ -12,7 +12,6 @@ export default function SelectUnitsSubunits({selectedUnits, setSelectedUnits, se
     setSelectedSubunits: (subunits: SubunitSimpleType[]) => void,
     classId: number,
 }){
-    const loading = useUnitsStore(state => state.isLoading)
     const units = useUnitsStore(state => state.units)
     const subunits = useUnitsStore(state => state.subunits)
     const fetchUnitsAndSubunits = useUnitsStore(state => state.fetchUnitsAndSubunits)
@@ -27,8 +26,7 @@ export default function SelectUnitsSubunits({selectedUnits, setSelectedUnits, se
 
     useEffect(() => {
         fetchUnitsAndSubunits(classId)
-        console.log(units)
-    }, [classId])
+    }, [classId, fetchUnitsAndSubunits])
 
     useEffect(() => {
         const handleClick = (e: MouseEvent) => {
@@ -43,7 +41,7 @@ export default function SelectUnitsSubunits({selectedUnits, setSelectedUnits, se
     
         document.addEventListener('click', handleClick)
         return () => document.removeEventListener('click', handleClick)
-    })
+    }, [])
 
     // Filter available units to select
     useMemo(() => {

@@ -3,7 +3,7 @@
 import ErrorPage from "@/components/ErrorPage"
 import LoadingSpinner from "@/components/LoadingSpinner"
 import QuizzesBoard from "@/components/Quiz/QuizzesBoard"
-import { QuizResultSimpleType, QuizSimpleType, QuizType } from "@/types/Quizzes"
+import { QuizResultSimpleType, QuizSimpleType } from "@/types/Quizzes"
 import api from "@/utils/api"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -17,34 +17,33 @@ export default function QuizPage(){
     const [error, setError] = useState<boolean>(false)
 
     useEffect(() => {
+        const fetchQuizzes = async () => {
+            const accessToken = localStorage.getItem('ACCESS_TOKEN')
+            if (!accessToken) {
+                toast.error('Current user session expired. Please login again')
+                router.push('/login')
+            }
+            setLoading(true)
+            try{
+                const [quizzesResponse, resultsResponse] = await Promise.all([
+                    api.get(`/quizzes/`), api.get(`/quizzes/results/`)
+                ])
+                const quizzes: QuizSimpleType[] = quizzesResponse.data
+                const results: QuizResultSimpleType[] = resultsResponse.data
+                setQuizzes(quizzes)
+                setResults(results)
+            }
+            catch{
+                toast.error('Something went wrong fetching quizzes. Please try again')
+                setError(true)
+            }
+            finally{
+                setLoading(false)
+            }
+        }
+
         fetchQuizzes()
-    }, [])
-
-
-    const fetchQuizzes = async () => {
-        const accessToken = localStorage.getItem('ACCESS_TOKEN')
-        if (!accessToken) {
-            toast.error('Current user session expired. Please login again')
-            router.push('/login')
-        }
-        setLoading(true)
-        try{
-            const [quizzesResponse, resultsResponse] = await Promise.all([
-                api.get(`/quizzes/`), api.get(`/quizzes/results/`)
-            ])
-            const quizzes: QuizSimpleType[] = quizzesResponse.data
-            const results: QuizResultSimpleType[] = resultsResponse.data
-            setQuizzes(quizzes)
-            setResults(results)
-        }
-        catch(err){
-            toast.error('Something went wrong fetching quizzes. Please try again')
-            setError(true)
-        }
-        finally{
-            setLoading(false)
-        }
-    }
+    }, [router])
 
     if(error){
         return (

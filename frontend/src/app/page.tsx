@@ -30,7 +30,7 @@ export default function Home() {
           </nav>
         </div>
         <div className="flex justify-center items-center w-full sm:w-[50%] p-10">
-          <img src="icon.png" className="aspect-square w-[70%] rounded-md" />
+          <img alt="Smart Note Icon" src="icon.png" className="aspect-square w-[70%] rounded-md"/>
         </div>
       </section>
       <section className="flex flex-col justify-center items-center w-full gap-y-8 p-10 bg-white">

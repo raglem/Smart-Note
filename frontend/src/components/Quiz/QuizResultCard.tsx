@@ -21,7 +21,7 @@ export default function QuizResultCard({ result }: {
                 <span className="text-2xl">{score}%</span>
             </header>
             <Link href={`/quizzes/results/${result.id}`}>
-                <img src={result.quiz.image} className="object-cover w-full h-50px cursor-pointer hover:opacity-80"/>
+                <img alt={`${result.quiz.name} Image`} src={result.quiz.image} className="object-cover w-full h-50px cursor-pointer hover:opacity-80"/>
             </Link>
             <div className="flex flex-col px-2 py-2 gap-y-2">
                 <div className="flex flex-row justify-between items-center text-md text-gray-600">
