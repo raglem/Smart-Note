@@ -1,13 +1,12 @@
 "use client"
 
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 
 import { StudyGroupContext } from "@/app/context/StudyGroupContext";
 
-import { FaCog, FaClock } from "react-icons/fa";
+import { FaClock } from "react-icons/fa";
 import { StudyGroupType } from "../../types";
 import { IoIosCheckmarkCircle } from "react-icons/io";
-import StudyGroupToolbar from "./StudyGroupToolbar";
 import api from "@/utils/api";
 import { toast } from "react-toastify";
 

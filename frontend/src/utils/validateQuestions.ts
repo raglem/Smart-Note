@@ -1,4 +1,4 @@
-import { MultipleChoiceQuestionType, QuestionType } from "@/types/Quizzes";
+import { QuestionType } from "@/types/Quizzes";
 
 export default function ValidateQuestions(questions: QuestionType[]){
     for(const [i, question] of questions.entries()){

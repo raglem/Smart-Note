@@ -41,26 +41,28 @@ export default function QuizResultPage(){
     }, [quizResult]);
     const [error, setError] = useState<boolean>(false)
     
-    useEffect(() => {fetchQuizResult()}, [])
-
-    const fetchQuizResult = async () => {
-        const accessToken = localStorage.getItem('ACCESS_TOKEN')
-        if (!accessToken) {
-            toast.error('Current user session expired. Please login again')
-            router.push('/login')
+    useEffect(() => {
+        const fetchQuizResult = async () => {
+            const accessToken = localStorage.getItem('ACCESS_TOKEN')
+            if (!accessToken) {
+                toast.error('Current user session expired. Please login again')
+                router.push('/login')
+            }
+    
+            try{
+                const res = await api.get(`/quizzes/results/${id}`)
+                const data = res.data as QuizResultDetailType
+                setQuizResult(data)
+            }
+            catch(err){
+                console.error(err)
+                toast.error('Something went wrong fetching the quiz result. Please try again')
+                setError(true)
+            }
         }
 
-        try{
-            const res = await api.get(`/quizzes/results/${id}`)
-            const data = res.data as QuizResultDetailType
-            setQuizResult(data)
-        }
-        catch(err){
-            console.error(err)
-            toast.error('Something went wrong fetching the quiz result. Please try again')
-            setError(true)
-        }
-    }
+        fetchQuizResult()
+    }, [id, router])
 
     if(error){
         return (
@@ -98,7 +100,6 @@ export default function QuizResultPage(){
             {quizResult.status === 'Graded' && <Results answers={sortedAnswers} />}
             {quizResult.status === 'Pending' && 
                 <GradeQuiz 
-                    quizId={quizResult.quiz.id}
                     multipleChoiceAnswers={formattedMCQs} multipleChoicePoints={quizResult.points_awarded} 
                     freeResponseAnswers={formattedFRQs}
                 />}

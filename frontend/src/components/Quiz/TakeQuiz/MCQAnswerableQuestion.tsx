@@ -15,7 +15,7 @@ export default function MCQAnswerableQuestion({ question, verifyAnswer }: {
             const isCorrect = selectedChoice === 0;
             verifyAnswer(question.id, isCorrect ? null : selectedChoice, isCorrect ? "Correct" : "Incorrect");
         }
-    }, [selectedChoice])
+    }, [question, verifyAnswer, selectedChoice])
 
     // Shuffle choices on component mount to avoid hydration error
     useEffect(() => {

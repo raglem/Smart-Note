@@ -5,7 +5,7 @@ import { useContext, useState } from "react";
 import { FaPlusCircle } from "react-icons/fa";
 
 export default function AddSubunit({ unit, order }: { unit: number, order: number }){
-    const { units, setUnits } = useContext(ClassContext)
+    const { setUnits } = useContext(ClassContext)
 
     const [name, setName] = useState("")
     const handleCreateSubunit = async () => {

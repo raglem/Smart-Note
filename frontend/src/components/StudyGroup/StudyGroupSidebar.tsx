@@ -1,6 +1,6 @@
 "use client"
 
-import { useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useContext, useEffect, useMemo, useRef } from "react";
 import { StudyGroupType } from "@/types";
 import { StudyGroupCard } from "./StudyGroupCard"
 import { StudyGroupContext } from "@/app/context/StudyGroupContext";
@@ -32,7 +32,7 @@ export default function StudyGroupSidebar() {
         if(!member){
             fetchMember()
         }
-    }, [])
+    }, [member, fetchMember])
 
     // Differentiate between joined and invited study groups (joined study groups are groups users have already approved)
     // Additionally, only show groups in the sidebar that are upcoming
@@ -121,7 +121,7 @@ export default function StudyGroupSidebar() {
                 {joinedStudyGroups.length === 0 && <div className="flex flex-col justify-center items-center gap-y-4 h-full">
                         <IoMdCheckmarkCircleOutline className="text-green-500 text-5xl"/>
                         <div className="flex flex-col items-center gap-y-2">
-                            <p className="text-lg text-primary text-center font-bold">You're all caught up.</p>
+                            <p className="text-lg text-primary text-center font-bold">{`You're all caught up.`}</p>
                             <p className="text-md text-primary text-center">No future study groups planned.</p>
                         </div>
                     </div>
@@ -136,7 +136,7 @@ export default function StudyGroupSidebar() {
                 {invitedStudyGroups.length === 0 && <div className="flex flex-col justify-center items-center gap-y-4 h-full">
                         <IoMdCheckmarkCircleOutline className="text-green-500 text-5xl"/>
                         <div className="flex flex-col items-center gap-y-2">
-                            <p className="text-lg text-primary font-bold">You're all caught up.</p>
+                            <p className="text-lg text-primary font-bold">{`You're all caught up.`}</p>
                             <p className="text-md text-primary">No pending invites.</p>
                         </div>
                     </div>

@@ -16,7 +16,7 @@ export default function Page(){
 
     useEffect(() => {
         fetchClasses()
-    }, [])
+    }, [fetchClasses])
 
     if(error){
         return (

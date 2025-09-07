@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, createContext } from "react";
-import { ClassType, UnitSimpleType, SubunitSimpleType } from "@/types/Sections";
+import { createContext } from "react";
+import { UnitSimpleType, SubunitSimpleType } from "@/types/Sections";
 
 type RelatedUnitSubunitsContextType = {
     units: UnitSimpleType[],

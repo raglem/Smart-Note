@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react";
-import { FRQAnswerType, MCQAnswerType, MCQFormattedAnswerType, QuestionType, QuizResultType, FormattedAnswerType } from "@/types/Quizzes";
+import { FRQAnswerType, MCQAnswerType, QuestionType, QuizResultType, FormattedAnswerType } from "@/types/Quizzes";
 import { FaCaretLeft, FaCaretRight } from "react-icons/fa";
 import MCQAnswerableQuestion from "./MCQAnswerableQuestion";
 import useMemberStore from "@/stores/memberStore";
@@ -42,7 +42,7 @@ export default function TakeQuiz({ quiz_id, questions } : {
 
     useEffect(() => {
         fetchMember()
-    }, [])
+    }, [fetchMember])
 
     const router = useRouter()
 
@@ -110,7 +110,7 @@ export default function TakeQuiz({ quiz_id, questions } : {
         }
 
         try{
-            const res = await api.post('/quizzes/submit/', body)
+            await api.post('/quizzes/submit/', body)
             toast.success('Quiz submitted successfully')
             router.push('/quizzes/')
         }

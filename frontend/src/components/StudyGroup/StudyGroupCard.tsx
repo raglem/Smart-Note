@@ -11,13 +11,7 @@ import StudyGroupToolbar from "./StudyGroupToolbar";
 
 export function StudyGroupCard({ group }: { group: StudyGroupType }) {
     // Context to handle study group forms
-    const { 
-        selectedStudyGroup, setSelectedStudyGroup, 
-        showSidebar, setShowSidebar,
-        setInvitingGroup, 
-        setManagingGroup 
-    } = useContext(StudyGroupContext)
-
+    const { selectedStudyGroup } = useContext(StudyGroupContext)
     const [showToolbar, setShowToolbar] = useState<boolean>(false)
     
     useEffect(() => {

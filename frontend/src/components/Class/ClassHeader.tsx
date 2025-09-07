@@ -4,7 +4,6 @@ import { useEffect, useState, useContext } from "react";
 import { ClassContext } from "@/app/context/ClassContext";
 import DuplicateCode from "./DuplicateCode";
 
-import { HiMiniDocumentDuplicate } from "react-icons/hi2";
 import { FaCheckCircle, FaCog, FaEdit } from "react-icons/fa";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { MdDeleteForever } from "react-icons/md";

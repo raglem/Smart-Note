@@ -16,7 +16,7 @@ export default function LeaveClass({ close} : {
     const handleLeave = async () => {
         setLoading(true)
         try{
-            const res = await api.delete(`/classes/leave/${id}/`)
+            await api.delete(`/classes/leave/${id}/`)
             router.push('/classes')
         }
         catch(err){

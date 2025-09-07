@@ -17,9 +17,8 @@ type GradedStatusType = {
     status: "Pending" | "Graded"
     rubricGrades: RubricGradeType[]
 }
-export default function GradeQuiz({ quizId, multipleChoiceAnswers, multipleChoicePoints, freeResponseAnswers }: 
+export default function GradeQuiz({ multipleChoiceAnswers, multipleChoicePoints, freeResponseAnswers }: 
 { 
-    quizId: number
     multipleChoiceAnswers: MCQAnswerResultType[]
     multipleChoicePoints: number,
     freeResponseAnswers: FRQAnswerResultType[]

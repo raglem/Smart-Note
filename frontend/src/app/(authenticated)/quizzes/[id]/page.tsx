@@ -20,34 +20,36 @@ export default function Page(){
     const [questions, setQuestions] = useState<QuestionType[]>([])
     const [error, setError] = useState<boolean>(false)
 
-    useEffect(() => {fetchQuiz()}, [])
+    useEffect(() => {
+        const fetchQuiz = async () => {
+            const accessToken = localStorage.getItem('ACCESS_TOKEN')
+            if(!accessToken){
+                toast.error('Current user session expired. Please login again')
+                router.push('/login')
+            }
+            
+            try{
+                const res = await api.get(`/quizzes/${id}`)
+                const data = res.data as QuizType
+                const formattedMultipleChoiceQuestions: MultipleChoiceQuestionType[] = data.mcq_questions.map(mcq => ({
+                    ...mcq,
+                    question_category: "MultipleChoice"
+                }))
+                const formattedFreeResponseQuestions: FreeResponseQuestionType[] = data.frq_questions.map(frq => ({
+                    ...frq,
+                    question_category: "FreeResponse"
+                }))
+                setQuiz(data)
+                setQuestions([...formattedMultipleChoiceQuestions, ...formattedFreeResponseQuestions])
+            }
+            catch{
+                toast.error('Something went wrong fetching the class. Please try again')
+                setError(true)
+            }
+        }
 
-    const fetchQuiz = async () => {
-        const accessToken = localStorage.getItem('ACCESS_TOKEN')
-        if(!accessToken){
-            toast.error('Current user session expired. Please login again')
-            router.push('/login')
-        }
-        
-        try{
-            const res = await api.get(`/quizzes/${id}`)
-            const data = res.data as QuizType
-            const formattedMultipleChoiceQuestions: MultipleChoiceQuestionType[] = data.mcq_questions.map(mcq => ({
-                ...mcq,
-                question_category: "MultipleChoice"
-            }))
-            const formattedFreeResponseQuestions: FreeResponseQuestionType[] = data.frq_questions.map(frq => ({
-                ...frq,
-                question_category: "FreeResponse"
-            }))
-            setQuiz(data)
-            setQuestions([...formattedMultipleChoiceQuestions, ...formattedFreeResponseQuestions])
-        }
-        catch(err){
-            toast.error('Something went wrong fetching the class. Please try again')
-            setError(true)
-        }
-    }
+        fetchQuiz()
+    }, [id, router])
 
     if(error){
         return (

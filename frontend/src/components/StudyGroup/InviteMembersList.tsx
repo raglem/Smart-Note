@@ -1,9 +1,8 @@
 "use client"
 
-import { useContext, useState, useEffect } from "react"
+import { useContext } from "react"
 import { SimpleMemberType, StudyGroupMemberType, StudyGroupType } from "@/types"
 import { StudyGroupContext } from "@/app/context/StudyGroupContext"
-import LoadingSpinner from "../LoadingSpinner"
 import api from "@/utils/api"
 
 import { IoIosCheckmarkCircle, IoMdPersonAdd } from "react-icons/io"

@@ -17,29 +17,29 @@ export default function Page(){
     const [error, setError] = useState<boolean>(false)
 
     useEffect(() => {
-        fetchStudyGroups()
-    }, [])
-
-    const fetchStudyGroups = async () => {
-        const accessToken = localStorage.getItem('ACCESS_TOKEN')
-        if (!accessToken) {
-            router.push('/quizzes')
-        }
-    
-        try{
-            const res = await api.get('/study-groups/')    
+        const fetchStudyGroups = async () => {
+            const accessToken = localStorage.getItem('ACCESS_TOKEN')
+            if (!accessToken) {
+                router.push('/quizzes')
+            }
         
-            // Process response data
-            const data: StudyGroupType[] = res.data
-            data.sort((a, b) => 
-                new Date(a.datetime).getTime() - new Date(b.datetime).getTime())
-            setStudyGroups(data)
+            try{
+                const res = await api.get('/study-groups/')    
+            
+                // Process response data
+                const data: StudyGroupType[] = res.data
+                data.sort((a, b) => 
+                    new Date(a.datetime).getTime() - new Date(b.datetime).getTime())
+                setStudyGroups(data)
+            }
+            catch(err){
+                console.error(err)
+                setError(true)
+            }
         }
-        catch(err){
-            console.error(err)
-            setError(true)
-        }
-    }
+
+        fetchStudyGroups()
+    }, [router])
 
     if(error){
         return(

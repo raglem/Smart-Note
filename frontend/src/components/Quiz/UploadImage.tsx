@@ -34,7 +34,7 @@ export default function UploadImage({ image, setImage }:
                 />
             </label>}
             {image && imagePreview && <>
-                <img src={imagePreview} className="object-cover w-full h-full rounded-md" />
+                <img src={imagePreview} alt="Image Preview" className="object-cover w-full h-full rounded-md" />
                 <FaRegTimesCircle className="absolute icon-responsive text-red-500 text-5xl top-0 right-0" onClick={handleImageRemoval}/>
             </>}
         </div>

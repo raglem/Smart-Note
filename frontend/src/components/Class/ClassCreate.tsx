@@ -1,6 +1,6 @@
 "use client"
 
-import { ClassType, useState } from "react"
+import { useState } from "react"
 import useClassesStore from "@/stores/classesStore"
 import AddMembers from "./AddMembers"
 import { FilePreviewType, SimpleMemberType } from "@/types"
