@@ -3,28 +3,23 @@
 import { useContext, useEffect, useState } from "react";
 import useClassesStore from "@/stores/classesStore";
 import { StudyGroupContext } from "@/app/context/StudyGroupContext";
-import { StudyGroupType } from "../../types";
 import { ClassType } from "@/types/Sections";
-import LoadingSpinner from "../LoadingSpinner";
 
-import { FaClock, FaPlusCircle } from "react-icons/fa";
-import { IoIosCheckmarkCircle, IoMdPersonAdd } from "react-icons/io";
 import { TbFaceIdError } from "react-icons/tb";
 import InviteMembersList from "./InviteMembersList";
 import { toast } from "react-toastify";
 
-export default function StudyGroupInvite({ id, name, studyGroup }: { id: number, name: string, studyGroup: StudyGroupType}) {
+export default function StudyGroupInvite({ id }: { id: number }) {
     // Retrieve classes from zustand store
     const classes = useClassesStore((state) => state.classes)
-    const isLoading = useClassesStore((state)=> state.isLoading)
     const error = useClassesStore((state) => state.error)
     const fetchClasses = useClassesStore((state) => state.fetchClasses)
 
     useEffect(() => {
         fetchClasses()
-    }, [])
+    }, [fetchClasses])
 
-    const { setStudyGroups, setInvitingGroup } = useContext(StudyGroupContext)
+    const { setInvitingGroup } = useContext(StudyGroupContext)
 
     const [selectedClassId, setSelectedClassId] = useState<number | null>((classes && classes.length > 0) ? classes[0].id : null)
     const selectedClass: ClassType = classes.find(c => c.id === selectedClassId) || classes[0]
@@ -43,7 +38,7 @@ export default function StudyGroupInvite({ id, name, studyGroup }: { id: number,
                     <div className="flex flex-row p-4 gap-x-2">
                         <TbFaceIdError className="text-primary text-5xl"/>
                         <p>
-                            You're not in any classes. <br/>
+                            {`You're not in any classes.`} <br/>
                             Join a class to invite members to your study group.
                         </p>
                     </div>

@@ -3,7 +3,7 @@
 import { useContext, useEffect, useState } from "react";
 import SortableItem from "../SortableItem";
 
-import { closestCenter, DndContext, DragEndEvent, useDroppable } from "@dnd-kit/core";
+import { closestCenter, DndContext, DragEndEvent } from "@dnd-kit/core";
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 
 import { IoMdRemoveCircle } from "react-icons/io";

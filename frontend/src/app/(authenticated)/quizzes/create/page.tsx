@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, createContext } from "react";
+import { useState } from "react";
 import UploadImage from "@/components/Quiz/UploadImage";
 import SelectClass from "@/components/Quiz/SelectClass";
 import SelectUnitsSubunits from "@/components/Quiz/SelectUnitsSubunits";
@@ -8,7 +8,6 @@ import CannotSelectUnitsSubunits from "@/components/Quiz/CannotSelectUnitsSubuni
 import Questions from "@/components/Quiz/CreateQuiz/Questions";
 import api from "@/utils/api";
 import { toast } from "react-toastify";
-import checkForValidCharacters from "@/utils/checkForValidCharacters";
 import { ClassType, UnitSimpleType, SubunitSimpleType } from "@/types/Sections";
 import { QuestionType } from "@/types/Quizzes";
 import RelatedUnitSubunitsContext from "@/app/context/RelatedUnitsSubunitsContext";
@@ -75,13 +74,13 @@ export default function CreatePage(){
 
             // Format json data for questions request
             const orderedQuestions = questions.map((q, i) => ({ ...q, order: i+1}))
-            const mcqQuestions = orderedQuestions.filter(q => q.question_category === "MultipleChoice").map((q, i) => ({
+            const mcqQuestions = orderedQuestions.filter(q => q.question_category === "MultipleChoice").map(q => ({
                 ...q,
                 id: undefined,
                 related_units: q.related_units.map(u => u.id),
                 related_subunits: q.related_subunits.map(s => s.id)
             }))
-            const frqQuestions = orderedQuestions.filter(q => q.question_category === "FreeResponse").map((q, i) => ({
+            const frqQuestions = orderedQuestions.filter(q => q.question_category === "FreeResponse").map(q => ({
                 ...q,
                 id: undefined,
                 related_units: q.related_units.map(u => u.id),
@@ -103,7 +102,7 @@ export default function CreatePage(){
                 },
             }
 
-            const questionsRes = await api.post('/quizzes/questions/bulk-create/', requestBody)
+            await api.post('/quizzes/questions/bulk-create/', requestBody)
             toast.success("Quiz created successfully")
             router.push('/quizzes')
         }
@@ -136,7 +135,7 @@ export default function CreatePage(){
                 <div className="flex flex-col w-full gap-y-4">
                     <div>
                         <label htmlFor="quiz-name">Class</label>
-                        <SelectClass selected={selectedClass} setSelected={setSelectedClass}/>
+                        <SelectClass setSelected={setSelectedClass}/>
                     </div>
                     {selectedClass ? <SelectUnitsSubunits 
                         selectedUnits={selectedUnits} setSelectedUnits={setSelectedUnits}

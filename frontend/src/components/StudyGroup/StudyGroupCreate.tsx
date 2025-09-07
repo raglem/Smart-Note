@@ -10,7 +10,6 @@ import LoadingSpinner from "../LoadingSpinner"
 export default function StudyGroupCreate(){
     const [name, setName] = useState<string>("")
     const [datetime, setDatetime] = useState<Date>(new Date())
-    const [visibility, setVisibility] = useState<"Public" | "Private">("Private")
     const [loading, setLoading] = useState<boolean>(false)
 
     // Retrieve context

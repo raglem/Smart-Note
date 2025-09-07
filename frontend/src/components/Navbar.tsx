@@ -19,7 +19,7 @@ export default function Navbar(){
     // This will reset the user state variables (ex. userId) and redirect to login page
     useEffect(() => {
       checkUser()
-    }, [path])
+    }, [path, checkUser])
 
     useEffect(() => {
       function handleClickOutside(e: MouseEvent){

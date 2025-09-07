@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react";
-import { QuizResultSimpleType, QuizSimpleType, QuizType } from "@/types/Quizzes";
+import { QuizResultSimpleType, QuizSimpleType } from "@/types/Quizzes";
 import QuizCard from "./QuizCard";
 import QuizResultCard from "./QuizResultCard";
 import { IoMdAddCircle } from "react-icons/io";
@@ -54,7 +54,7 @@ export default function QuizzesBoard({quizzes, results}: {quizzes: QuizSimpleTyp
     // On initial render, sort results by date
     useEffect(() => {
         setSortedResults(results.sort((a, b) => a.date < b.date ? 1 : -1))
-    }, [])
+    }, [results])
 
     return (
         <div className="flex flex-col items-center w-full gap-y-8">
@@ -126,7 +126,7 @@ export default function QuizzesBoard({quizzes, results}: {quizzes: QuizSimpleTyp
                                 {pendingResults.length === 0 && (
                                     <div className="flex flex-row gap-x-2 items-center border-1 border-primary rounded-md p-2">
                                     <AiOutlineFileDone className="text-5xl text-primary"/>
-                                    <h2 className="text-2xl"> You're all caught up. No quizzes require grading </h2>
+                                    <h2 className="text-2xl"> {`You're all caught up. No quizzes require grading`} </h2>
                                     </div>
                                 )}
                             </div>

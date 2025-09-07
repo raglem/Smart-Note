@@ -1,6 +1,6 @@
 "use client"
 import { useContext, useState } from "react";
-import { FilePreviewType, FileType, SectionEnumType } from "../../types";
+import { FileType, SectionEnumType } from "../../types";
 import { FaFileUpload } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
 import FilePreview from "./FilePreview";

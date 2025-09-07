@@ -3,7 +3,7 @@
 import { StudyGroupContext } from "@/app/context/StudyGroupContext"
 import { StudyGroupDateContext } from "@/app/context/StudyGroupDateContext"
 import { StudyGroupType } from "@/types"
-import { useContext, useMemo, useState } from "react"
+import { useContext, useMemo } from "react"
 import { FaCaretLeft, FaCaretRight } from "react-icons/fa"
 import StudyGroupCalendarDay from "./StudyGroupCalendarDay"
 

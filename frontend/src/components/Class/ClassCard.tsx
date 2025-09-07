@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { IoPeopleSharp } from "react-icons/io5";
-import { LuNotebookPen } from "react-icons/lu";
 import { ClassType } from "@/types/Sections";
 import { toast } from "react-toastify";
 

@@ -1,11 +1,10 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import { SimpleMemberType } from "@/types"
 import { IoIosCheckmarkCircle } from "react-icons/io"
 import { IoAddCircle, IoRemoveCircleOutline } from "react-icons/io5"
 import { BiCaretDown, BiCaretUp } from "react-icons/bi"
-import { UnitType } from "@/types/Sections"
 import { toast } from "react-toastify"
 import api from "@/utils/api"
 import LoadingSpinner from "../LoadingSpinner"
@@ -45,7 +44,7 @@ export default function AddMembers({
 
                 setMatchingMembers(formattedMembers)
             }
-            catch(err){
+            catch{
                 toast.error("Failed to search for members")
             }
             finally{
@@ -54,7 +53,7 @@ export default function AddMembers({
             
         }
        searchMembers()
-    }, [formattedMemberQuery])
+    }, [memberQuery, formattedMemberQuery])
 
     const handleAddMember = (m: SimpleMemberType) => {
         if(addedMembers.find(addedMember => addedMember.id === m.id)){

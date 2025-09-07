@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect } from "react"
-import { MultipleChoiceQuestionType, QuestionType } from "@/types/Quizzes"
+import { QuestionType } from "@/types/Quizzes"
 import MultipleChoiceQuestion from "./MultipleChoiceQuestion"
 import { CiSquareChevDown, CiSquareChevUp } from "react-icons/ci"
 import { IoTrash } from "react-icons/io5";
@@ -27,7 +27,7 @@ export default function Questions({questions, setQuestions}: {
                 }]
             }])
         }
-    }, [])
+    }, [questions, setQuestions])
     const setQuestion = (updatedQuestion: QuestionType) => {
         setQuestions(prevQuestions => prevQuestions.map(q => q.id === updatedQuestion.id ? updatedQuestion : q))
     }

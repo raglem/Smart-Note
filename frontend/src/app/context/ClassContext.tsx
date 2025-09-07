@@ -2,7 +2,6 @@
 
 import { createContext, useState } from "react";
 import api from "@/utils/api";
-import axios from 'axios'
 import { UnitType } from "../../types/Sections";
 import { FileType, SimpleMemberType } from "@/types";
 

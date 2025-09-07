@@ -1,9 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation";
-import { useContext, useState } from "react";
-import { UserContext } from "../context/UserContext";
-import Link from "next/link";
+import { useState } from "react";
 import api from "@/utils/api";
 import { toast } from "react-toastify";
 import LoadingSpinner from "@/components/LoadingSpinner";
@@ -13,13 +11,12 @@ export default function Page(){
     const [password, setPassword] = useState<string>("");
     const [mode, setMode] = useState<"Login" | "Register">("Login")
     const [loading, setLoading] = useState<boolean>(false)
-    const { setUsername: setUsernameContext, setUserId } = useContext(UserContext)
     const router = useRouter()
 
     const handleLogin = async () => {
       setLoading(true)
       const delayTimer = setTimeout(() => {
-        toast.error('Initial request will take extra time due to server spinup. Initial response may be delayed up to a minute')
+        toast.error('Initial response may be delayed up to a minute due to server spinup. Thank you for your patience')
       }, 5000);
       try{
         const res = await api.post('/users/login/', { username, password })
@@ -52,7 +49,7 @@ export default function Page(){
         toast.error('Initial request will take extra time due to server spinup. Initial response may be delayed up to a minute')
       }, 5000);
       try{
-        const res = await api.post('/users/register/', { username, password })
+        await api.post('/users/register/', { username, password })
         toast.success('User registration successful. Please login with the same credentials.')
         
         // Reset fields
@@ -75,14 +72,10 @@ export default function Page(){
       }
     }
 
-    const sendRequestWithDelay = async () => {
-      const res = await api.post('/users/login/', { username, password })
-    }
-
     return (
       <main className="flex flex-row justify-center full-screen-wrapper">
         <section className="hidden md:flex justify-center items-center h-full w-[50%] bg-secondary">
-          <img src="icon.png" className="aspect-square w-[80%] max-w-[768px] rounded-lg" />
+          <img src="icon.png" alt="Smart Note Icon" className="aspect-square w-[80%] max-w-[768px] rounded-lg"/>
         </section>
         <section className="flex justify-center items-center h-full w-[70%]">
           <div className="relative mx-auto flex flex-col w-[310px] lg:w-[480px] xl:[768px] p-8 space-y-3 card border-1 border-primary">

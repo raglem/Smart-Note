@@ -13,8 +13,8 @@ type AccessTokenPayload = {
 
 export async function GET() {
   const cookieStore = await cookies()
-  let access = cookieStore.get('access_token')?.value
-  let refresh = cookieStore.get('refresh_token')?.value
+  const access = cookieStore.get('access_token')?.value
+  const refresh = cookieStore.get('refresh_token')?.value
   // Check there is no access token
   if (!access) {
     // If there is no refresh token, return unauthenticated response
@@ -58,7 +58,6 @@ export async function GET() {
 
   // If there is an access token, send back a response with the user
   try {
-    const secret = process.env.JWT_SECRET || ''
     const decrypted = jwtDecode<AccessTokenPayload>(access)
     const user = {
       userId: decrypted.user_id,

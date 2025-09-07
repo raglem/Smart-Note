@@ -9,7 +9,7 @@ export default function FRQAnswerableQuestion({ question, saveAnswer }: {
     const [userAnswer, setUserAnswer] = useState<string>("")
     useEffect(() => {
         saveAnswer(question.id, userAnswer)
-    }, [userAnswer])
+    }, [userAnswer, question, saveAnswer])
     return (
         <div className="flex flex-row gap-x-2 border-b-1 border-b-primary py-4">
             <h2 className="text-2xl">{`${question.order})`}</h2>

@@ -1,7 +1,7 @@
 "use client"
 
 import { useContext, useEffect, useMemo, useState } from "react";
-import { isSubunitType, isUnitType, SectionType, SubunitType, UnitType } from "../../types/Sections"
+import { isUnitType, SectionType, SubunitType, UnitType } from "../../types/Sections"
 import { FaCaretUp, FaCaretDown, FaTrashAlt } from "react-icons/fa";
 
 import FilePreview from "../File/FilePreview";
@@ -9,12 +9,13 @@ import RemoveFile from "../File/RemoveFile";
 import { GiHamburgerMenu } from "react-icons/gi";
 import FileAdd from "../File/FileAdd";
 
-import { closestCenter, DndContext, DragEndEvent, DragPendingEvent, DragStartEvent } from "@dnd-kit/core";
+import { closestCenter, DndContext, DragEndEvent } from "@dnd-kit/core";
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import SortableItem from "../SortableItem";
 import { ClassContext } from "@/app/context/ClassContext";
 import api from "@/utils/api";
 import AddSubunit from "./AddSubunit";
+import { toast } from "react-toastify";
 
 export default function Section({ sectionId, sectionType, ...dragProps }: { 
     sectionId: number, 
@@ -25,25 +26,38 @@ export default function Section({ sectionId, sectionType, ...dragProps }: {
     // Gather context for editMode
     const { units, setUnits, editMode, draggingUnit, draggingSubunit, setDraggingUnit, setDraggingSubunit } = useContext(ClassContext)
 
-    // Store potential changes for editMode
-    const section: UnitType | SubunitType | undefined = sectionType === 'Unit'
+    // Find section from context
+    let section: UnitType | SubunitType | undefined = sectionType === 'Unit'
     ? units.find(u => u.id === sectionId)
     : units
         .flatMap(u => u.subunits.map(s => ({ ...s, parentUnitId: u.id })))
         .find(s => s.id === sectionId);
 
+    // If section is not found, populate with dummy values and later return error
     if(!section){
-        return (<div>
-            Not found
-        </div>)
+        toast.error(`Something went wrong loading all units and subunits. Please try again`)
+        section = {
+            id: -1,
+            class_id: -1,
+            name: "",
+            course_number: "",
+            order: -1,
+            members: [],
+            subunits: [],
+            files: []
+        }
     }
 
     const [name, setName] = useState<string>(section.name)
-    const [order, setOrder] = useState<number>(section.order)
 
     // State for sub-sections
     const [openSubsection, setOpenSubsection] = useState<boolean>(false)
-    const [subsections, setSubsections] = useState<SectionType[] | null>(isUnitType(section) ? section.subunits: null )
+    const [subsections, setSubsections] = useState<SectionType[] | null>((() => {
+        if(isUnitType(section)){
+            return section.subunits
+        }
+        return null
+    })())
 
     // Very important: Trigger rerender of subsection if units change
     useEffect(() => {
@@ -66,7 +80,7 @@ export default function Section({ sectionId, sectionType, ...dragProps }: {
         }
     }, [sectionType, draggingSubunit, draggingUnit, openSubsection]);
       
-    const toggleSubsection = (id:number) => {
+    const toggleSubsection = () => {
         setDraggingUnit(false)
         setDraggingSubunit(false)
         setOpenSubsection(!openSubsection)
@@ -101,7 +115,7 @@ export default function Section({ sectionId, sectionType, ...dragProps }: {
         const lowercaseSectionType = sectionType === 'Unit' ? 'unit' : 'subunit'
 
         try{
-            const res = await api.delete(`/classes/${lowercaseSectionType}s/${section.id}/`)
+            await api.delete(`/classes/${lowercaseSectionType}s/${section.id}/`)
             // Update context with removed unit/subunit
             if(sectionType === 'Unit'){
                 setUnits(units.filter(unit => unit.id !== section.id))
@@ -119,7 +133,7 @@ export default function Section({ sectionId, sectionType, ...dragProps }: {
     }
 
     // Update context a subunit is being dragged
-    const handleDragPending = (event: DragPendingEvent) => {
+    const handleDragPending = () => {
         setDraggingSubunit(true)
     }
 
@@ -153,15 +167,23 @@ export default function Section({ sectionId, sectionType, ...dragProps }: {
         }))
     }
 
+    if(section.id === -1){
+        return (
+            <div className="flex flex-row w-full p-2">
+                Error fetching section...
+            </div>
+        )
+    }
+
     return (
         <div className="flex flex-col gap-y-2">
             <div className="flex flex-row justify-between items-center gap-x-2">
                 {<div>
                     {
                     openSubsection ? (
-                        <FaCaretUp className="icon-responsive w-4" onClick={() => toggleSubsection(section.id)} />
+                        <FaCaretUp className="icon-responsive w-4" onClick={() => toggleSubsection()} />
                     ): (
-                        <FaCaretDown className="icon-responsive w-4" onClick={() => toggleSubsection(section.id)} />
+                        <FaCaretDown className="icon-responsive w-4" onClick={() => toggleSubsection()} />
                     )
                     }
                     </div>

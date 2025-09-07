@@ -1,7 +1,7 @@
 "use client"
 
 import api from "@/utils/api";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useState } from "react";
 
 type UserContextType = {
     username: string,

@@ -3,7 +3,6 @@
 import { useState } from "react"
 import CreateClass from "./ClassCreate"
 import Join from "./Join";
-import { IoMdAddCircleOutline } from "react-icons/io";
 import { IoMdAddCircle } from "react-icons/io";
 
 export default function ClassesHeader(){
