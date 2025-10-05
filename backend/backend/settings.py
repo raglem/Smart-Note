@@ -91,16 +91,32 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 #     }
 # }
 
-# # For postgres production database
+# # For Render postgres production database
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.environ.get('DB_NAME'),
+#         'USER': os.environ.get('DB_USERNAME'),
+#         'PASSWORD': os.environ.get('DB_PASSWORD'),
+#         'HOST': os.environ.get('DB_HOST'),
+#         'PORT': '5432',
+#     }
+# }
+
+# # For Neon Postgres production database
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME'),
-        'USER': os.environ.get('DB_USERNAME'),
-        'PASSWORD': os.environ.get('DB_PASSWORD'),
-        'HOST': os.environ.get('DB_HOST'),
-        'PORT': '5432',
-    }
+  'default': {
+    'ENGINE': 'django.db.backends.postgresql',
+    'NAME': os.environ.get('PGDATABASE'),
+    'USER': os.environ.get('PGUSER'),
+    'PASSWORD': os.environ.get('PGPASSWORD'),
+    'HOST': os.environ.get('PGHOST'),
+    'PORT': os.environ.get('PGPORT', 5432),
+    'OPTIONS': {
+      'sslmode': 'require',
+    },
+    'DISABLE_SERVER_SIDE_CURSORS': True,
+  }
 }
 
 
@@ -170,21 +186,22 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 CORS_ALLOW_CREDENTIALS = True
 
-###########################
-# # For local testing
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:3000",
-# ]
+##########################
+# For local testing
+ALLOWED_HOSTS = ['*']
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
 
-###########################
-# CSRF_TRUSTED_ORIGINS = [
-#     "http://localhost:3000",
-# ]
+##########################
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+]
 
 # For deployment testing
-ALLOWED_HOSTS = ['smartnote-qlck.onrender.com']
-CORS_ALLOW_ALL_ORIGINS = True
-CSRF_TRUSTED_ORIGINS = ['https://smartnote-qlck.onrender.com']
+# ALLOWED_HOSTS = ['smartnote-qlck.onrender.com']
+# CORS_ALLOW_ALL_ORIGINS = True
+# CSRF_TRUSTED_ORIGINS = ['https://smartnote-qlck.onrender.com']
 
 ###########################
 # # # For production
