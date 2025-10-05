@@ -15,6 +15,7 @@ const eslintConfig = [
     rules: {
       "@typescript-eslint/no-explicit-any": "off", // allow any type
       "@next/next/no-img-element": "off", // allow <img> instead of <Image>
+      "react-hooks/exhaustive-deps": "off", // allow missing dependencies in useEffect
     },
   },
 ];

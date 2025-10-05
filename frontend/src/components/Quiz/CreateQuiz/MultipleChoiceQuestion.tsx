@@ -52,7 +52,7 @@ export default function MultipleChoiceQuestion({question, setQuestion}:{
         };
         document.addEventListener('keydown', handleEnterKey)
         return () => document.removeEventListener('keydown', handleEnterKey)
-    }, [alternateChoices, question, setQuestion])
+    }, [alternateChoices])
 
     // Update parent component when question changes
     useEffect(() => {
@@ -65,14 +65,15 @@ export default function MultipleChoiceQuestion({question, setQuestion}:{
                 choice_text: choice
             }))
         })
-    }, [question, setQuestion, questionText, correctAnswer, alternateChoices])
+    }, [questionText, correctAnswer, alternateChoices])
+
     useEffect(() => {
         setQuestion({
             ...question,
             related_units: questionRelatedUnits,
             related_subunits: questionRelatedSubunits
         })
-    }, [question, setQuestion, questionRelatedUnits, questionRelatedSubunits])
+    }, [questionRelatedUnits, questionRelatedSubunits])
 
     return (
         <div className="flex flex-col w-full gap-y-3">

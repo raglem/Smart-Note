@@ -27,7 +27,7 @@ export default function Questions({questions, setQuestions}: {
                 }]
             }])
         }
-    }, [questions, setQuestions])
+    }, [])
     const setQuestion = (updatedQuestion: QuestionType) => {
         setQuestions(prevQuestions => prevQuestions.map(q => q.id === updatedQuestion.id ? updatedQuestion : q))
     }
